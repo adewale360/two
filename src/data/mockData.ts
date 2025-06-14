@@ -1,6 +1,6 @@
 import { Student, Lecturer, Department, NewsItem, PerformanceData, Faculty } from '../types';
 
-// Faculty structure
+// Updated Faculty structure with new information
 export const mockFaculties: Faculty[] = [
   {
     id: '1',
@@ -26,73 +26,76 @@ export const mockFaculties: Faculty[] = [
   {
     id: '2',
     name: 'COLENSMA',
-    fullName: 'College of Engineering, Natural Sciences and Mathematics',
-    description: 'Excellence in engineering, natural sciences, and mathematical applications.',
+    fullName: 'College of Environmental Sciences and Management',
+    description: 'Welcome to Caleb University\'s College of Environmental Sciences and Management, a hub of innovation, sustainability, and excellence in the fields of architecture, estate management, and quantity surveying. Our college offers comprehensive programs designed to shape future professionals who will address complex environmental challenges.',
     dean: {
       name: 'Prof. Adebayo Ogundimu',
       email: 'adebayo.ogundimu@calebuniversity.edu.ng',
       phone: '08012345678'
     },
     departments: [
-      'Civil Engineering',
-      'Electrical Engineering',
-      'Mechanical Engineering',
-      'Mathematics',
-      'Physics',
-      'Chemistry'
+      'Architecture',
+      'Estate Management'
     ]
   },
   {
     id: '3',
     name: 'CASMAS',
-    fullName: 'College of Administrative Sciences and Management Studies',
-    description: 'Developing future business leaders and administrators.',
+    fullName: 'College of Art, Social, and Management Science',
+    description: 'Welcome to Caleb University\'s College of Art, Social, and Management Science, a dynamic and interdisciplinary academic community dedicated to fostering creativity, critical thinking, and professional excellence. We recognize the essential role that arts, social sciences, and management play in shaping society.',
     dean: {
       name: 'Prof. Funmi Adeyemi',
       email: 'funmi.adeyemi@calebuniversity.edu.ng',
       phone: '08023456789'
     },
     departments: [
-      'Business Administration',
       'Accounting',
+      'Banking and Finance',
+      'Business Administration',
+      'Criminology and Security Studies',
       'Economics',
+      'International Relations',
+      'Mass Communication',
+      'Peace Studies and Conflict Resolution',
+      'Political Science',
       'Public Administration',
-      'Marketing',
-      'Human Resource Management'
+      'Psychology',
+      'Taxation'
     ]
   },
   {
     id: '4',
     name: 'COLAW',
     fullName: 'College of Law',
-    description: 'Training competent legal practitioners and scholars.',
+    description: 'Welcome to Caleb University College of Law, a vibrant and aspiring institution committed to nurturing the next generation of legal professionals. We are driven by a strong belief in the power of education to shape individuals and make a positive impact on society.',
     dean: {
-      name: 'Prof. Olumide Akintola',
-      email: 'olumide.akintola@calebuniversity.edu.ng',
+      name: 'Prof. Foluke Dada',
+      email: 'foluke.dada@calebuniversity.edu.ng',
       phone: '08034567890'
     },
     departments: [
-      'Private Law',
-      'Public Law',
-      'Commercial Law',
-      'International Law'
+      'Public and Property Law',
+      'Private and International Law'
     ]
   },
   {
     id: '5',
     name: 'NURSING',
-    fullName: 'College of Nursing Sciences',
-    description: 'Preparing compassionate and skilled nursing professionals.',
+    fullName: 'College of Nursing and Basic Medical Sciences',
+    description: 'Caleb University College of Nursing and Basic Medical Sciences stands as a beacon of excellence in healthcare education, offering diverse programs tailored to meet the evolving demands of the medical field. We provide comprehensive foundation in both theoretical knowledge and hands-on training.',
     dean: {
       name: 'Prof. Blessing Okafor',
       email: 'blessing.okafor@calebuniversity.edu.ng',
       phone: '08045678901'
     },
     departments: [
-      'Nursing Science',
-      'Public Health Nursing',
-      'Psychiatric Nursing',
-      'Pediatric Nursing'
+      'Maternal and Child Health Nursing',
+      'Community and Public Health Nursing',
+      'Adult Health/Medical and Surgical Nursing',
+      'Mental Health and Psychiatric Nursing',
+      'Nursing Management and Education',
+      'Human Physiology',
+      'Human Anatomy'
     ]
   }
 ];
@@ -120,14 +123,14 @@ export const mockStudents: Student[] = [
     name: 'Bob Smith',
     email: 'bob.smith@university.edu',
     studentId: 'EE2021002',
-    department: 'Electrical Engineering',
+    department: 'Architecture',
     faculty: 'COLENSMA',
     level: '300',
     semester: 6,
     gpa: 4.12,
     courses: [
-      { courseCode: 'EE301', courseName: 'Digital Systems', grade: 'B+', score: 85, semester: 6, level: 300 },
-      { courseCode: 'EE302', courseName: 'Control Systems', grade: 'A', score: 90, semester: 6, level: 300 },
+      { courseCode: 'ARC301', courseName: 'Design Studio', grade: 'B+', score: 85, semester: 6, level: 300 },
+      { courseCode: 'ARC302', courseName: 'Building Technology', grade: 'A', score: 90, semester: 6, level: 300 },
     ]
   },
   {
@@ -150,10 +153,10 @@ export const mockStudents: Student[] = [
     const faculties = ['COPAS', 'COLENSMA', 'CASMAS', 'COLAW', 'NURSING'];
     const departments = {
       'COPAS': ['Computer Science', 'Biochemistry', 'Cyber Security', 'Software Engineering'],
-      'COLENSMA': ['Electrical Engineering', 'Civil Engineering', 'Mathematics', 'Physics'],
-      'CASMAS': ['Business Administration', 'Accounting', 'Economics', 'Marketing'],
-      'COLAW': ['Private Law', 'Public Law', 'Commercial Law'],
-      'NURSING': ['Nursing Science', 'Public Health Nursing', 'Psychiatric Nursing']
+      'COLENSMA': ['Architecture', 'Estate Management'],
+      'CASMAS': ['Business Administration', 'Accounting', 'Economics', 'Mass Communication'],
+      'COLAW': ['Public and Property Law', 'Private and International Law'],
+      'NURSING': ['Nursing Science', 'Human Physiology', 'Human Anatomy']
     };
     
     const faculty = faculties[i % faculties.length];
@@ -201,9 +204,9 @@ export const mockLecturers: Lecturer[] = [
     name: 'Prof. Michael Brown',
     email: 'michael.brown@university.edu',
     staffId: 'STAFF002',
-    department: 'Electrical Engineering',
+    department: 'Architecture',
     faculty: 'COLENSMA',
-    courses: ['EE301', 'EE302'],
+    courses: ['ARC301', 'ARC302'],
     rating: 4.6,
     studentsCount: 85
   },
@@ -231,7 +234,7 @@ export const mockDepartments: Department[] = [
   },
   {
     id: '2',
-    name: 'Electrical Engineering',
+    name: 'Architecture',
     faculty: 'COLENSMA',
     studentCount: 320,
     lecturerCount: 18,
@@ -284,8 +287,8 @@ export const mockDashboardStats = {
 export const mockPerformanceData: PerformanceData[] = [
   { course: 'CS401', score: 85, students: 45, semester: 'Fall 2024' },
   { course: 'CS402', score: 78, students: 42, semester: 'Fall 2024' },
-  { course: 'EE301', score: 82, students: 38, semester: 'Fall 2024' },
-  { course: 'EE302', score: 79, students: 35, semester: 'Fall 2024' },
+  { course: 'ARC301', score: 82, students: 38, semester: 'Fall 2024' },
+  { course: 'ARC302', score: 79, students: 35, semester: 'Fall 2024' },
   { course: 'BIO201', score: 88, students: 50, semester: 'Fall 2024' },
   { course: 'BIO202', score: 84, students: 48, semester: 'Fall 2024' },
 ];

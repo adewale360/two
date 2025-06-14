@@ -64,28 +64,28 @@ const Reports: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen p-6">
+    <div className="compact-spacing bg-gray-50 dark:bg-gray-900 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Reports
           </h1>
         </div>
-        <button className="flex items-center space-x-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-          <Download className="h-4 w-4" />
+        <button className="flex items-center space-x-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-3 py-2 rounded text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+          <Download className="h-3 w-3" />
           <span>Download</span>
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center space-x-4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+      <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 minimal-padding rounded-lg shadow-sm mb-4">
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Timeframe:</span>
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Timeframe:</span>
           <select
             value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value)}
-            className="px-3 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 dark:text-white"
+            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded text-xs focus:ring-2 focus:ring-blue-500 dark:text-white"
           >
             <option value="All-time">All-time</option>
             <option value="This Year">This Year</option>
@@ -93,11 +93,11 @@ const Reports: React.FC = () => {
           </select>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">People:</span>
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">People:</span>
           <select
             value={peopleFilter}
             onChange={(e) => setPeopleFilter(e.target.value)}
-            className="px-3 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 dark:text-white"
+            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded text-xs focus:ring-2 focus:ring-blue-500 dark:text-white"
           >
             <option value="All">All</option>
             <option value="Students">Students</option>
@@ -105,11 +105,11 @@ const Reports: React.FC = () => {
           </select>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Topic:</span>
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Topic:</span>
           <select
             value={topicFilter}
             onChange={(e) => setTopicFilter(e.target.value)}
-            className="px-3 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 dark:text-white"
+            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded text-xs focus:ring-2 focus:ring-blue-500 dark:text-white"
           >
             <option value="All">All</option>
             <option value="Computer Science">Computer Science</option>
@@ -120,20 +120,20 @@ const Reports: React.FC = () => {
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 compact-grid mb-4">
         {metricsData.map((metric, index) => (
-          <div key={index} className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">{metric.title}</h3>
+          <div key={index} className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">{metric.title}</h3>
               <span className="text-xs text-gray-500 dark:text-gray-500">Month</span>
             </div>
-            <div className="flex items-end space-x-2 mb-4">
-              <span className="text-3xl font-bold text-gray-900 dark:text-white">{metric.value}</span>
-              <span className="text-lg text-gray-500 dark:text-gray-400">{metric.total}</span>
+            <div className="flex items-end space-x-1 mb-2">
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">{metric.value}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">{metric.total}</span>
             </div>
             {/* Mini trend line */}
             <div className="flex items-center space-x-2">
-              <div className="flex-1 h-8 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
+              <div className="flex-1 h-6 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
                 <svg className="w-full h-full" viewBox="0 0 100 30">
                   <path
                     d="M0,25 Q25,15 50,20 T100,10"
@@ -144,7 +144,7 @@ const Reports: React.FC = () => {
                 </svg>
               </div>
               <div className="text-right">
-                <div className={`text-sm font-medium ${metric.isIncrease ? 'text-green-600' : 'text-blue-600'}`}>
+                <div className={`text-xs font-medium ${metric.isIncrease ? 'text-green-600' : 'text-blue-600'}`}>
                   {metric.isIncrease ? '+' : ''}{metric.percentage}%
                 </div>
               </div>
@@ -154,37 +154,34 @@ const Reports: React.FC = () => {
       </div>
 
       {/* Activity Chart */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Activity</h3>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Month</span>
-        </div>
+      <div className="mb-4">
         <CustomBarChart
           data={activityData}
           dataKey="value"
           xAxisKey="month"
+          title="Activity"
           color="#3b82f6"
         />
       </div>
 
       {/* Performance Topics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Weakest Topics</h3>
-          <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid mb-4">
+        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
+          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Weakest Topics</h3>
+          <div className="tight-spacing">
             {weakestTopics.map((topic, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center text-lg">
+              <div key={index} className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-sm">
                   {topic.icon}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-medium text-gray-900 dark:text-white">{topic.name}</span>
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{topic.percentage}% Correct</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{topic.name}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{topic.percentage}% Correct</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                     <div 
-                      className={`h-2 rounded-full ${topic.color}`}
+                      className={`h-1.5 rounded-full ${topic.color}`}
                       style={{ width: `${topic.percentage}%` }}
                     ></div>
                   </div>
@@ -194,22 +191,22 @@ const Reports: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Strongest Topics</h3>
-          <div className="space-y-4">
+        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
+          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Strongest Topics</h3>
+          <div className="tight-spacing">
             {strongestTopics.map((topic, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center text-lg">
+              <div key={index} className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-sm">
                   {topic.icon}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-medium text-gray-900 dark:text-white">{topic.name}</span>
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{topic.percentage}% Correct</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{topic.name}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{topic.percentage}% Correct</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                     <div 
-                      className={`h-2 rounded-full ${topic.color}`}
+                      className={`h-1.5 rounded-full ${topic.color}`}
                       style={{ width: `${topic.percentage}%` }}
                     ></div>
                   </div>
@@ -221,14 +218,14 @@ const Reports: React.FC = () => {
       </div>
 
       {/* Leaderboards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">User Leaderboard</h3>
-          <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid">
+        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
+          <h3 className="compact-header text-gray-900 dark:text-white mb-3">User Leaderboard</h3>
+          <div className="tight-spacing">
             {userLeaderboard.map((user, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <div className="flex items-center space-x-3">
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+              <div key={index} className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
                     user.rank === 1 ? 'bg-yellow-100 text-yellow-800' : 
                     user.rank === 2 ? 'bg-gray-100 text-gray-800' : 
                     user.rank === 3 ? 'bg-orange-100 text-orange-800' : 
@@ -236,21 +233,21 @@ const Reports: React.FC = () => {
                   }`}>
                     {user.rank}
                   </span>
-                  <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                  <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900 dark:text-white">{user.name}</span>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-medium text-gray-900 dark:text-white">{user.rank}</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</span>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-xs font-medium text-gray-900 dark:text-white">{user.rank}</span>
                       {user.trend === 'up' ? (
-                        <ChevronUp className="w-4 h-4 text-green-500" />
+                        <ChevronUp className="w-3 h-3 text-green-500" />
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-red-500" />
+                        <ChevronDown className="w-3 h-3 text-red-500" />
                       )}
                     </div>
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
                     {user.points} • {user.percentage}
                   </div>
                 </div>
@@ -259,13 +256,13 @@ const Reports: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Groups Leaderboard</h3>
-          <div className="space-y-4">
+        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
+          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Groups Leaderboard</h3>
+          <div className="tight-spacing">
             {groupsLeaderboard.map((group, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <div className="flex items-center space-x-3">
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+              <div key={index} className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
                     group.rank === 1 ? 'bg-yellow-100 text-yellow-800' : 
                     group.rank === 2 ? 'bg-gray-100 text-gray-800' : 
                     group.rank === 3 ? 'bg-orange-100 text-orange-800' : 
@@ -273,21 +270,21 @@ const Reports: React.FC = () => {
                   }`}>
                     {group.rank}
                   </span>
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
+                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900 dark:text-white">{group.name}</span>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-medium text-gray-900 dark:text-white">{group.rank}</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{group.name}</span>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-xs font-medium text-gray-900 dark:text-white">{group.rank}</span>
                       {group.trend === 'up' ? (
-                        <ChevronUp className="w-4 h-4 text-green-500" />
+                        <ChevronUp className="w-3 h-3 text-green-500" />
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-red-500" />
+                        <ChevronDown className="w-3 h-3 text-red-500" />
                       )}
                     </div>
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
                     {group.points} • {group.percentage}
                   </div>
                 </div>
