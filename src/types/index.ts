@@ -5,7 +5,7 @@ export interface Student {
   studentId: string;
   department: string;
   faculty: string;
-  level: number;
+  level: string;
   semester: number;
   gpa: number;
   courses: CourseGrade[];
@@ -41,6 +41,19 @@ export interface Department {
   averageGpa: number;
 }
 
+export interface Faculty {
+  id: string;
+  name: string;
+  fullName: string;
+  description: string;
+  dean: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  departments: string[];
+}
+
 export interface NewsItem {
   id: string;
   title: string;
@@ -48,6 +61,15 @@ export interface NewsItem {
   date: string;
   category: 'academic' | 'event' | 'announcement';
   featured: boolean;
+}
+
+export interface News {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  category: 'academic' | 'event' | 'announcement' | 'achievement';
+  author: string;
 }
 
 export interface PerformanceData {

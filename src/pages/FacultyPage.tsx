@@ -1,42 +1,28 @@
 import React, { useState } from 'react';
-import { Users, BookOpen, GraduationCap, TrendingUp, MapPin, Award } from 'lucide-react';
-import { GlassCard } from '../components/ui/GlassCard';
-import { StatsCard } from '../components/dashboard/StatsCard';
-import { CustomBarChart } from '../components/charts/BarChart';
-import { DonutChart } from '../components/charts/DonutChart';
-import { mockStudents, mockLecturers } from '../data/mockData';
+import { Users, BookOpen, GraduationCap, TrendingUp, MapPin, Award, School, Mail, Phone } from 'lucide-react';
+import Card from '../components/Common/Card';
+import StatCard from '../components/Common/StatCard';
+import CustomBarChart from '../components/Charts/BarChart';
+import DonutChart from '../components/Charts/DonutChart';
+import { mockStudents, mockLecturers, mockFaculties } from '../data/mockData';
 
-export function FacultyPage() {
-  const [selectedFaculty, setSelectedFaculty] = useState('Engineering');
+const FacultyPage: React.FC = () => {
+  const [selectedFaculty, setSelectedFaculty] = useState('COPAS');
 
-  const faculties = Array.from(new Set([
-    ...mockStudents.map(s => s.faculty),
-    ...mockLecturers.map(l => l.faculty)
-  ]));
-
+  const currentFaculty = mockFaculties.find(f => f.name === selectedFaculty) || mockFaculties[0];
   const facultyStudents = mockStudents.filter(s => s.faculty === selectedFaculty);
   const facultyLecturers = mockLecturers.filter(l => l.faculty === selectedFaculty);
 
-  const departmentData = Array.from(new Set(facultyStudents.map(s => s.department)))
-    .map(dept => ({
-      name: dept,
-      value: facultyStudents.filter(s => s.department === dept).length
-    }));
-
-  const performanceData = Array.from(new Set(facultyStudents.map(s => s.department)))
-    .map(dept => ({
-      name: dept,
-      value: Number((facultyStudents
-        .filter(s => s.department === dept)
-        .reduce((sum, s) => sum + s.gpa, 0) / 
-        facultyStudents.filter(s => s.department === dept).length).toFixed(2))
-    }));
+  const departmentData = currentFaculty.departments.map(dept => ({
+    name: dept.length > 15 ? dept.substring(0, 15) + '...' : dept,
+    value: facultyStudents.filter(s => s.department === dept).length
+  }));
 
   const levelDistribution = [
-    { name: 'Level 100', value: facultyStudents.filter(s => s.level === '100').length, color: '#3B82F6' },
-    { name: 'Level 200', value: facultyStudents.filter(s => s.level === '200').length, color: '#10B981' },
-    { name: 'Level 300', value: facultyStudents.filter(s => s.level === '300').length, color: '#F59E0B' },
-    { name: 'Level 400', value: facultyStudents.filter(s => s.level === '400').length, color: '#EF4444' }
+    { name: 'Level 100', value: facultyStudents.filter(s => s.level === '100').length, fill: '#3B82F6' },
+    { name: 'Level 200', value: facultyStudents.filter(s => s.level === '200').length, fill: '#10B981' },
+    { name: 'Level 300', value: facultyStudents.filter(s => s.level === '300').length, fill: '#F59E0B' },
+    { name: 'Level 400', value: facultyStudents.filter(s => s.level === '400').length, fill: '#EF4444' }
   ];
 
   const averageGPA = facultyStudents.length > 0 
@@ -48,14 +34,14 @@ export function FacultyPage() {
     : '0.0';
 
   return (
-    <div className="space-y-8">
+    <div className="compact-spacing">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Faculty Overview
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Comprehensive view of faculty performance and statistics
           </p>
         </div>
@@ -63,82 +49,79 @@ export function FacultyPage() {
         <select
           value={selectedFaculty}
           onChange={(e) => setSelectedFaculty(e.target.value)}
-          className="px-4 py-2 bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10 rounded-lg backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500"
         >
-          {faculties.map(faculty => (
-            <option key={faculty} value={faculty}>{faculty}</option>
+          {mockFaculties.map(faculty => (
+            <option key={faculty.name} value={faculty.name}>{faculty.name}</option>
           ))}
         </select>
       </div>
 
-      {/* Faculty Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
-          title="Total Students"
-          value={facultyStudents.length}
-          icon={Users}
-          change="+8% from last semester"
-          changeType="increase"
-        />
-        <StatsCard
-          title="Total Lecturers"
-          value={facultyLecturers.length}
-          icon={BookOpen}
-          change="Same as last semester"
-          changeType="neutral"
-        />
-        <StatsCard
-          title="Average GPA"
-          value={averageGPA}
-          icon={TrendingUp}
-          change="+0.12 from last semester"
-          changeType="increase"
-        />
-        <StatsCard
-          title="Lecturer Rating"
-          value={`${averageRating}/5.0`}
-          icon={Award}
-          change="+0.3 from last semester"
-          changeType="increase"
-        />
-      </div>
+      {/* Faculty Details */}
+      <Card title={`${currentFaculty.name} - ${currentFaculty.fullName}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid">
+          <div className="lg:col-span-2">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              {currentFaculty.description}
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 compact-grid">
+              <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                <p className="text-lg font-bold text-primary-600">{currentFaculty.departments.length}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Departments</p>
+              </div>
+              <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                <p className="text-lg font-bold text-green-600">{facultyStudents.length}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Students</p>
+              </div>
+              <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                <p className="text-lg font-bold text-blue-600">{facultyLecturers.length}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Lecturers</p>
+              </div>
+              <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                <p className="text-lg font-bold text-yellow-600">{averageGPA}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Avg GPA</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-gray-50 dark:bg-gray-700 minimal-padding rounded">
+            <h4 className="compact-subheader text-gray-900 dark:text-white mb-2">Dean Information</h4>
+            <div className="tight-spacing">
+              <div className="flex items-center text-xs">
+                <Users className="h-3 w-3 mr-1 text-gray-500" />
+                <span className="font-medium">{currentFaculty.dean.name}</span>
+              </div>
+              <div className="flex items-center text-xs text-gray-600 dark:text-gray-400">
+                <Mail className="h-3 w-3 mr-1" />
+                <span>{currentFaculty.dean.email}</span>
+              </div>
+              <div className="flex items-center text-xs text-gray-600 dark:text-gray-400">
+                <Phone className="h-3 w-3 mr-1" />
+                <span>{currentFaculty.dean.phone}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Student Distribution by Department */}
-        <GlassCard className="p-6">
-          <CustomBarChart 
-            data={departmentData}
-            title="Student Distribution by Department"
-            color="#3B82F6"
-          />
-        </GlassCard>
-
-        {/* Level Distribution */}
-        <GlassCard className="p-6">
-          <DonutChart 
-            data={levelDistribution}
-            title="Student Level Distribution"
-          />
-        </GlassCard>
+      <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid">
+        <CustomBarChart 
+          data={departmentData}
+          dataKey="value"
+          xAxisKey="name"
+          title="Student Distribution by Department"
+          color="#3b82f6"
+        />
+        <DonutChart 
+          data={levelDistribution}
+          title="Student Level Distribution"
+        />
       </div>
 
-      {/* Department Performance */}
-      <GlassCard className="p-6">
-        <CustomBarChart 
-          data={performanceData}
-          title="Average GPA by Department"
-          color="#10B981"
-        />
-      </GlassCard>
-
-      {/* Faculty Departments */}
-      <div>
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
-          Departments in {selectedFaculty}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from(new Set(facultyStudents.map(s => s.department))).map(department => {
+      {/* Departments Grid */}
+      <Card title="Departments">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 compact-grid">
+          {currentFaculty.departments.map((department, index) => {
             const deptStudents = facultyStudents.filter(s => s.department === department);
             const deptLecturers = facultyLecturers.filter(l => l.department === department);
             const deptGPA = deptStudents.length > 0
@@ -146,48 +129,43 @@ export function FacultyPage() {
               : '0.00';
 
             return (
-              <GlassCard key={department} className="p-6">
-                <div className="flex items-center mb-4">
-                  <GraduationCap className="text-blue-500 mr-3" size={24} />
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <div key={index} className="bg-gray-50 dark:bg-gray-700 minimal-padding rounded">
+                <div className="flex items-center mb-2">
+                  <GraduationCap className="text-blue-500 mr-2" size={16} />
+                  <h3 className="compact-subheader text-gray-900 dark:text-white">
                     {department}
                   </h3>
                 </div>
                 
-                <div className="space-y-3">
+                <div className="tight-spacing">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600 dark:text-gray-400">Students</span>
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Students</span>
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">
                       {deptStudents.length}
                     </span>
                   </div>
                   
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600 dark:text-gray-400">Lecturers</span>
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Lecturers</span>
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">
                       {deptLecturers.length}
                     </span>
                   </div>
                   
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600 dark:text-gray-400">Avg. GPA</span>
-                    <span className="font-semibold text-blue-600">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Avg. GPA</span>
+                    <span className="text-xs font-semibold text-blue-600">
                       {deptGPA}
                     </span>
                   </div>
-                  
-                  <div className="pt-2 border-t border-white/10">
-                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      <TrendingUp size={14} className="mr-1" />
-                      <span>Trending upward</span>
-                    </div>
-                  </div>
                 </div>
-              </GlassCard>
+              </div>
             );
           })}
         </div>
-      </div>
+      </Card>
     </div>
   );
-}
+};
+
+export default FacultyPage;
