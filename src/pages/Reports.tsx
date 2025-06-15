@@ -5,7 +5,7 @@ import StatCard from '../components/Common/StatCard';
 import CustomBarChart from '../components/Charts/BarChart';
 import CustomAreaChart from '../components/Charts/AreaChart';
 import DonutChart from '../components/Charts/DonutChart';
-import { mockPerformanceData, semesterProgressData, scoreDistributionData, mockDepartments, mockStudents } from '../data/mockData';
+import { mockPerformanceData, semesterProgressData, scoreDistributionData, mockDepartments, mockStudents, mockLecturers } from '../data/mockData';
 
 const Reports: React.FC = () => {
   const [timeFilter, setTimeFilter] = useState('All-time');
@@ -19,49 +19,131 @@ const Reports: React.FC = () => {
     { title: 'Av. Session Length', value: '2m 34s', total: '', percentage: 34, isIncrease: true },
   ];
 
-  // Activity data for the bar chart
-  const activityData = [
-    { month: 'JAN', value: 150 },
-    { month: 'FEB', value: 180 },
-    { month: 'MAR', value: 220 },
-    { month: 'APR', value: 280 },
-    { month: 'MAY', value: 320 },
-    { month: 'JUN', value: 290 },
-    { month: 'JUL', value: 350 },
-    { month: 'AUG', value: 180 },
-    { month: 'SEP', value: 280 },
-    { month: 'OCT', value: 380 },
-    { month: 'NOV', value: 420 },
-    { month: 'DEC', value: 450 },
-  ];
+  // Activity data for the bar chart - filtered based on timeFilter
+  const getActivityData = () => {
+    const baseData = [
+      { month: 'JAN', value: 150 },
+      { month: 'FEB', value: 180 },
+      { month: 'MAR', value: 220 },
+      { month: 'APR', value: 280 },
+      { month: 'MAY', value: 320 },
+      { month: 'JUN', value: 290 },
+      { month: 'JUL', value: 350 },
+      { month: 'AUG', value: 180 },
+      { month: 'SEP', value: 280 },
+      { month: 'OCT', value: 380 },
+      { month: 'NOV', value: 420 },
+      { month: 'DEC', value: 450 },
+    ];
 
-  // Performance topics data
-  const weakestTopics = [
-    { name: 'Advanced Mathematics', icon: '📐', percentage: 74, color: 'bg-red-500' },
-    { name: 'Physics Fundamentals', icon: '⚛️', percentage: 52, color: 'bg-orange-500' },
-    { name: 'Computer Networks', icon: '🌐', percentage: 36, color: 'bg-red-600' },
-  ];
+    if (timeFilter === 'This Month') {
+      return baseData.slice(-1);
+    } else if (timeFilter === 'This Year') {
+      return baseData;
+    }
+    return baseData;
+  };
 
-  const strongestTopics = [
-    { name: 'Programming Basics', icon: '💻', percentage: 95, color: 'bg-green-500' },
-    { name: 'Database Design', icon: '🗄️', percentage: 92, color: 'bg-green-400' },
-    { name: 'Web Development', icon: '🌍', percentage: 89, color: 'bg-green-600' },
-  ];
+  // Performance topics data - filtered based on topicFilter
+  const getWeakestTopics = () => {
+    const allTopics = [
+      { name: 'Advanced Mathematics', icon: '📐', percentage: 74, color: 'bg-red-500' },
+      { name: 'Physics Fundamentals', icon: '⚛️', percentage: 52, color: 'bg-orange-500' },
+      { name: 'Computer Networks', icon: '🌐', percentage: 36, color: 'bg-red-600' },
+      { name: 'Engineering Mechanics', icon: '⚙️', percentage: 68, color: 'bg-red-400' },
+      { name: 'Biology Lab', icon: '🧬', percentage: 45, color: 'bg-orange-600' },
+    ];
 
-  // Leaderboard data
-  const userLeaderboard = [
-    { rank: 1, name: 'Alice Johnson', points: '637 Points', percentage: '98% Correct', trend: 'up' },
-    { rank: 2, name: 'Bob Smith', points: '637 Points', percentage: '96% Correct', trend: 'down' },
-    { rank: 3, name: 'Carol Davis', points: '637 Points', percentage: '94% Correct', trend: 'up' },
-    { rank: 4, name: 'David Wilson', points: '637 Points', percentage: '92% Correct', trend: 'up' },
-  ];
+    if (topicFilter === 'All') return allTopics.slice(0, 3);
+    return allTopics.filter(topic => topic.name.toLowerCase().includes(topicFilter.toLowerCase())).slice(0, 3);
+  };
 
-  const groupsLeaderboard = [
-    { rank: 1, name: 'Computer Science', points: '52 Points / User', percentage: '97% Correct', trend: 'up' },
-    { rank: 2, name: 'Engineering Group', points: '52 Points / User', percentage: '95% Correct', trend: 'down' },
-    { rank: 3, name: 'Biology Department', points: '52 Points / User', percentage: '87% Correct', trend: 'up' },
-    { rank: 4, name: 'Mathematics Faculty', points: '50 Points / User', percentage: '85% Correct', trend: 'up' },
-  ];
+  const getStrongestTopics = () => {
+    const allTopics = [
+      { name: 'Programming Basics', icon: '💻', percentage: 95, color: 'bg-green-500' },
+      { name: 'Database Design', icon: '🗄️', percentage: 92, color: 'bg-green-400' },
+      { name: 'Web Development', icon: '🌍', percentage: 89, color: 'bg-green-600' },
+      { name: 'Architecture Design', icon: '🏗️', percentage: 88, color: 'bg-green-500' },
+      { name: 'Business Management', icon: '📊', percentage: 91, color: 'bg-green-400' },
+    ];
+
+    if (topicFilter === 'All') return allTopics.slice(0, 3);
+    return allTopics.filter(topic => topic.name.toLowerCase().includes(topicFilter.toLowerCase())).slice(0, 3);
+  };
+
+  // Filtered leaderboard data
+  const getFilteredStudents = () => {
+    let filtered = [...mockStudents];
+    
+    if (peopleFilter === 'Students') {
+      // Already students
+    } else if (peopleFilter !== 'All') {
+      filtered = filtered.filter(student => student.department === peopleFilter);
+    }
+
+    if (topicFilter !== 'All') {
+      filtered = filtered.filter(student => 
+        student.department.toLowerCase().includes(topicFilter.toLowerCase())
+      );
+    }
+
+    return filtered.sort((a, b) => b.gpa - a.gpa).slice(0, 4);
+  };
+
+  const getFilteredDepartments = () => {
+    const departments = Array.from(new Set(mockStudents.map(s => s.department)));
+    return departments.map(dept => {
+      const deptStudents = mockStudents.filter(s => s.department === dept);
+      const avgGPA = deptStudents.reduce((sum, s) => sum + s.gpa, 0) / deptStudents.length;
+      const correctPercentage = Math.round(avgGPA * 20); // Convert GPA to percentage
+      
+      return {
+        name: dept,
+        points: `${avgGPA.toFixed(1)} Avg GPA`,
+        percentage: `${correctPercentage}% Correct`,
+        trend: Math.random() > 0.5 ? 'up' : 'down'
+      };
+    }).sort((a, b) => parseFloat(b.points) - parseFloat(a.points)).slice(0, 4);
+  };
+
+  const getFilteredLecturers = () => {
+    let filtered = [...mockLecturers];
+    
+    if (topicFilter !== 'All') {
+      filtered = filtered.filter(lecturer => 
+        lecturer.department.toLowerCase().includes(topicFilter.toLowerCase())
+      );
+    }
+
+    return filtered.sort((a, b) => b.rating - a.rating).slice(0, 4);
+  };
+
+  const studentLeaderboard = getFilteredStudents().map((student, index) => ({
+    rank: index + 1,
+    name: student.name,
+    points: `${student.gpa.toFixed(1)} GPA`,
+    percentage: `${Math.round(student.gpa * 20)}% Correct`,
+    trend: Math.random() > 0.5 ? 'up' : 'down'
+  }));
+
+  const departmentLeaderboard = getFilteredDepartments().map((dept, index) => ({
+    rank: index + 1,
+    name: dept.name,
+    points: dept.points,
+    percentage: dept.percentage,
+    trend: dept.trend
+  }));
+
+  const lecturerLeaderboard = getFilteredLecturers().map((lecturer, index) => ({
+    rank: index + 1,
+    name: lecturer.name,
+    points: `${lecturer.rating.toFixed(1)} Rating`,
+    percentage: `${lecturer.studentsCount} Students`,
+    trend: Math.random() > 0.5 ? 'up' : 'down'
+  }));
+
+  const weakestTopics = getWeakestTopics();
+  const strongestTopics = getStrongestTopics();
 
   return (
     <div className="compact-spacing bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -102,6 +184,9 @@ const Reports: React.FC = () => {
             <option value="All">All</option>
             <option value="Students">Students</option>
             <option value="Faculty">Faculty</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Architecture">Architecture</option>
+            <option value="Biochemistry">Biochemistry</option>
           </select>
         </div>
         <div className="flex items-center space-x-2">
@@ -115,6 +200,8 @@ const Reports: React.FC = () => {
             <option value="Computer Science">Computer Science</option>
             <option value="Engineering">Engineering</option>
             <option value="Biology">Biology</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Architecture">Architecture</option>
           </select>
         </div>
       </div>
@@ -156,7 +243,7 @@ const Reports: React.FC = () => {
       {/* Activity Chart */}
       <div className="mb-4">
         <CustomBarChart
-          data={activityData}
+          data={getActivityData()}
           dataKey="value"
           xAxisKey="month"
           title="Activity"
@@ -218,29 +305,29 @@ const Reports: React.FC = () => {
       </div>
 
       {/* Leaderboards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid">
+      <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid">
         <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-          <h3 className="compact-header text-gray-900 dark:text-white mb-3">User Leaderboard</h3>
+          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Student Leaderboard</h3>
           <div className="tight-spacing">
-            {userLeaderboard.map((user, index) => (
+            {studentLeaderboard.map((student, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
                   <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                    user.rank === 1 ? 'bg-yellow-100 text-yellow-800' : 
-                    user.rank === 2 ? 'bg-gray-100 text-gray-800' : 
-                    user.rank === 3 ? 'bg-orange-100 text-orange-800' : 
+                    student.rank === 1 ? 'bg-yellow-100 text-yellow-800' : 
+                    student.rank === 2 ? 'bg-gray-100 text-gray-800' : 
+                    student.rank === 3 ? 'bg-orange-100 text-orange-800' : 
                     'bg-blue-100 text-blue-800'
                   }`}>
-                    {user.rank}
+                    {student.rank}
                   </span>
                   <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{student.name}</span>
                     <div className="flex items-center space-x-1">
-                      <span className="text-xs font-medium text-gray-900 dark:text-white">{user.rank}</span>
-                      {user.trend === 'up' ? (
+                      <span className="text-xs font-medium text-gray-900 dark:text-white">{student.rank}</span>
+                      {student.trend === 'up' ? (
                         <ChevronUp className="w-3 h-3 text-green-500" />
                       ) : (
                         <ChevronDown className="w-3 h-3 text-red-500" />
@@ -248,7 +335,7 @@ const Reports: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 dark:text-gray-400">
-                    {user.points} • {user.percentage}
+                    {student.points} • {student.percentage}
                   </div>
                 </div>
               </div>
@@ -257,27 +344,27 @@ const Reports: React.FC = () => {
         </div>
 
         <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Groups Leaderboard</h3>
+          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Department Leaderboard</h3>
           <div className="tight-spacing">
-            {groupsLeaderboard.map((group, index) => (
+            {departmentLeaderboard.map((dept, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
                   <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                    group.rank === 1 ? 'bg-yellow-100 text-yellow-800' : 
-                    group.rank === 2 ? 'bg-gray-100 text-gray-800' : 
-                    group.rank === 3 ? 'bg-orange-100 text-orange-800' : 
+                    dept.rank === 1 ? 'bg-yellow-100 text-yellow-800' : 
+                    dept.rank === 2 ? 'bg-gray-100 text-gray-800' : 
+                    dept.rank === 3 ? 'bg-orange-100 text-orange-800' : 
                     'bg-blue-100 text-blue-800'
                   }`}>
-                    {group.rank}
+                    {dept.rank}
                   </span>
                   <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">{group.name}</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{dept.name}</span>
                     <div className="flex items-center space-x-1">
-                      <span className="text-xs font-medium text-gray-900 dark:text-white">{group.rank}</span>
-                      {group.trend === 'up' ? (
+                      <span className="text-xs font-medium text-gray-900 dark:text-white">{dept.rank}</span>
+                      {dept.trend === 'up' ? (
                         <ChevronUp className="w-3 h-3 text-green-500" />
                       ) : (
                         <ChevronDown className="w-3 h-3 text-red-500" />
@@ -285,7 +372,44 @@ const Reports: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 dark:text-gray-400">
-                    {group.points} • {group.percentage}
+                    {dept.points} • {dept.percentage}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
+          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Lecturer Leaderboard</h3>
+          <div className="tight-spacing">
+            {lecturerLeaderboard.map((lecturer, index) => (
+              <div key={index} className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                    lecturer.rank === 1 ? 'bg-yellow-100 text-yellow-800' : 
+                    lecturer.rank === 2 ? 'bg-gray-100 text-gray-800' : 
+                    lecturer.rank === 3 ? 'bg-orange-100 text-orange-800' : 
+                    'bg-blue-100 text-blue-800'
+                  }`}>
+                    {lecturer.rank}
+                  </span>
+                  <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-teal-600 rounded-full"></div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{lecturer.name}</span>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-xs font-medium text-gray-900 dark:text-white">{lecturer.rank}</span>
+                      {lecturer.trend === 'up' ? (
+                        <ChevronUp className="w-3 h-3 text-green-500" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3 text-red-500" />
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
+                    {lecturer.points} • {lecturer.percentage}
                   </div>
                 </div>
               </div>
