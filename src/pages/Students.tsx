@@ -10,6 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 const Students: React.FC = () => {
   const { user } = useAuth();
   const [selectedStudent, setSelectedStudent] = useState(mockStudents[0]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     department: '',
     level: '',
@@ -18,6 +19,19 @@ const Students: React.FC = () => {
 
   const isStudent = user?.role === 'student';
   const currentStudent = isStudent ? mockStudents.find(s => s.email === user?.email) || mockStudents[0] : selectedStudent;
+
+  // Filter students based on search and filters
+  const filteredStudents = mockStudents.filter(student => {
+    const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         student.studentId.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesDepartment = !filters.department || student.department === filters.department;
+    const matchesLevel = !filters.level || student.level === filters.level;
+    const matchesSemester = !filters.semester || student.semester.toString() === filters.semester;
+    
+    return matchesSearch && matchesDepartment && matchesLevel && matchesSemester;
+  });
 
   return (
     <div className="compact-spacing">
@@ -41,12 +55,14 @@ const Students: React.FC = () => {
         <>
           {/* Filters */}
           <Card>
-            <div className="grid grid-cols-1 md:grid-cols-4 compact-grid">
+            <div className="grid grid-cols-1 md:grid-cols-5 compact-grid">
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search students..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
               </div>
@@ -59,6 +75,8 @@ const Students: React.FC = () => {
                 <option value="Computer Science">Computer Science</option>
                 <option value="Architecture">Architecture</option>
                 <option value="Biochemistry">Biochemistry</option>
+                <option value="Software Engineering">Software Engineering</option>
+                <option value="Cyber Security">Cyber Security</option>
               </select>
               <select
                 value={filters.level}
@@ -77,9 +95,18 @@ const Students: React.FC = () => {
                 className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               >
                 <option value="">All Semesters</option>
-                <option value="1">First Semester</option>
-                <option value="2">Second Semester</option>
+                <option value="1">1st Semester</option>
+                <option value="2">2nd Semester</option>
+                <option value="3">3rd Semester</option>
+                <option value="4">4th Semester</option>
+                <option value="5">5th Semester</option>
+                <option value="6">6th Semester</option>
+                <option value="7">7th Semester</option>
+                <option value="8">8th Semester</option>
               </select>
+              <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                Showing {filteredStudents.length} of {mockStudents.length} students
+              </div>
             </div>
           </Card>
 
@@ -98,7 +125,7 @@ const Students: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockStudents.slice(0, 10).map((student) => (
+                  {filteredStudents.slice(0, 10).map((student) => (
                     <tr key={student.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="py-2 px-3">
                         <div className="flex items-center space-x-2">
@@ -137,7 +164,7 @@ const Students: React.FC = () => {
       )}
 
       {/* Performance Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 compact-grid">
+      <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid">
         <CustomBarChart
           data={currentStudent.courses.map(course => ({ 
             course: course.courseCode, 

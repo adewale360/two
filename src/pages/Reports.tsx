@@ -12,7 +12,7 @@ const Reports: React.FC = () => {
   const [peopleFilter, setPeopleFilter] = useState('All');
   const [topicFilter, setTopicFilter] = useState('All');
 
-  // Tesla-style metrics data
+  // Tesla-style metrics data with reduced padding
   const metricsData = [
     { title: 'Active Users', value: '27', total: '/80', percentage: 64 },
     { title: 'Questions Answered', value: '3,298', total: '', percentage: 86 },
@@ -206,26 +206,26 @@ const Reports: React.FC = () => {
         </div>
       </div>
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 compact-grid mb-4">
+      {/* Metrics Cards - Reduced padding */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-4">
         {metricsData.map((metric, index) => (
-          <div key={index} className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-            <div className="flex items-center justify-between mb-2">
+          <div key={index} className="bg-white dark:bg-gray-800 p-2 rounded-lg shadow-sm">
+            <div className="flex items-center justify-between mb-1">
               <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">{metric.title}</h3>
               <span className="text-xs text-gray-500 dark:text-gray-500">Month</span>
             </div>
-            <div className="flex items-end space-x-1 mb-2">
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">{metric.value}</span>
+            <div className="flex items-end space-x-1 mb-1">
+              <span className="text-xl font-bold text-gray-900 dark:text-white">{metric.value}</span>
               <span className="text-sm text-gray-500 dark:text-gray-400">{metric.total}</span>
             </div>
             {/* Mini trend line */}
             <div className="flex items-center space-x-2">
-              <div className="flex-1 h-6 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
-                <svg className="w-full h-full" viewBox="0 0 100 30">
+              <div className="flex-1 h-4 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
+                <svg className="w-full h-full" viewBox="0 0 100 20">
                   <path
-                    d="M0,25 Q25,15 50,20 T100,10"
+                    d="M0,15 Q25,8 50,12 T100,5"
                     stroke="#3b82f6"
-                    strokeWidth="2"
+                    strokeWidth="1.5"
                     fill="none"
                   />
                 </svg>

@@ -8,6 +8,8 @@ import { useAuth } from '../contexts/AuthContext';
 const Lecturers: React.FC = () => {
   const { user } = useAuth();
   const [selectedLecturer, setSelectedLecturer] = useState(mockLecturers[0]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [departmentFilter, setDepartmentFilter] = useState('');
   const [showResultForm, setShowResultForm] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedStudent, setSelectedStudent] = useState('');
@@ -20,6 +22,17 @@ const Lecturers: React.FC = () => {
 
   const isLecturer = user?.role === 'lecturer';
   const currentLecturer = isLecturer ? mockLecturers.find(l => l.email === user?.email) || mockLecturers[0] : selectedLecturer;
+
+  // Filter lecturers based on search and department
+  const filteredLecturers = mockLecturers.filter(lecturer => {
+    const matchesSearch = lecturer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         lecturer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         lecturer.staffId.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesDepartment = !departmentFilter || lecturer.department === departmentFilter;
+    
+    return matchesSearch && matchesDepartment;
+  });
 
   const studentsForCourse = selectedCourse ? getStudentsByCourse(selectedCourse) : [];
 
@@ -69,15 +82,26 @@ const Lecturers: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Search lecturers..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
               </div>
-              <select className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+              <select 
+                value={departmentFilter}
+                onChange={(e) => setDepartmentFilter(e.target.value)}
+                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+              >
                 <option value="">All Departments</option>
                 <option value="Computer Science">Computer Science</option>
                 <option value="Architecture">Architecture</option>
                 <option value="Biochemistry">Biochemistry</option>
+                <option value="Software Engineering">Software Engineering</option>
+                <option value="Cyber Security">Cyber Security</option>
               </select>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Showing {filteredLecturers.length} of {mockLecturers.length} lecturers
+              </div>
             </div>
           </Card>
 
@@ -97,7 +121,7 @@ const Lecturers: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockLecturers.map((lecturer) => (
+                  {filteredLecturers.map((lecturer) => (
                     <tr key={lecturer.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="py-2 px-3">
                         <div className="flex items-center space-x-2">
