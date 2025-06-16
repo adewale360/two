@@ -3,8 +3,9 @@ import { Users, BookOpen, GraduationCap, TrendingUp, MapPin, Award, School, Mail
 import Card from '../components/Common/Card';
 import StatCard from '../components/Common/StatCard';
 import CustomBarChart from '../components/Charts/BarChart';
+import CustomLineChart from '../components/Charts/LineChart';
 import DonutChart from '../components/Charts/DonutChart';
-import { mockStudents, mockLecturers, mockFaculties } from '../data/mockData';
+import { mockStudents, mockLecturers, mockFaculties, admissionsByYearData } from '../data/mockData';
 
 const FacultyPage: React.FC = () => {
   const [selectedFaculty, setSelectedFaculty] = useState('COPAS');
@@ -24,6 +25,23 @@ const FacultyPage: React.FC = () => {
     { name: 'Level 300', value: facultyStudents.filter(s => s.level === '300').length, fill: '#F59E0B' },
     { name: 'Level 400', value: facultyStudents.filter(s => s.level === '400').length, fill: '#EF4444' }
   ];
+
+  // Prepare admissions data for the selected faculty
+  const admissionsData = admissionsByYearData.map(yearData => {
+    const facultyDepts = currentFaculty.departments;
+    let totalAdmissions = 0;
+    
+    facultyDepts.forEach(dept => {
+      if (yearData[dept]) {
+        totalAdmissions += yearData[dept];
+      }
+    });
+    
+    return {
+      year: yearData.year,
+      admissions: totalAdmissions
+    };
+  });
 
   const averageGPA = facultyStudents.length > 0 
     ? (facultyStudents.reduce((sum, s) => sum + s.gpa, 0) / facultyStudents.length).toFixed(2)
@@ -104,13 +122,20 @@ const FacultyPage: React.FC = () => {
       </Card>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid">
+      <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid">
         <CustomBarChart 
           data={departmentData}
           dataKey="value"
           xAxisKey="name"
           title="Student Distribution by Department"
           color="#3b82f6"
+        />
+        <CustomLineChart 
+          data={admissionsData}
+          dataKey="admissions"
+          xAxisKey="year"
+          title="Admissions by Year"
+          color="#10b981"
         />
         <DonutChart 
           data={levelDistribution}

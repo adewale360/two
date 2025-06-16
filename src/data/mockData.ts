@@ -149,12 +149,12 @@ export const mockStudents: Student[] = [
     ]
   },
   // Adding more students across different faculties
-  ...Array.from({ length: 37 }, (_, i) => {
+  ...Array.from({ length: 47 }, (_, i) => {
     const faculties = ['COPAS', 'COLENSMA', 'CASMAS', 'COLAW', 'NURSING'];
     const departments = {
-      'COPAS': ['Computer Science', 'Biochemistry', 'Cyber Security', 'Software Engineering'],
+      'COPAS': ['Computer Science', 'Biochemistry', 'Cyber Security', 'Software Engineering', 'Information Systems'],
       'COLENSMA': ['Architecture', 'Estate Management'],
-      'CASMAS': ['Business Administration', 'Accounting', 'Economics', 'Mass Communication'],
+      'CASMAS': ['Business Administration', 'Accounting', 'Economics', 'Mass Communication', 'Psychology'],
       'COLAW': ['Public and Property Law', 'Private and International Law'],
       'NURSING': ['Nursing Science', 'Human Physiology', 'Human Anatomy']
     };
@@ -187,6 +187,7 @@ export const mockStudents: Student[] = [
   })
 ];
 
+// Expanded lecturers to 25 distributed across departments
 export const mockLecturers: Lecturer[] = [
   {
     id: '1',
@@ -220,7 +221,42 @@ export const mockLecturers: Lecturer[] = [
     courses: ['BIO201', 'BIO202'],
     rating: 4.9,
     studentsCount: 95
-  }
+  },
+  // Adding 22 more lecturers
+  ...Array.from({ length: 22 }, (_, i) => {
+    const faculties = ['COPAS', 'COLENSMA', 'CASMAS', 'COLAW', 'NURSING'];
+    const departments = {
+      'COPAS': ['Computer Science', 'Biochemistry', 'Cyber Security', 'Software Engineering', 'Information Systems'],
+      'COLENSMA': ['Architecture', 'Estate Management'],
+      'CASMAS': ['Business Administration', 'Accounting', 'Economics', 'Mass Communication', 'Psychology'],
+      'COLAW': ['Public and Property Law', 'Private and International Law'],
+      'NURSING': ['Nursing Science', 'Human Physiology', 'Human Anatomy']
+    };
+    
+    const faculty = faculties[i % faculties.length];
+    const deptList = departments[faculty];
+    const department = deptList[i % deptList.length];
+    
+    const titles = ['Dr.', 'Prof.', 'Mr.', 'Mrs.', 'Ms.'];
+    const firstNames = ['John', 'Jane', 'David', 'Mary', 'Robert', 'Lisa', 'James', 'Patricia', 'Michael', 'Jennifer'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+    
+    const title = titles[i % titles.length];
+    const firstName = firstNames[i % firstNames.length];
+    const lastName = lastNames[i % lastNames.length];
+    
+    return {
+      id: `${4 + i}`,
+      name: `${title} ${firstName} ${lastName}`,
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@university.edu`,
+      staffId: `STAFF${String(4 + i).padStart(3, '0')}`,
+      department,
+      faculty,
+      courses: [`${department.substring(0, 3).toUpperCase()}${Math.floor(Math.random() * 4) + 1}01`, `${department.substring(0, 3).toUpperCase()}${Math.floor(Math.random() * 4) + 1}02`],
+      rating: Number((Math.random() * 1.5 + 3.5).toFixed(1)),
+      studentsCount: Math.floor(Math.random() * 80) + 40
+    };
+  })
 ];
 
 export const mockDepartments: Department[] = [
@@ -305,6 +341,15 @@ export const scoreDistributionData = [
   { name: 'B (80-89)', value: 40, fill: '#3b82f6' },
   { name: 'C (70-79)', value: 20, fill: '#f59e0b' },
   { name: 'D (60-69)', value: 5, fill: '#ef4444' },
+];
+
+// New data for faculty page
+export const admissionsByYearData = [
+  { year: '2020', 'Computer Science': 120, 'Biochemistry': 85, 'Cyber Security': 65, 'Software Engineering': 95, 'Information Systems': 75 },
+  { year: '2021', 'Computer Science': 135, 'Biochemistry': 92, 'Cyber Security': 78, 'Software Engineering': 110, 'Information Systems': 82 },
+  { year: '2022', 'Computer Science': 150, 'Biochemistry': 98, 'Cyber Security': 89, 'Software Engineering': 125, 'Information Systems': 88 },
+  { year: '2023', 'Computer Science': 165, 'Biochemistry': 105, 'Cyber Security': 95, 'Software Engineering': 140, 'Information Systems': 95 },
+  { year: '2024', 'Computer Science': 180, 'Biochemistry': 112, 'Cyber Security': 102, 'Software Engineering': 155, 'Information Systems': 102 }
 ];
 
 // Helper function to get students by course

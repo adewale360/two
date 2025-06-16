@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   User, Mail, Phone, MapPin, Calendar, Edit, Save, X, Camera, Award, BookOpen, TrendingUp,
   GraduationCap, Users, Clock, FileText, Star, Building, Briefcase, Globe, Target,
-  BarChart3, PieChart, Activity, CheckCircle, AlertCircle, Settings, Shield
+  BarChart3, PieChart, Activity, CheckCircle, AlertCircle, Settings, Shield, Key, Monitor
 } from 'lucide-react';
 import Card from '../components/Common/Card';
 import StatCard from '../components/Common/StatCard';
@@ -14,6 +14,74 @@ const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   
+  // Admin-specific profile data
+  const [adminProfileData, setAdminProfileData] = useState({
+    // Basic Information
+    name: user?.name || 'Admin User',
+    email: user?.email || 'admin@calebuniversity.edu.ng',
+    phone: '+234 803 123 4567',
+    adminId: 'ADMIN001',
+    username: 'admin.user',
+    role: 'Super Admin',
+    department: 'ICT Department',
+    
+    // System Role & Permissions
+    accessLevel: 'Full Admin',
+    permissions: ['Students', 'Staff', 'Reports', 'Settings', 'System Config'],
+    lastRoleUpdate: '2024-01-01',
+    
+    // Activity Log
+    lastLogin: '2024-01-15 09:30 AM',
+    ipAddress: '192.168.1.100',
+    location: 'Lagos, Nigeria',
+    devicesUsed: ['Windows Desktop', 'Mobile App'],
+    recentActions: [
+      'User created: John Doe',
+      'Report exported: Student Performance Q4',
+      'System settings updated',
+      'Bulk user import completed'
+    ],
+    
+    // Account Settings
+    twoFactorEnabled: true,
+    passwordLastChanged: '2024-01-01',
+    loginAttempts: [
+      { date: '2024-01-15', status: 'Success', ip: '192.168.1.100' },
+      { date: '2024-01-14', status: 'Success', ip: '192.168.1.100' },
+      { date: '2024-01-13', status: 'Failed', ip: '192.168.1.105' }
+    ],
+    notificationPreferences: {
+      email: true,
+      sms: false,
+      push: true
+    },
+    themePreference: 'Dark Mode',
+    
+    // System Contributions
+    reportsCreated: 45,
+    usersManaged: 1250,
+    alertsHandled: 23,
+    maintenanceLogs: [
+      'System backup completed - 2024-01-15',
+      'Database optimization - 2024-01-10',
+      'Security patch applied - 2024-01-05'
+    ],
+    
+    // Metadata
+    accountCreated: '2020-09-01',
+    status: 'Active',
+    assignedBy: 'System Administrator',
+    linkedFaculties: ['All Faculties'],
+    
+    bio: 'Experienced system administrator with over 5 years managing educational platforms. Dedicated to maintaining system integrity and supporting academic excellence.',
+    interests: ['System Administration', 'Data Analytics', 'Educational Technology', 'Cybersecurity'],
+    emergencyContact: {
+      name: 'Jane Admin',
+      relationship: 'Colleague',
+      phone: '+234 803 987 6543'
+    }
+  });
+
   // Enhanced profile data for staff
   const [profileData, setProfileData] = useState({
     // Basic Information
@@ -101,7 +169,7 @@ const Profile: React.FC = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    console.log('Profile updated:', profileData);
+    console.log('Profile updated:', user?.role === 'admin' ? adminProfileData : profileData);
   };
 
   const handleCancel = () => {
@@ -115,9 +183,20 @@ const Profile: React.FC = () => {
     ? mockLecturers.find(l => l.email === user?.email) || mockLecturers[0]
     : null;
 
-  const isStaff = user?.role === 'lecturer' || user?.role === 'admin';
+  const isStaff = user?.role === 'lecturer';
+  const isAdmin = user?.role === 'admin';
 
-  const tabs = [
+  // Admin-specific tabs
+  const adminTabs = [
+    { id: 'basic', label: 'Basic Info', icon: User },
+    { id: 'permissions', label: 'Permissions', icon: Shield },
+    { id: 'activity', label: 'Activity Log', icon: Activity },
+    { id: 'security', label: 'Security', icon: Key },
+    { id: 'system', label: 'System', icon: Monitor }
+  ];
+
+  // Staff tabs
+  const staffTabs = [
     { id: 'basic', label: 'Basic Info', icon: User },
     { id: 'academic', label: 'Academic', icon: GraduationCap },
     { id: 'teaching', label: 'Teaching', icon: BookOpen },
@@ -128,7 +207,271 @@ const Profile: React.FC = () => {
     { id: 'engagement', label: 'Engagement', icon: Users }
   ];
 
-  const renderTabContent = () => {
+  const tabs = isAdmin ? adminTabs : staffTabs;
+  const currentProfileData = isAdmin ? adminProfileData : profileData;
+  const setCurrentProfileData = isAdmin ? setAdminProfileData : setProfileData;
+
+  const renderAdminTabContent = () => {
+    switch (activeTab) {
+      case 'basic':
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid">
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">Personal Information</h4>
+              <div className="tight-spacing">
+                <div className="flex items-center text-sm">
+                  <User className="h-4 w-4 mr-2 text-gray-500" />
+                  <span>{adminProfileData.name}</span>
+                </div>
+                <div className="flex items-center text-sm">
+                  <Mail className="h-4 w-4 mr-2 text-gray-500" />
+                  <span>{adminProfileData.email}</span>
+                </div>
+                <div className="flex items-center text-sm">
+                  <Phone className="h-4 w-4 mr-2 text-gray-500" />
+                  <span>{adminProfileData.phone}</span>
+                </div>
+                <div className="flex items-center text-sm">
+                  <Building className="h-4 w-4 mr-2 text-gray-500" />
+                  <span>{adminProfileData.department}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">Admin Information</h4>
+              <div className="tight-spacing">
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Admin ID:</span>
+                  <p className="font-medium">{adminProfileData.adminId}</p>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Username:</span>
+                  <p className="font-medium">{adminProfileData.username}</p>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Role:</span>
+                  <p className="font-medium">{adminProfileData.role}</p>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Access Level:</span>
+                  <p className="font-medium text-green-600">{adminProfileData.accessLevel}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'permissions':
+        return (
+          <div className="tight-spacing">
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">System Permissions</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 compact-grid">
+                {adminProfileData.permissions.map((permission, index) => (
+                  <div key={index} className="flex items-center space-x-2 minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <span className="text-sm text-gray-900 dark:text-white">{permission}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">Linked Faculties</h4>
+              <div className="flex flex-wrap gap-2">
+                {adminProfileData.linkedFaculties.map((faculty, index) => (
+                  <span key={index} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 text-xs rounded">
+                    {faculty}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div className="text-sm">
+              <span className="text-gray-600 dark:text-gray-400">Last Role Update:</span>
+              <p className="font-medium">{adminProfileData.lastRoleUpdate}</p>
+            </div>
+          </div>
+        );
+
+      case 'activity':
+        return (
+          <div className="tight-spacing">
+            <div className="grid grid-cols-1 md:grid-cols-3 compact-grid mb-4">
+              <StatCard
+                title="Reports Created"
+                value={adminProfileData.reportsCreated}
+                icon={FileText}
+                color="blue"
+              />
+              <StatCard
+                title="Users Managed"
+                value={adminProfileData.usersManaged}
+                icon={Users}
+                color="green"
+              />
+              <StatCard
+                title="Alerts Handled"
+                value={adminProfileData.alertsHandled}
+                icon={AlertCircle}
+                color="yellow"
+              />
+            </div>
+            
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">Recent Actions</h4>
+              <div className="tight-spacing">
+                {adminProfileData.recentActions.map((action, index) => (
+                  <div key={index} className="minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                    <p className="text-sm text-gray-900 dark:text-white">{action}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">Maintenance Logs</h4>
+              <div className="tight-spacing">
+                {adminProfileData.maintenanceLogs.map((log, index) => (
+                  <div key={index} className="minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                    <p className="text-sm text-gray-900 dark:text-white">{log}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'security':
+        return (
+          <div className="tight-spacing">
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">Security Settings</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 compact-grid">
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Two-Factor Authentication:</span>
+                  <p className={`font-medium ${adminProfileData.twoFactorEnabled ? 'text-green-600' : 'text-red-600'}`}>
+                    {adminProfileData.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                  </p>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Password Last Changed:</span>
+                  <p className="font-medium">{adminProfileData.passwordLastChanged}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">Login History</h4>
+              <div className="overflow-x-auto">
+                <table className="w-full compact-table">
+                  <thead>
+                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                      <th className="text-left py-2 px-3 text-xs font-medium text-gray-900 dark:text-white">Date</th>
+                      <th className="text-left py-2 px-3 text-xs font-medium text-gray-900 dark:text-white">Status</th>
+                      <th className="text-left py-2 px-3 text-xs font-medium text-gray-900 dark:text-white">IP Address</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {adminProfileData.loginAttempts.map((attempt, index) => (
+                      <tr key={index} className="border-b border-gray-100 dark:border-gray-700">
+                        <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{attempt.date}</td>
+                        <td className="py-2 px-3">
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            attempt.status === 'Success' 
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                              : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                          }`}>
+                            {attempt.status}
+                          </span>
+                        </td>
+                        <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{attempt.ip}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'system':
+        return (
+          <div className="tight-spacing">
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">System Information</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 compact-grid">
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Account Created:</span>
+                  <p className="font-medium">{adminProfileData.accountCreated}</p>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Status:</span>
+                  <p className="font-medium text-green-600">{adminProfileData.status}</p>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Assigned By:</span>
+                  <p className="font-medium">{adminProfileData.assignedBy}</p>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Last Login:</span>
+                  <p className="font-medium">{adminProfileData.lastLogin}</p>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">IP Address:</span>
+                  <p className="font-medium">{adminProfileData.ipAddress}</p>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Location:</span>
+                  <p className="font-medium">{adminProfileData.location}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">Devices Used</h4>
+              <div className="flex flex-wrap gap-2">
+                {adminProfileData.devicesUsed.map((device, index) => (
+                  <span key={index} className="px-2 py-1 bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-400 text-xs rounded">
+                    {device}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="compact-subheader text-gray-900 dark:text-white mb-3">Notification Preferences</h4>
+              <div className="grid grid-cols-3 compact-grid">
+                <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Email</p>
+                  <p className={`text-xs ${adminProfileData.notificationPreferences.email ? 'text-green-600' : 'text-red-600'}`}>
+                    {adminProfileData.notificationPreferences.email ? 'Enabled' : 'Disabled'}
+                  </p>
+                </div>
+                <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">SMS</p>
+                  <p className={`text-xs ${adminProfileData.notificationPreferences.sms ? 'text-green-600' : 'text-red-600'}`}>
+                    {adminProfileData.notificationPreferences.sms ? 'Enabled' : 'Disabled'}
+                  </p>
+                </div>
+                <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Push</p>
+                  <p className={`text-xs ${adminProfileData.notificationPreferences.push ? 'text-green-600' : 'text-red-600'}`}>
+                    {adminProfileData.notificationPreferences.push ? 'Enabled' : 'Disabled'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const renderStaffTabContent = () => {
     switch (activeTab) {
       case 'basic':
         return (
@@ -554,19 +897,23 @@ const Profile: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {isStaff ? 'Staff Profile' : 'User Profile'}
+            {isAdmin ? 'Admin Profile' : isStaff ? 'Staff Profile' : 'User Profile'}
           </h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {isStaff ? 'Comprehensive staff information and performance metrics' : 'Manage your personal information and preferences'}
+            {isAdmin ? 'System administrator profile and access management' : 
+             isStaff ? 'Comprehensive staff information and performance metrics' : 
+             'Manage your personal information and preferences'}
           </p>
         </div>
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="flex items-center space-x-2 bg-primary-600 text-white px-3 py-2 rounded text-sm hover:bg-primary-700 transition-colors"
-        >
-          <Edit className="h-4 w-4" />
-          <span>{isEditing ? 'Cancel' : 'Edit Profile'}</span>
-        </button>
+        {!isAdmin && (
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className="flex items-center space-x-2 bg-primary-600 text-white px-3 py-2 rounded text-sm hover:bg-primary-700 transition-colors"
+          >
+            <Edit className="h-4 w-4" />
+            <span>{isEditing ? 'Cancel' : 'Edit Profile'}</span>
+          </button>
+        )}
       </div>
 
       {/* Profile Overview */}
@@ -576,7 +923,7 @@ const Profile: React.FC = () => {
           <div className="text-center">
             <div className="relative inline-block">
               <div className="w-24 h-24 bg-gradient-to-r from-primary-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3">
-                {profileData.name.split(' ').map(n => n.charAt(0)).join('')}
+                {currentProfileData.name.split(' ').map(n => n.charAt(0)).join('')}
               </div>
               {isEditing && (
                 <button className="absolute bottom-0 right-0 p-1 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-600">
@@ -584,10 +931,36 @@ const Profile: React.FC = () => {
                 </button>
               )}
             </div>
-            <h3 className="compact-header text-gray-900 dark:text-white">{profileData.name}</h3>
+            <h3 className="compact-header text-gray-900 dark:text-white">{currentProfileData.name}</h3>
             <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">{user?.role}</p>
-            <p className="text-xs text-primary-600 dark:text-primary-400">{profileData.department}</p>
+            <p className="text-xs text-primary-600 dark:text-primary-400">
+              {isAdmin ? adminProfileData.department : profileData.department}
+            </p>
           </div>
+
+          {/* Quick Stats for Admin */}
+          {isAdmin && (
+            <>
+              <StatCard
+                title="Reports Created"
+                value={adminProfileData.reportsCreated}
+                icon={FileText}
+                color="blue"
+              />
+              <StatCard
+                title="Users Managed"
+                value={adminProfileData.usersManaged}
+                icon={Users}
+                color="green"
+              />
+              <StatCard
+                title="System Alerts"
+                value={adminProfileData.alertsHandled}
+                icon={AlertCircle}
+                color="yellow"
+              />
+            </>
+          )}
 
           {/* Quick Stats for Staff */}
           {isStaff && (
@@ -638,7 +1011,7 @@ const Profile: React.FC = () => {
           )}
         </div>
 
-        {isEditing && (
+        {isEditing && !isAdmin && (
           <div className="flex justify-end space-x-2 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <button
               onClick={handleCancel}
@@ -658,8 +1031,8 @@ const Profile: React.FC = () => {
         )}
       </Card>
 
-      {/* Detailed Information Tabs (Staff Only) */}
-      {isStaff && (
+      {/* Detailed Information Tabs (Staff and Admin) */}
+      {(isStaff || isAdmin) && (
         <>
           {/* Tab Navigation */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-4">
@@ -683,7 +1056,7 @@ const Profile: React.FC = () => {
 
           {/* Tab Content */}
           <Card title={tabs.find(tab => tab.id === activeTab)?.label}>
-            {renderTabContent()}
+            {isAdmin ? renderAdminTabContent() : renderStaffTabContent()}
           </Card>
         </>
       )}
@@ -691,15 +1064,15 @@ const Profile: React.FC = () => {
       {/* Bio and Emergency Contact (All Users) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid">
         <Card title="About">
-          {isEditing ? (
+          {isEditing && !isAdmin ? (
             <textarea
-              value={profileData.bio}
-              onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
+              value={currentProfileData.bio}
+              onChange={(e) => setCurrentProfileData({...currentProfileData, bio: e.target.value})}
               rows={4}
               className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
             />
           ) : (
-            <p className="text-sm text-gray-600 dark:text-gray-400">{profileData.bio}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{currentProfileData.bio}</p>
           )}
         </Card>
 
@@ -707,50 +1080,50 @@ const Profile: React.FC = () => {
           <div className="tight-spacing">
             <div className="text-sm">
               <span className="text-gray-600 dark:text-gray-400">Name:</span>
-              {isEditing ? (
+              {isEditing && !isAdmin ? (
                 <input
                   type="text"
-                  value={profileData.emergencyContact.name}
-                  onChange={(e) => setProfileData({
-                    ...profileData, 
-                    emergencyContact: {...profileData.emergencyContact, name: e.target.value}
+                  value={currentProfileData.emergencyContact.name}
+                  onChange={(e) => setCurrentProfileData({
+                    ...currentProfileData, 
+                    emergencyContact: {...currentProfileData.emergencyContact, name: e.target.value}
                   })}
                   className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white mt-1"
                 />
               ) : (
-                <p className="font-medium">{profileData.emergencyContact.name}</p>
+                <p className="font-medium">{currentProfileData.emergencyContact.name}</p>
               )}
             </div>
             <div className="text-sm">
               <span className="text-gray-600 dark:text-gray-400">Relationship:</span>
-              {isEditing ? (
+              {isEditing && !isAdmin ? (
                 <input
                   type="text"
-                  value={profileData.emergencyContact.relationship}
-                  onChange={(e) => setProfileData({
-                    ...profileData, 
-                    emergencyContact: {...profileData.emergencyContact, relationship: e.target.value}
+                  value={currentProfileData.emergencyContact.relationship}
+                  onChange={(e) => setCurrentProfileData({
+                    ...currentProfileData, 
+                    emergencyContact: {...currentProfileData.emergencyContact, relationship: e.target.value}
                   })}
                   className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white mt-1"
                 />
               ) : (
-                <p className="font-medium">{profileData.emergencyContact.relationship}</p>
+                <p className="font-medium">{currentProfileData.emergencyContact.relationship}</p>
               )}
             </div>
             <div className="text-sm">
               <span className="text-gray-600 dark:text-gray-400">Phone:</span>
-              {isEditing ? (
+              {isEditing && !isAdmin ? (
                 <input
                   type="tel"
-                  value={profileData.emergencyContact.phone}
-                  onChange={(e) => setProfileData({
-                    ...profileData, 
-                    emergencyContact: {...profileData.emergencyContact, phone: e.target.value}
+                  value={currentProfileData.emergencyContact.phone}
+                  onChange={(e) => setCurrentProfileData({
+                    ...currentProfileData, 
+                    emergencyContact: {...currentProfileData.emergencyContact, phone: e.target.value}
                   })}
                   className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white mt-1"
                 />
               ) : (
-                <p className="font-medium">{profileData.emergencyContact.phone}</p>
+                <p className="font-medium">{currentProfileData.emergencyContact.phone}</p>
               )}
             </div>
           </div>
@@ -759,14 +1132,14 @@ const Profile: React.FC = () => {
 
       {/* Interests */}
       <Card title="Interests & Skills">
-        {isEditing ? (
+        {isEditing && !isAdmin ? (
           <div>
             <input
               type="text"
               placeholder="Add interests separated by commas"
-              value={profileData.interests.join(', ')}
-              onChange={(e) => setProfileData({
-                ...profileData, 
+              value={currentProfileData.interests.join(', ')}
+              onChange={(e) => setCurrentProfileData({
+                ...currentProfileData, 
                 interests: e.target.value.split(',').map(i => i.trim())
               })}
               className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
@@ -774,7 +1147,7 @@ const Profile: React.FC = () => {
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {profileData.interests.map((interest, index) => (
+            {currentProfileData.interests.map((interest, index) => (
               <span
                 key={index}
                 className="px-3 py-1 bg-primary-100 dark:bg-primary-900/20 text-primary-800 dark:text-primary-400 text-xs rounded-full"

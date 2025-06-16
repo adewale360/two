@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, User, Star, TrendingUp, Users } from 'lucide-react';
+import { Search, Plus, User, Star, TrendingUp, Users, Calendar, CheckCircle, BarChart3 } from 'lucide-react';
 import Card from '../components/Common/Card';
 import CustomBarChart from '../components/Charts/BarChart';
 import { mockLecturers, mockPerformanceData, getStudentsByCourse } from '../data/mockData';
@@ -35,6 +35,14 @@ const Lecturers: React.FC = () => {
   });
 
   const studentsForCourse = selectedCourse ? getStudentsByCourse(selectedCourse) : [];
+
+  // Mock syllabus coverage data for heat map
+  const syllabusData = currentLecturer.courses.map(course => ({
+    course,
+    coverage: Math.floor(Math.random() * 30) + 70, // 70-100% coverage
+    classesTaken: Math.floor(Math.random() * 5) + 10, // 10-15 classes
+    totalClasses: 15
+  }));
 
   const handleResultSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,7 +220,7 @@ const Lecturers: React.FC = () => {
         </Card>
       </div>
 
-      {/* Course Performance */}
+      {/* Course Performance and Syllabus Coverage */}
       <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid">
         <CustomBarChart
           data={mockPerformanceData.slice(0, 3)}
@@ -222,30 +230,99 @@ const Lecturers: React.FC = () => {
           color="#10b981"
         />
 
-        <Card title="Course Details">
+        <Card title="Syllabus Coverage & Classes">
           <div className="tight-spacing">
-            {currentLecturer.courses.map((courseCode, index) => {
-              const courseData = mockPerformanceData.find(p => p.course === courseCode);
-              return (
-                <div key={index} className="flex items-center justify-between minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
-                  <div>
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{courseCode}</h4>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                      {courseData ? `${courseData.students} students` : 'No data available'}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-gray-900 dark:text-white">
-                      {courseData ? `${courseData.score}%` : 'N/A'}
-                    </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">Avg Score</p>
+            {syllabusData.map((data, index) => (
+              <div key={index} className="minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{data.course}</h4>
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-3 w-3 text-gray-500" />
+                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                      {data.classesTaken}/{data.totalClasses}
+                    </span>
                   </div>
                 </div>
-              );
-            })}
+                
+                {/* Syllabus Coverage Heat Map */}
+                <div className="mb-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Syllabus Coverage</span>
+                    <span className="text-xs font-medium text-gray-900 dark:text-white">{data.coverage}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        data.coverage >= 90 ? 'bg-green-500' :
+                        data.coverage >= 75 ? 'bg-yellow-500' :
+                        'bg-red-500'
+                      }`}
+                      style={{ width: `${data.coverage}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Classes Progress */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Classes Completed</span>
+                    <span className="text-xs font-medium text-gray-900 dark:text-white">
+                      {Math.round((data.classesTaken / data.totalClasses) * 100)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                    <div 
+                      className="h-2 rounded-full bg-blue-500"
+                      style={{ width: `${(data.classesTaken / data.totalClasses) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </Card>
       </div>
+
+      {/* Course Details */}
+      <Card title="Course Details">
+        <div className="tight-spacing">
+          {currentLecturer.courses.map((courseCode, index) => {
+            const courseData = mockPerformanceData.find(p => p.course === courseCode);
+            const syllabusInfo = syllabusData.find(s => s.course === courseCode);
+            
+            return (
+              <div key={index} className="flex items-center justify-between minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                <div className="flex-1">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{courseCode}</h4>
+                  <div className="flex items-center space-x-4 mt-1">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {courseData ? `${courseData.students} students` : 'No data available'}
+                    </p>
+                    <div className="flex items-center space-x-1">
+                      <CheckCircle className="h-3 w-3 text-green-500" />
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                        {syllabusInfo?.coverage}% syllabus
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <BarChart3 className="h-3 w-3 text-blue-500" />
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                        {syllabusInfo?.classesTaken}/{syllabusInfo?.totalClasses} classes
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-gray-900 dark:text-white">
+                    {courseData ? `${courseData.score}%` : 'N/A'}
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Avg Score</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
 
       {/* Result Submission Modal */}
       {showResultForm && (

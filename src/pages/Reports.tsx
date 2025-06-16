@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Filter, TrendingUp, Users, BookOpen, Award, ChevronUp, ChevronDown } from 'lucide-react';
+import { Download, Filter, TrendingUp, Users, BookOpen, Award, ChevronUp, ChevronDown, Target, BarChart3 } from 'lucide-react';
 import Card from '../components/Common/Card';
 import StatCard from '../components/Common/StatCard';
 import CustomBarChart from '../components/Charts/BarChart';
@@ -12,11 +12,13 @@ const Reports: React.FC = () => {
   const [peopleFilter, setPeopleFilter] = useState('All');
   const [topicFilter, setTopicFilter] = useState('All');
 
-  // Tesla-style metrics data with reduced padding
+  // Enhanced metrics data with additional metrics
   const metricsData = [
-    { title: 'Active Users', value: '27', total: '/80', percentage: 64 },
-    { title: 'Questions Answered', value: '3,298', total: '', percentage: 86 },
-    { title: 'Av. Session Length', value: '2m 34s', total: '', percentage: 34, isIncrease: true },
+    { title: 'Active Users', value: '27', total: '/80', percentage: 64, color: '#3b82f6' },
+    { title: 'Questions Answered', value: '3,298', total: '', percentage: 86, color: '#10b981' },
+    { title: 'Av. Session Length', value: '2m 34s', total: '', percentage: 34, isIncrease: true, color: '#f59e0b' },
+    { title: 'Course Completion Rate', value: '94.2%', total: '', percentage: 94, color: '#8b5cf6' },
+    { title: 'Average Grade Distribution', value: 'B+', total: '', percentage: 78, color: '#ef4444' },
   ];
 
   // Activity data for the bar chart - filtered based on timeFilter
@@ -206,8 +208,8 @@ const Reports: React.FC = () => {
         </div>
       </div>
 
-      {/* Metrics Cards - Reduced padding */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-4">
+      {/* Enhanced Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
         {metricsData.map((metric, index) => (
           <div key={index} className="metrics-card">
             <div className="flex items-center justify-between mb-1">
@@ -215,16 +217,16 @@ const Reports: React.FC = () => {
               <span className="text-xs text-gray-500 dark:text-gray-500">Month</span>
             </div>
             <div className="flex items-end space-x-1 mb-1">
-              <span className="text-xl font-bold text-gray-900 dark:text-white">{metric.value}</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">{metric.total}</span>
+              <span className="text-lg font-bold text-gray-900 dark:text-white">{metric.value}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{metric.total}</span>
             </div>
-            {/* Mini trend line */}
+            {/* Mini trend line with different colors */}
             <div className="flex items-center space-x-2">
               <div className="flex-1 h-4 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
                 <svg className="w-full h-full" viewBox="0 0 100 20">
                   <path
                     d="M0,15 Q25,8 50,12 T100,5"
-                    stroke="#3b82f6"
+                    stroke={metric.color}
                     strokeWidth="1.5"
                     fill="none"
                   />
@@ -240,8 +242,8 @@ const Reports: React.FC = () => {
         ))}
       </div>
 
-      {/* Activity Chart */}
-      <div className="mb-4">
+      {/* Activity Chart with Topics beside it */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid mb-4">
         <CustomBarChart
           data={getActivityData()}
           dataKey="value"
@@ -249,26 +251,23 @@ const Reports: React.FC = () => {
           title="Activity"
           color="#3b82f6"
         />
-      </div>
 
-      {/* Performance Topics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid mb-4">
         <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
           <h3 className="compact-header text-gray-900 dark:text-white mb-3">Weakest Topics</h3>
           <div className="tight-spacing">
             {weakestTopics.map((topic, index) => (
               <div key={index} className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-sm">
+                <div className="w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs">
                   {topic.icon}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">{topic.name}</span>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{topic.percentage}% Correct</span>
+                    <span className="text-xs font-medium text-gray-900 dark:text-white">{topic.name}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{topic.percentage}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
                     <div 
-                      className={`h-1.5 rounded-full ${topic.color}`}
+                      className={`h-1 rounded-full ${topic.color}`}
                       style={{ width: `${topic.percentage}%` }}
                     ></div>
                   </div>
@@ -283,17 +282,17 @@ const Reports: React.FC = () => {
           <div className="tight-spacing">
             {strongestTopics.map((topic, index) => (
               <div key={index} className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-sm">
+                <div className="w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs">
                   {topic.icon}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">{topic.name}</span>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{topic.percentage}% Correct</span>
+                    <span className="text-xs font-medium text-gray-900 dark:text-white">{topic.name}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{topic.percentage}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
                     <div 
-                      className={`h-1.5 rounded-full ${topic.color}`}
+                      className={`h-1 rounded-full ${topic.color}`}
                       style={{ width: `${topic.percentage}%` }}
                     ></div>
                   </div>
