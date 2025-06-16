@@ -209,7 +209,7 @@ const Reports: React.FC = () => {
       {/* Metrics Cards - Reduced padding */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-4">
         {metricsData.map((metric, index) => (
-          <div key={index} className="bg-white dark:bg-gray-800 p-2 rounded-lg shadow-sm">
+          <div key={index} className="metrics-card">
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">{metric.title}</h3>
               <span className="text-xs text-gray-500 dark:text-gray-500">Month</span>

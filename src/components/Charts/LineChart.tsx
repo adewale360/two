@@ -20,13 +20,13 @@ const CustomLineChart: React.FC<LineChartProps> = ({
   const { theme } = useTheme();
   
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 max-w-sm">
+    <div className="chart-container">
       {title && (
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+        <h3 className="compact-header text-gray-900 dark:text-white mb-3">
           {title}
         </h3>
       )}
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={160}>
         <AreaChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
           <defs>
             <linearGradient id={`gradient-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
@@ -43,13 +43,15 @@ const CustomLineChart: React.FC<LineChartProps> = ({
           <YAxis 
             stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'}
             fontSize={10}
+            width={30}
           />
           <Tooltip 
             contentStyle={{
               backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
               border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
-              borderRadius: '8px',
-              color: theme === 'dark' ? '#f9fafb' : '#111827'
+              borderRadius: '6px',
+              color: theme === 'dark' ? '#f9fafb' : '#111827',
+              fontSize: '12px'
             }}
           />
           <Area 

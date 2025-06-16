@@ -11,20 +11,20 @@ const DonutChart: React.FC<DonutChartProps> = ({ data, title }) => {
   const { theme } = useTheme();
   
   return (
-    <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+    <div className="chart-container">
       {title && (
-        <h3 className="compact-header text-gray-900 dark:text-white mb-2">
+        <h3 className="compact-header text-gray-900 dark:text-white mb-3">
           {title}
         </h3>
       )}
-      <ResponsiveContainer width="100%" height={180}>
+      <ResponsiveContainer width="100%" height={160}>
         <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={40}
-            outerRadius={70}
+            innerRadius={35}
+            outerRadius={60}
             paddingAngle={3}
             dataKey="value"
           >
