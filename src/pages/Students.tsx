@@ -20,13 +20,12 @@ const Students: React.FC = () => {
   const isStudent = user?.role === 'student';
   const currentStudent = isStudent ? mockStudents.find(s => s.email === user?.email) || mockStudents[0] : selectedStudent;
 
-  // Get available semesters based on selected level
+  // Get available semesters based on selected level - Fixed to show 1st and 2nd
   const availableSemesters = useMemo(() => {
     if (!filters.level) return ['1', '2'];
     
-    const levelNum = parseInt(filters.level);
-    const baseSemester = (levelNum - 1) * 2;
-    return [`${baseSemester + 1}`, `${baseSemester + 2}`];
+    // Always return 1st and 2nd semester regardless of level
+    return ['1', '2'];
   }, [filters.level]);
 
   // Reset semester when level changes
@@ -42,7 +41,19 @@ const Students: React.FC = () => {
     
     const matchesDepartment = !filters.department || student.department === filters.department;
     const matchesLevel = !filters.level || student.level === filters.level;
-    const matchesSemester = !filters.semester || student.semester.toString() === filters.semester;
+    
+    // Fixed semester filtering logic
+    let matchesSemester = true;
+    if (filters.semester && filters.level) {
+      const levelNum = parseInt(filters.level);
+      const semesterNum = parseInt(filters.semester);
+      const actualSemester = (levelNum - 1) * 2 + semesterNum;
+      matchesSemester = student.semester === actualSemester;
+    } else if (filters.semester && !filters.level) {
+      // If semester is selected but no level, match any student in that semester pattern
+      const semesterNum = parseInt(filters.semester);
+      matchesSemester = student.semester % 2 === semesterNum % 2;
+    }
     
     return matchesSearch && matchesDepartment && matchesLevel && matchesSemester;
   });
@@ -122,18 +133,8 @@ const Students: React.FC = () => {
                 disabled={!filters.level}
               >
                 <option value="">All Semesters</option>
-                {filters.level ? (
-                  availableSemesters.map(sem => (
-                    <option key={sem} value={sem}>
-                      {sem === '1' || sem === '3' || sem === '5' || sem === '7' ? '1st' : '2nd'} Semester
-                    </option>
-                  ))
-                ) : (
-                  <>
-                    <option value="1">1st Semester</option>
-                    <option value="2">2nd Semester</option>
-                  </>
-                )}
+                <option value="1">1st Semester</option>
+                <option value="2">2nd Semester</option>
               </select>
               <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                 Showing {filteredStudents.length} of {mockStudents.length} students

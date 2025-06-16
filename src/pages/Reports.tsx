@@ -12,7 +12,7 @@ const Reports: React.FC = () => {
   const [peopleFilter, setPeopleFilter] = useState('All');
   const [topicFilter, setTopicFilter] = useState('All');
 
-  // Enhanced metrics data with additional metrics
+  // Enhanced metrics data with additional metrics and increased height
   const metricsData = [
     { title: 'Active Users', value: '27', total: '/80', percentage: 64, color: '#3b82f6' },
     { title: 'Questions Answered', value: '3,298', total: '', percentage: 86, color: '#10b981' },
@@ -208,26 +208,26 @@ const Reports: React.FC = () => {
         </div>
       </div>
 
-      {/* Enhanced Metrics Cards */}
+      {/* Enhanced Metrics Cards with increased height */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
         {metricsData.map((metric, index) => (
-          <div key={index} className="metrics-card">
+          <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">{metric.title}</h3>
               <span className="text-xs text-gray-500 dark:text-gray-500">Month</span>
             </div>
-            <div className="flex items-end space-x-1 mb-1">
+            <div className="flex items-end space-x-1 mb-2">
               <span className="text-lg font-bold text-gray-900 dark:text-white">{metric.value}</span>
               <span className="text-xs text-gray-500 dark:text-gray-400">{metric.total}</span>
             </div>
-            {/* Mini trend line with different colors */}
+            {/* Mini trend line with different colors and increased height */}
             <div className="flex items-center space-x-2">
-              <div className="flex-1 h-4 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
-                <svg className="w-full h-full" viewBox="0 0 100 20">
+              <div className="flex-1 h-6 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
+                <svg className="w-full h-full" viewBox="0 0 100 30">
                   <path
-                    d="M0,15 Q25,8 50,12 T100,5"
+                    d="M0,20 Q25,10 50,15 T100,8"
                     stroke={metric.color}
-                    strokeWidth="1.5"
+                    strokeWidth="2"
                     fill="none"
                   />
                 </svg>
