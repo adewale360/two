@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search, Filter, Download, GraduationCap, TrendingUp } from 'lucide-react';
 import Card from '../components/Common/Card';
 import CustomBarChart from '../components/Charts/BarChart';
@@ -19,6 +19,20 @@ const Students: React.FC = () => {
 
   const isStudent = user?.role === 'student';
   const currentStudent = isStudent ? mockStudents.find(s => s.email === user?.email) || mockStudents[0] : selectedStudent;
+
+  // Get available semesters based on selected level
+  const availableSemesters = useMemo(() => {
+    if (!filters.level) return ['1', '2'];
+    
+    const levelNum = parseInt(filters.level);
+    const baseSemester = (levelNum - 1) * 2;
+    return [`${baseSemester + 1}`, `${baseSemester + 2}`];
+  }, [filters.level]);
+
+  // Reset semester when level changes
+  const handleLevelChange = (level: string) => {
+    setFilters(prev => ({ ...prev, level, semester: '' }));
+  };
 
   // Filter students based on search and filters
   const filteredStudents = mockStudents.filter(student => {
@@ -53,9 +67,9 @@ const Students: React.FC = () => {
 
       {!isStudent && (
         <>
-          {/* Filters */}
+          {/* Filters - Reduced padding */}
           <Card>
-            <div className="grid grid-cols-1 md:grid-cols-5 compact-grid">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-2 py-2">
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                 <input
@@ -63,13 +77,13 @@ const Students: React.FC = () => {
                   placeholder="Search students..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
               </div>
               <select
                 value={filters.department}
                 onChange={(e) => setFilters({ ...filters, department: e.target.value })}
-                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               >
                 <option value="">All Departments</option>
                 <option value="Computer Science">Computer Science</option>
@@ -77,11 +91,23 @@ const Students: React.FC = () => {
                 <option value="Biochemistry">Biochemistry</option>
                 <option value="Software Engineering">Software Engineering</option>
                 <option value="Cyber Security">Cyber Security</option>
+                <option value="Information Systems">Information Systems</option>
+                <option value="Business Administration">Business Administration</option>
+                <option value="Accounting">Accounting</option>
+                <option value="Economics">Economics</option>
+                <option value="Mass Communication">Mass Communication</option>
+                <option value="Psychology">Psychology</option>
+                <option value="Estate Management">Estate Management</option>
+                <option value="Public and Property Law">Public and Property Law</option>
+                <option value="Private and International Law">Private and International Law</option>
+                <option value="Nursing Science">Nursing Science</option>
+                <option value="Human Physiology">Human Physiology</option>
+                <option value="Human Anatomy">Human Anatomy</option>
               </select>
               <select
                 value={filters.level}
-                onChange={(e) => setFilters({ ...filters, level: e.target.value })}
-                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                onChange={(e) => handleLevelChange(e.target.value)}
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               >
                 <option value="">All Levels</option>
                 <option value="100">100 Level</option>
@@ -92,17 +118,22 @@ const Students: React.FC = () => {
               <select
                 value={filters.semester}
                 onChange={(e) => setFilters({ ...filters, semester: e.target.value })}
-                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                disabled={!filters.level}
               >
                 <option value="">All Semesters</option>
-                <option value="1">1st Semester</option>
-                <option value="2">2nd Semester</option>
-                <option value="3">3rd Semester</option>
-                <option value="4">4th Semester</option>
-                <option value="5">5th Semester</option>
-                <option value="6">6th Semester</option>
-                <option value="7">7th Semester</option>
-                <option value="8">8th Semester</option>
+                {filters.level ? (
+                  availableSemesters.map(sem => (
+                    <option key={sem} value={sem}>
+                      {sem === '1' || sem === '3' || sem === '5' || sem === '7' ? '1st' : '2nd'} Semester
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="1">1st Semester</option>
+                    <option value="2">2nd Semester</option>
+                  </>
+                )}
               </select>
               <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                 Showing {filteredStudents.length} of {mockStudents.length} students
