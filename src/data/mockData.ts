@@ -103,10 +103,14 @@ export const mockFaculties: Faculty[] = [
 // All departments across faculties
 const allDepartments = [
   'Computer Science', 'Biochemistry', 'Cyber Security', 'Software Engineering', 'Information Systems',
+  'Environmental Management and Toxicology', 'Industrial Chemistry', 'Microbiology and Industrial Biotechnology',
   'Architecture', 'Estate Management',
   'Business Administration', 'Accounting', 'Economics', 'Mass Communication', 'Psychology',
+  'Banking and Finance', 'Criminology and Security Studies', 'International Relations',
+  'Peace Studies and Conflict Resolution', 'Political Science', 'Public Administration', 'Taxation',
   'Public and Property Law', 'Private and International Law',
-  'Nursing Science', 'Human Physiology', 'Human Anatomy'
+  'Maternal and Child Health Nursing', 'Community and Public Health Nursing', 'Adult Health/Medical and Surgical Nursing',
+  'Mental Health and Psychiatric Nursing', 'Nursing Management and Education', 'Human Physiology', 'Human Anatomy'
 ];
 
 // Generate students ensuring at least 5 per department per level
@@ -264,7 +268,7 @@ const generateStudents = () => {
 // Generate the students
 export const mockStudents = generateStudents();
 
-// Expanded lecturers to 25 distributed across departments
+// Expanded lecturers to 25 distributed across departments with Nigerian rating system
 export const mockLecturers: Lecturer[] = [
   {
     id: '1',
@@ -353,29 +357,166 @@ export const mockDepartments: Department[] = [
   }
 ];
 
+// Expanded news with 20 items
 export const mockNews: NewsItem[] = [
   {
     id: '1',
-    title: 'Fall Semester 2024 Registration Now Open',
-    content: 'Students can now register for Fall 2024 courses through the online portal. Registration deadline is August 15th.',
-    date: '2024-07-15',
+    title: 'First Semester 2024/2025 Registration Now Open',
+    content: 'Students can now register for First Semester 2024/2025 courses through the online portal. Registration deadline is September 15th, 2024. All students are advised to complete their registration early to avoid last-minute rush. Course advisors are available for consultation during office hours.',
+    date: '2024-08-15',
     category: 'academic',
     featured: true
   },
   {
     id: '2',
-    title: 'Annual Research Symposium',
-    content: 'Join us for the Annual Research Symposium featuring presentations from our top students and faculty members.',
-    date: '2024-07-10',
+    title: 'Annual Research Symposium 2024',
+    content: 'Join us for the Annual Research Symposium featuring presentations from our top students and faculty members. The event will showcase groundbreaking research across all faculties. Registration is free for all university members. Refreshments will be provided.',
+    date: '2024-08-10',
     category: 'event',
     featured: true
   },
   {
     id: '3',
-    title: 'New Laboratory Equipment Installed',
-    content: 'The Engineering faculty has received new state-of-the-art laboratory equipment to enhance student learning experience.',
-    date: '2024-07-08',
+    title: 'New Laboratory Equipment Installed in COPAS',
+    content: 'The College of Pure and Applied Sciences has received new state-of-the-art laboratory equipment to enhance student learning experience. The equipment includes advanced microscopes, spectrophotometers, and computer workstations.',
+    date: '2024-08-08',
     category: 'announcement',
+    featured: false
+  },
+  {
+    id: '4',
+    title: 'Student Union Election Results Announced',
+    content: 'The results of the 2024/2025 Student Union elections have been announced. Congratulations to all elected officials. The new administration promises to work towards improving student welfare and academic excellence.',
+    date: '2024-08-05',
+    category: 'announcement',
+    featured: true
+  },
+  {
+    id: '5',
+    title: 'Career Fair 2024 - Industry Partners Welcome',
+    content: 'Our annual career fair will feature over 50 companies from various industries. Students from all levels are encouraged to attend. Professional attire is required. CV review sessions will be available.',
+    date: '2024-08-03',
+    category: 'event',
+    featured: false
+  },
+  {
+    id: '6',
+    title: 'Library Extended Hours During Exam Period',
+    content: 'The university library will extend its operating hours during the upcoming examination period. The library will be open 24/7 from September 1st to September 30th to support student preparation.',
+    date: '2024-08-01',
+    category: 'academic',
+    featured: false
+  },
+  {
+    id: '7',
+    title: 'New Scholarship Program for Outstanding Students',
+    content: 'The university announces a new merit-based scholarship program for students with exceptional academic performance. Applications are now open for the 2024/2025 academic session.',
+    date: '2024-07-30',
+    category: 'academic',
+    featured: true
+  },
+  {
+    id: '8',
+    title: 'Campus WiFi Upgrade Completed',
+    content: 'The campus-wide WiFi infrastructure upgrade has been completed. Students and staff can now enjoy faster and more reliable internet connectivity across all university facilities.',
+    date: '2024-07-28',
+    category: 'announcement',
+    featured: false
+  },
+  {
+    id: '9',
+    title: 'International Students Orientation Program',
+    content: 'A comprehensive orientation program has been organized for international students. The program covers academic procedures, campus life, and cultural integration activities.',
+    date: '2024-07-25',
+    category: 'event',
+    featured: false
+  },
+  {
+    id: '10',
+    title: 'Faculty Development Workshop on Digital Teaching',
+    content: 'A three-day workshop on digital teaching methodologies will be conducted for all faculty members. The workshop aims to enhance online and hybrid teaching capabilities.',
+    date: '2024-07-22',
+    category: 'academic',
+    featured: false
+  },
+  {
+    id: '11',
+    title: 'Sports Complex Renovation Project Begins',
+    content: 'The renovation of the university sports complex has commenced. The project includes upgrading the gymnasium, swimming pool, and outdoor courts. Completion is expected by December 2024.',
+    date: '2024-07-20',
+    category: 'announcement',
+    featured: false
+  },
+  {
+    id: '12',
+    title: 'Guest Lecture Series: Industry Leaders Share Insights',
+    content: 'A series of guest lectures featuring prominent industry leaders will be held throughout the semester. Topics include entrepreneurship, innovation, and career development.',
+    date: '2024-07-18',
+    category: 'event',
+    featured: false
+  },
+  {
+    id: '13',
+    title: 'Student Health Services Expansion',
+    content: 'The university health center has expanded its services to include mental health counseling and wellness programs. All services are free for registered students.',
+    date: '2024-07-15',
+    category: 'announcement',
+    featured: false
+  },
+  {
+    id: '14',
+    title: 'Research Grant Opportunities for Graduate Students',
+    content: 'Several research grant opportunities are now available for graduate students. Funding ranges from ₦500,000 to ₦2,000,000 depending on the project scope and duration.',
+    date: '2024-07-12',
+    category: 'academic',
+    featured: false
+  },
+  {
+    id: '15',
+    title: 'Campus Security Enhancement Measures',
+    content: 'New security measures have been implemented across campus including additional CCTV cameras, improved lighting, and 24/7 security patrols for enhanced student safety.',
+    date: '2024-07-10',
+    category: 'announcement',
+    featured: false
+  },
+  {
+    id: '16',
+    title: 'Alumni Homecoming Weekend 2024',
+    content: 'All alumni are invited to the annual homecoming weekend featuring networking events, campus tours, and reunion dinners. Register early to secure your spot.',
+    date: '2024-07-08',
+    category: 'event',
+    featured: false
+  },
+  {
+    id: '17',
+    title: 'Environmental Sustainability Initiative Launch',
+    content: 'The university launches a comprehensive environmental sustainability initiative including waste reduction programs, renewable energy projects, and green campus policies.',
+    date: '2024-07-05',
+    category: 'announcement',
+    featured: false
+  },
+  {
+    id: '18',
+    title: 'Student Exchange Program Applications Open',
+    content: 'Applications are now open for the international student exchange program. Students can apply to study at partner universities in Europe, Asia, and North America.',
+    date: '2024-07-03',
+    category: 'academic',
+    featured: false
+  },
+  {
+    id: '19',
+    title: 'Campus Food Services Menu Expansion',
+    content: 'The campus cafeteria has expanded its menu to include more diverse and healthy food options. New vendors have been added to provide students with better dining choices.',
+    date: '2024-07-01',
+    category: 'announcement',
+    featured: false
+  },
+  {
+    id: '20',
+    title: 'Academic Excellence Awards Ceremony',
+    content: 'The annual academic excellence awards ceremony will recognize outstanding students, faculty, and staff members. The event will be held in the main auditorium with live streaming available.',
+    date: '2024-06-28',
+    category: 'event',
     featured: false
   }
 ];
@@ -388,19 +529,19 @@ export const mockDashboardStats = {
 };
 
 export const mockPerformanceData: PerformanceData[] = [
-  { course: 'CS401', score: 85, students: 45, semester: 'Fall 2024' },
-  { course: 'CS402', score: 78, students: 42, semester: 'Fall 2024' },
-  { course: 'ARC301', score: 82, students: 38, semester: 'Fall 2024' },
-  { course: 'ARC302', score: 79, students: 35, semester: 'Fall 2024' },
-  { course: 'BIO201', score: 88, students: 50, semester: 'Fall 2024' },
-  { course: 'BIO202', score: 84, students: 48, semester: 'Fall 2024' },
+  { course: 'CS401', score: 85, students: 45, semester: 'First Semester 2024' },
+  { course: 'CS402', score: 78, students: 42, semester: 'First Semester 2024' },
+  { course: 'ARC301', score: 82, students: 38, semester: 'First Semester 2024' },
+  { course: 'ARC302', score: 79, students: 35, semester: 'First Semester 2024' },
+  { course: 'BIO201', score: 88, students: 50, semester: 'First Semester 2024' },
+  { course: 'BIO202', score: 84, students: 48, semester: 'First Semester 2024' },
 ];
 
 export const semesterProgressData = [
-  { semester: 'Fall 2023', gpa: 3.2 },
-  { semester: 'Spring 2024', gpa: 3.5 },
-  { semester: 'Summer 2024', gpa: 3.8 },
-  { semester: 'Fall 2024', gpa: 4.1 },
+  { semester: 'First Semester 2023', gpa: 3.2 },
+  { semester: 'Second Semester 2023', gpa: 3.5 },
+  { semester: 'First Semester 2024', gpa: 3.8 },
+  { semester: 'Second Semester 2024', gpa: 4.1 },
 ];
 
 export const scoreDistributionData = [
