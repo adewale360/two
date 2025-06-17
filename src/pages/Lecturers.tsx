@@ -82,10 +82,10 @@ const Lecturers: React.FC = () => {
 
       {!isLecturer && (
         <>
-          {/* Search and Filters */}
+          {/* Search and Filters - Auto-fit padding */}
           <Card>
-            <div className="flex items-center space-x-3">
-              <div className="relative flex-1">
+            <div className="flex flex-wrap items-center gap-3 py-2">
+              <div className="relative min-w-0 flex-1">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                 <input
                   type="text"
@@ -98,7 +98,7 @@ const Lecturers: React.FC = () => {
               <select 
                 value={departmentFilter}
                 onChange={(e) => setDepartmentFilter(e.target.value)}
-                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
               >
                 <option value="">All Departments</option>
                 <option value="Computer Science">Computer Science</option>
@@ -119,7 +119,7 @@ const Lecturers: React.FC = () => {
                 <option value="Human Physiology">Human Physiology</option>
                 <option value="Human Anatomy">Human Anatomy</option>
               </select>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                 Showing {filteredLecturers.length} of {mockLecturers.length} lecturers
               </div>
             </div>

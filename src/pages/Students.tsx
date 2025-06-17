@@ -78,10 +78,10 @@ const Students: React.FC = () => {
 
       {!isStudent && (
         <>
-          {/* Filters - Reduced padding */}
+          {/* Filters - Auto-fit padding */}
           <Card>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-2 py-2">
-              <div className="relative">
+            <div className="flex flex-wrap items-center gap-3 py-2">
+              <div className="relative min-w-0 flex-1">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                 <input
                   type="text"
@@ -94,7 +94,7 @@ const Students: React.FC = () => {
               <select
                 value={filters.department}
                 onChange={(e) => setFilters({ ...filters, department: e.target.value })}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
               >
                 <option value="">All Departments</option>
                 <option value="Computer Science">Computer Science</option>
@@ -118,7 +118,7 @@ const Students: React.FC = () => {
               <select
                 value={filters.level}
                 onChange={(e) => handleLevelChange(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
               >
                 <option value="">All Levels</option>
                 <option value="100">100 Level</option>
@@ -129,14 +129,14 @@ const Students: React.FC = () => {
               <select
                 value={filters.semester}
                 onChange={(e) => setFilters({ ...filters, semester: e.target.value })}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
                 disabled={!filters.level}
               >
                 <option value="">All Semesters</option>
                 <option value="1">1st Semester</option>
                 <option value="2">2nd Semester</option>
               </select>
-              <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+              <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                 Showing {filteredStudents.length} of {mockStudents.length} students
               </div>
             </div>
@@ -153,11 +153,12 @@ const Students: React.FC = () => {
                     <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Department</th>
                     <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Level</th>
                     <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">GPA</th>
+                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Status</th>
                     <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredStudents.slice(0, 10).map((student) => (
+                  {filteredStudents.slice(0, 15).map((student) => (
                     <tr key={student.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="py-2 px-3">
                         <div className="flex items-center space-x-2">
@@ -174,8 +175,26 @@ const Students: React.FC = () => {
                       <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.department}</td>
                       <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.level}</td>
                       <td className="py-2 px-3">
-                        <span className={`text-sm font-semibold ${student.gpa >= 4.0 ? 'text-green-600' : student.gpa >= 3.0 ? 'text-yellow-600' : 'text-red-600'}`}>
-                          {student.gpa}
+                        <span className={`text-sm font-semibold ${
+                          student.gpa >= 4.0 ? 'text-green-600' : 
+                          student.gpa >= 3.0 ? 'text-yellow-600' : 
+                          student.gpa >= 2.0 ? 'text-orange-600' :
+                          'text-red-600'
+                        }`}>
+                          {student.gpa.toFixed(2)}
+                        </span>
+                      </td>
+                      <td className="py-2 px-3">
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          student.gpa >= 4.0 ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                          student.gpa >= 3.0 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
+                          student.gpa >= 2.0 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400' :
+                          'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                        }`}>
+                          {student.gpa >= 4.0 ? 'Excellent' :
+                           student.gpa >= 3.0 ? 'Good' :
+                           student.gpa >= 2.0 ? 'Fair' :
+                           'At Risk'}
                         </span>
                       </td>
                       <td className="py-2 px-3">
@@ -224,9 +243,9 @@ const Students: React.FC = () => {
 
       {/* Student Details */}
       <Card title={`${currentStudent.name} - Performance Details`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 compact-grid mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 compact-grid mb-4">
           <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
-            <p className="text-lg font-bold text-primary-600">{currentStudent.gpa}</p>
+            <p className="text-lg font-bold text-primary-600">{currentStudent.gpa.toFixed(2)}</p>
             <p className="text-xs text-gray-600 dark:text-gray-400">Current GPA</p>
           </div>
           <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
@@ -240,6 +259,20 @@ const Students: React.FC = () => {
           <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
             <p className="text-lg font-bold text-purple-600">{currentStudent.courses.length}</p>
             <p className="text-xs text-gray-600 dark:text-gray-400">Courses</p>
+          </div>
+          <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+            <p className={`text-lg font-bold ${
+              currentStudent.gpa >= 4.0 ? 'text-green-600' :
+              currentStudent.gpa >= 3.0 ? 'text-yellow-600' :
+              currentStudent.gpa >= 2.0 ? 'text-orange-600' :
+              'text-red-600'
+            }`}>
+              {currentStudent.gpa >= 4.0 ? 'Excellent' :
+               currentStudent.gpa >= 3.0 ? 'Good' :
+               currentStudent.gpa >= 2.0 ? 'Fair' :
+               'At Risk'}
+            </p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Status</p>
           </div>
         </div>
 
@@ -266,15 +299,21 @@ const Students: React.FC = () => {
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
                         : course.grade === 'B+' || course.grade === 'B'
                         ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
-                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                        : course.grade === 'C+' || course.grade === 'C'
+                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                        : course.grade === 'D+' || course.grade === 'D'
+                        ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                     }`}>
                       {course.grade}
                     </span>
                   </td>
                   <td className="py-2 px-3">
-                    <span className="flex items-center text-xs text-green-600 dark:text-green-400">
+                    <span className={`flex items-center text-xs ${
+                      course.score >= 60 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                    }`}>
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      Passed
+                      {course.score >= 60 ? 'Passed' : 'Failed'}
                     </span>
                   </td>
                 </tr>

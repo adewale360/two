@@ -100,92 +100,169 @@ export const mockFaculties: Faculty[] = [
   }
 ];
 
-// Updated students with faculty assignments
-export const mockStudents: Student[] = [
-  {
-    id: '1',
-    name: 'Alice Johnson',
-    email: 'alice.johnson@university.edu',
-    studentId: 'CS2021001',
-    department: 'Computer Science',
-    faculty: 'COPAS',
-    level: '400',
-    semester: 8,
-    gpa: 4.85,
-    courses: [
-      { courseCode: 'CS401', courseName: 'Advanced Algorithms', grade: 'A', score: 95, semester: 8, level: 400 },
-      { courseCode: 'CS402', courseName: 'Machine Learning', grade: 'A', score: 92, semester: 8, level: 400 },
-      { courseCode: 'CS403', courseName: 'Software Engineering', grade: 'A+', score: 98, semester: 8, level: 400 },
-    ]
-  },
-  {
-    id: '2',
-    name: 'Bob Smith',
-    email: 'bob.smith@university.edu',
-    studentId: 'EE2021002',
-    department: 'Architecture',
-    faculty: 'COLENSMA',
-    level: '300',
-    semester: 6,
-    gpa: 4.12,
-    courses: [
-      { courseCode: 'ARC301', courseName: 'Design Studio', grade: 'B+', score: 85, semester: 6, level: 300 },
-      { courseCode: 'ARC302', courseName: 'Building Technology', grade: 'A', score: 90, semester: 6, level: 300 },
-    ]
-  },
-  {
-    id: '3',
-    name: 'Carol Davis',
-    email: 'carol.davis@university.edu',
-    studentId: 'BIO2021003',
-    department: 'Biochemistry',
-    faculty: 'COPAS',
-    level: '200',
-    semester: 4,
-    gpa: 3.88,
-    courses: [
-      { courseCode: 'BIO201', courseName: 'Genetics', grade: 'B+', score: 88, semester: 4, level: 200 },
-      { courseCode: 'BIO202', courseName: 'Molecular Biology', grade: 'A-', score: 87, semester: 4, level: 200 },
-    ]
-  },
-  // Adding more students across different faculties
-  ...Array.from({ length: 47 }, (_, i) => {
-    const faculties = ['COPAS', 'COLENSMA', 'CASMAS', 'COLAW', 'NURSING'];
-    const departments = {
-      'COPAS': ['Computer Science', 'Biochemistry', 'Cyber Security', 'Software Engineering', 'Information Systems'],
-      'COLENSMA': ['Architecture', 'Estate Management'],
-      'CASMAS': ['Business Administration', 'Accounting', 'Economics', 'Mass Communication', 'Psychology'],
-      'COLAW': ['Public and Property Law', 'Private and International Law'],
-      'NURSING': ['Nursing Science', 'Human Physiology', 'Human Anatomy']
+// All departments across faculties
+const allDepartments = [
+  'Computer Science', 'Biochemistry', 'Cyber Security', 'Software Engineering', 'Information Systems',
+  'Architecture', 'Estate Management',
+  'Business Administration', 'Accounting', 'Economics', 'Mass Communication', 'Psychology',
+  'Public and Property Law', 'Private and International Law',
+  'Nursing Science', 'Human Physiology', 'Human Anatomy'
+];
+
+// Generate students ensuring at least 5 per department per level
+const generateStudents = () => {
+  const students: Student[] = [];
+  let studentCounter = 1;
+
+  // First, ensure each department has at least 5 students per level
+  allDepartments.forEach(department => {
+    const faculty = mockFaculties.find(f => f.departments.includes(department))?.name || 'COPAS';
+    
+    ['100', '200', '300', '400'].forEach(level => {
+      for (let i = 0; i < 5; i++) {
+        const firstName = ['Alice', 'Bob', 'Carol', 'David', 'Emma', 'Frank', 'Grace', 'Henry', 'Ivy', 'Jack'][i % 10];
+        const lastName = ['Johnson', 'Smith', 'Davis', 'Wilson', 'Brown', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White'][i % 10];
+        
+        // Generate realistic GPA with some failing students
+        let gpa: number;
+        const random = Math.random();
+        if (random < 0.05) { // 5% failing students (below 2.0)
+          gpa = Number((Math.random() * 1.5 + 0.5).toFixed(2)); // 0.5 - 2.0
+        } else if (random < 0.15) { // 10% struggling students (2.0 - 2.5)
+          gpa = Number((Math.random() * 0.5 + 2.0).toFixed(2)); // 2.0 - 2.5
+        } else if (random < 0.35) { // 20% below average (2.5 - 3.0)
+          gpa = Number((Math.random() * 0.5 + 2.5).toFixed(2)); // 2.5 - 3.0
+        } else if (random < 0.70) { // 35% average (3.0 - 4.0)
+          gpa = Number((Math.random() * 1.0 + 3.0).toFixed(2)); // 3.0 - 4.0
+        } else { // 30% excellent (4.0 - 5.0)
+          gpa = Number((Math.random() * 1.0 + 4.0).toFixed(2)); // 4.0 - 5.0
+        }
+
+        const levelNum = parseInt(level);
+        const semester = Math.floor(Math.random() * 2) + 1 + (levelNum - 1) * 2; // 1-8 based on level
+
+        // Generate course grades based on GPA
+        const generateGrade = (baseGPA: number) => {
+          const variation = (Math.random() - 0.5) * 0.5; // ±0.25 variation
+          const courseGPA = Math.max(0, Math.min(5, baseGPA + variation));
+          
+          if (courseGPA >= 4.5) return { grade: 'A+', score: Math.floor(Math.random() * 10) + 90 };
+          if (courseGPA >= 4.0) return { grade: 'A', score: Math.floor(Math.random() * 10) + 80 };
+          if (courseGPA >= 3.5) return { grade: 'B+', score: Math.floor(Math.random() * 10) + 75 };
+          if (courseGPA >= 3.0) return { grade: 'B', score: Math.floor(Math.random() * 10) + 70 };
+          if (courseGPA >= 2.5) return { grade: 'C+', score: Math.floor(Math.random() * 10) + 65 };
+          if (courseGPA >= 2.0) return { grade: 'C', score: Math.floor(Math.random() * 10) + 60 };
+          if (courseGPA >= 1.5) return { grade: 'D+', score: Math.floor(Math.random() * 10) + 55 };
+          if (courseGPA >= 1.0) return { grade: 'D', score: Math.floor(Math.random() * 10) + 50 };
+          return { grade: 'F', score: Math.floor(Math.random() * 50) + 0 };
+        };
+
+        const courses = Array.from({ length: Math.floor(Math.random() * 3) + 3 }, (_, courseIndex) => {
+          const { grade, score } = generateGrade(gpa);
+          return {
+            courseCode: `${department.substring(0, 3).toUpperCase()}${levelNum}0${courseIndex + 1}`,
+            courseName: `${department} Course ${courseIndex + 1}`,
+            grade,
+            score,
+            semester,
+            level: levelNum
+          };
+        });
+
+        students.push({
+          id: studentCounter.toString(),
+          name: `${firstName} ${lastName}`,
+          email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${studentCounter}@university.edu`,
+          studentId: `STU2021${String(studentCounter).padStart(3, '0')}`,
+          department,
+          faculty,
+          level,
+          semester,
+          gpa,
+          courses
+        });
+
+        studentCounter++;
+      }
+    });
+  });
+
+  // Add some additional random students to reach a good total
+  const additionalStudents = 200;
+  for (let i = 0; i < additionalStudents; i++) {
+    const department = allDepartments[Math.floor(Math.random() * allDepartments.length)];
+    const faculty = mockFaculties.find(f => f.departments.includes(department))?.name || 'COPAS';
+    const level = ['100', '200', '300', '400'][Math.floor(Math.random() * 4)];
+    const levelNum = parseInt(level);
+    const semester = Math.floor(Math.random() * 2) + 1 + (levelNum - 1) * 2;
+
+    const firstNames = ['Michael', 'Sarah', 'James', 'Lisa', 'Robert', 'Maria', 'William', 'Jennifer', 'Richard', 'Linda', 'Charles', 'Barbara', 'Joseph', 'Susan', 'Thomas', 'Jessica', 'Christopher', 'Karen', 'Daniel', 'Nancy'];
+    const lastNames = ['Garcia', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall', 'Allen', 'Young', 'Hernandez', 'King', 'Wright', 'Lopez', 'Hill', 'Scott', 'Green', 'Adams', 'Baker', 'Gonzalez', 'Nelson', 'Carter'];
+    
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+
+    // Generate realistic GPA distribution
+    let gpa: number;
+    const random = Math.random();
+    if (random < 0.08) { // 8% failing/struggling
+      gpa = Number((Math.random() * 2.0 + 0.5).toFixed(2));
+    } else if (random < 0.25) { // 17% below average
+      gpa = Number((Math.random() * 0.8 + 2.2).toFixed(2));
+    } else if (random < 0.65) { // 40% average
+      gpa = Number((Math.random() * 1.2 + 3.0).toFixed(2));
+    } else { // 35% excellent
+      gpa = Number((Math.random() * 0.8 + 4.2).toFixed(2));
+    }
+
+    const generateGrade = (baseGPA: number) => {
+      const variation = (Math.random() - 0.5) * 0.5;
+      const courseGPA = Math.max(0, Math.min(5, baseGPA + variation));
+      
+      if (courseGPA >= 4.5) return { grade: 'A+', score: Math.floor(Math.random() * 10) + 90 };
+      if (courseGPA >= 4.0) return { grade: 'A', score: Math.floor(Math.random() * 10) + 80 };
+      if (courseGPA >= 3.5) return { grade: 'B+', score: Math.floor(Math.random() * 10) + 75 };
+      if (courseGPA >= 3.0) return { grade: 'B', score: Math.floor(Math.random() * 10) + 70 };
+      if (courseGPA >= 2.5) return { grade: 'C+', score: Math.floor(Math.random() * 10) + 65 };
+      if (courseGPA >= 2.0) return { grade: 'C', score: Math.floor(Math.random() * 10) + 60 };
+      if (courseGPA >= 1.5) return { grade: 'D+', score: Math.floor(Math.random() * 10) + 55 };
+      if (courseGPA >= 1.0) return { grade: 'D', score: Math.floor(Math.random() * 10) + 50 };
+      return { grade: 'F', score: Math.floor(Math.random() * 50) + 0 };
     };
-    
-    const faculty = faculties[i % faculties.length];
-    const deptList = departments[faculty];
-    const department = deptList[i % deptList.length];
-    
-    return {
-      id: `${4 + i}`,
-      name: `Student ${4 + i}`,
-      email: `student${4 + i}@university.edu`,
-      studentId: `STU2021${String(4 + i).padStart(3, '0')}`,
+
+    const courses = Array.from({ length: Math.floor(Math.random() * 3) + 3 }, (_, courseIndex) => {
+      const { grade, score } = generateGrade(gpa);
+      return {
+        courseCode: `${department.substring(0, 3).toUpperCase()}${levelNum}0${courseIndex + 1}`,
+        courseName: `${department} Course ${courseIndex + 1}`,
+        grade,
+        score,
+        semester,
+        level: levelNum
+      };
+    });
+
+    students.push({
+      id: studentCounter.toString(),
+      name: `${firstName} ${lastName}`,
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${studentCounter}@university.edu`,
+      studentId: `STU2021${String(studentCounter).padStart(3, '0')}`,
       department,
       faculty,
-      level: ['100', '200', '300', '400'][Math.floor(Math.random() * 4)],
-      semester: Math.floor(Math.random() * 8) + 1,
-      gpa: Number((Math.random() * 2 + 3).toFixed(2)),
-      courses: [
-        {
-          courseCode: `${department.substring(0, 3).toUpperCase()}${Math.floor(Math.random() * 4) + 1}01`,
-          courseName: `Course ${i + 1}`,
-          grade: ['A+', 'A', 'A-', 'B+', 'B', 'B-'][Math.floor(Math.random() * 6)],
-          score: Math.floor(Math.random() * 30) + 70,
-          semester: Math.floor(Math.random() * 8) + 1,
-          level: [100, 200, 300, 400][Math.floor(Math.random() * 4)]
-        }
-      ]
-    };
-  })
-];
+      level,
+      semester,
+      gpa,
+      courses
+    });
+
+    studentCounter++;
+  }
+
+  return students;
+};
+
+// Generate the students
+export const mockStudents = generateStudents();
 
 // Expanded lecturers to 25 distributed across departments
 export const mockLecturers: Lecturer[] = [
@@ -222,24 +299,14 @@ export const mockLecturers: Lecturer[] = [
     rating: 4.9,
     studentsCount: 95
   },
-  // Adding 22 more lecturers
+  // Adding 22 more lecturers distributed across all departments
   ...Array.from({ length: 22 }, (_, i) => {
-    const faculties = ['COPAS', 'COLENSMA', 'CASMAS', 'COLAW', 'NURSING'];
-    const departments = {
-      'COPAS': ['Computer Science', 'Biochemistry', 'Cyber Security', 'Software Engineering', 'Information Systems'],
-      'COLENSMA': ['Architecture', 'Estate Management'],
-      'CASMAS': ['Business Administration', 'Accounting', 'Economics', 'Mass Communication', 'Psychology'],
-      'COLAW': ['Public and Property Law', 'Private and International Law'],
-      'NURSING': ['Nursing Science', 'Human Physiology', 'Human Anatomy']
-    };
-    
-    const faculty = faculties[i % faculties.length];
-    const deptList = departments[faculty];
-    const department = deptList[i % deptList.length];
+    const department = allDepartments[i % allDepartments.length];
+    const faculty = mockFaculties.find(f => f.departments.includes(department))?.name || 'COPAS';
     
     const titles = ['Dr.', 'Prof.', 'Mr.', 'Mrs.', 'Ms.'];
-    const firstNames = ['John', 'Jane', 'David', 'Mary', 'Robert', 'Lisa', 'James', 'Patricia', 'Michael', 'Jennifer'];
-    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+    const firstNames = ['John', 'Jane', 'David', 'Mary', 'Robert', 'Lisa', 'James', 'Patricia', 'Michael', 'Jennifer', 'William', 'Linda', 'Richard', 'Barbara', 'Joseph', 'Susan', 'Thomas', 'Jessica', 'Christopher', 'Karen', 'Daniel', 'Nancy'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Thompson'];
     
     const title = titles[i % titles.length];
     const firstName = firstNames[i % firstNames.length];
@@ -314,10 +381,10 @@ export const mockNews: NewsItem[] = [
 ];
 
 export const mockDashboardStats = {
-  totalStudents: 1250,
-  totalLecturers: 85,
+  totalStudents: mockStudents.length,
+  totalLecturers: mockLecturers.length,
   totalCourses: 156,
-  averageGPA: 3.75
+  averageGPA: Number((mockStudents.reduce((sum, s) => sum + s.gpa, 0) / mockStudents.length).toFixed(2))
 };
 
 export const mockPerformanceData: PerformanceData[] = [
