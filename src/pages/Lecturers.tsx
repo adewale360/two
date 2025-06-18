@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Search, Plus, User, Star, TrendingUp, Users, Calendar, CheckCircle, BarChart3 } from 'lucide-react';
+import { Search, Plus, User, Star, TrendingUp, Users, Calendar, CheckCircle, BarChart3, BookOpen, Clock } from 'lucide-react';
 import Card from '../components/Common/Card';
 import CustomBarChart from '../components/Charts/BarChart';
-import { mockLecturers, mockPerformanceData, getStudentsByCourse } from '../data/mockData';
+import { mockLecturers, mockPerformanceData, getStudentsByCourse, courseSyllabi } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
 
 const Lecturers: React.FC = () => {
@@ -13,6 +13,8 @@ const Lecturers: React.FC = () => {
   const [showResultForm, setShowResultForm] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedStudent, setSelectedStudent] = useState('');
+  const [showSyllabusModal, setShowSyllabusModal] = useState(false);
+  const [selectedSyllabusCourse, setSelectedSyllabusCourse] = useState('');
   const [resultForm, setResultForm] = useState({
     courseCode: '',
     semester: '1st',
@@ -57,34 +59,48 @@ const Lecturers: React.FC = () => {
     setSelectedStudent('');
   };
 
+  const handleSyllabusUpdate = (courseCode: string, topicIndex: number, field: 'completed' | 'scheduled') => {
+    // This would update the syllabus completion in real-time
+    console.log(`Updated ${field} for ${courseCode} topic ${topicIndex}`);
+  };
+
   return (
     <div className="compact-spacing">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {isLecturer ? 'My Teaching Dashboard' : 'Lecturer Management'}
+            {isLecturer ? 'Course Management' : 'Lecturers'}
           </h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {isLecturer ? 'Manage your courses and track student performance' : 'Monitor lecturer performance and course management'}
           </p>
         </div>
         {isLecturer && (
-          <button 
-            onClick={() => setShowResultForm(true)}
-            className="flex items-center space-x-2 bg-primary-600 text-white px-3 py-2 rounded text-sm hover:bg-primary-700 transition-colors"
-          >
-            <Plus className="h-3 w-3" />
-            <span>Submit Results</span>
-          </button>
+          <div className="flex space-x-2">
+            <button 
+              onClick={() => setShowSyllabusModal(true)}
+              className="flex items-center space-x-2 bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 transition-colors"
+            >
+              <BookOpen className="h-3 w-3" />
+              <span>Manage Syllabus</span>
+            </button>
+            <button 
+              onClick={() => setShowResultForm(true)}
+              className="flex items-center space-x-2 bg-primary-600 text-white px-3 py-2 rounded text-sm hover:bg-primary-700 transition-colors"
+            >
+              <Plus className="h-3 w-3" />
+              <span>Submit Results</span>
+            </button>
+          </div>
         )}
       </div>
 
       {!isLecturer && (
         <>
-          {/* Search and Filters - Auto-fit padding */}
+          {/* Search and Filters */}
           <Card>
-            <div className="flex flex-wrap items-center gap-3 py-2">
+            <div className="flex flex-wrap items-center gap-3 py-1">
               <div className="relative min-w-0 flex-1">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                 <input
@@ -92,13 +108,13 @@ const Lecturers: React.FC = () => {
                   placeholder="Search lecturers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
               </div>
               <select 
                 value={departmentFilter}
                 onChange={(e) => setDepartmentFilter(e.target.value)}
-                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
               >
                 <option value="">All Departments</option>
                 <option value="Computer Science">Computer Science</option>
@@ -337,6 +353,77 @@ const Lecturers: React.FC = () => {
           </div>
         </Card>
       </div>
+
+      {/* Syllabus Management Modal */}
+      {showSyllabusModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="compact-header text-gray-900 dark:text-white">Manage Course Syllabus</h3>
+              <button
+                onClick={() => setShowSyllabusModal(false)}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Course Selection */}
+            <div className="mb-4">
+              <select
+                value={selectedSyllabusCourse}
+                onChange={(e) => setSelectedSyllabusCourse(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="">Select a course</option>
+                {currentLecturer.courses.map(course => (
+                  <option key={course} value={course}>{course}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Syllabus Content */}
+            {selectedSyllabusCourse && courseSyllabi[selectedSyllabusCourse] && (
+              <div className="space-y-3">
+                <h4 className="compact-subheader text-gray-900 dark:text-white">
+                  {selectedSyllabusCourse} Syllabus
+                </h4>
+                <div className="space-y-2">
+                  {courseSyllabi[selectedSyllabusCourse].map((topic, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded">
+                      <div className="flex-1">
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {topic.topic}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            checked={topic.scheduled}
+                            onChange={() => handleSyllabusUpdate(selectedSyllabusCourse, index, 'scheduled')}
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          <span className="text-xs text-gray-600 dark:text-gray-400">Scheduled</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            checked={topic.completed}
+                            onChange={() => handleSyllabusUpdate(selectedSyllabusCourse, index, 'completed')}
+                            className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-xs text-gray-600 dark:text-gray-400">Completed</span>
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Result Submission Modal */}
       {showResultForm && (

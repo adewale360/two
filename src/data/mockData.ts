@@ -145,7 +145,7 @@ const generateStudents = () => {
         const levelNum = parseInt(level);
         const semester = Math.floor(Math.random() * 2) + 1 + (levelNum - 1) * 2; // 1-8 based on level
 
-        // Generate course grades based on GPA
+        // Generate course grades based on GPA - minimum 8 courses
         const generateGrade = (baseGPA: number) => {
           const variation = (Math.random() - 0.5) * 0.5; // ±0.25 variation
           const courseGPA = Math.max(0, Math.min(5, baseGPA + variation));
@@ -161,7 +161,7 @@ const generateStudents = () => {
           return { grade: 'F', score: Math.floor(Math.random() * 50) + 0 };
         };
 
-        const courses = Array.from({ length: Math.floor(Math.random() * 3) + 3 }, (_, courseIndex) => {
+        const courses = Array.from({ length: Math.floor(Math.random() * 3) + 8 }, (_, courseIndex) => {
           const { grade, score } = generateGrade(gpa);
           return {
             courseCode: `${department.substring(0, 3).toUpperCase()}${levelNum}0${courseIndex + 1}`,
@@ -234,7 +234,7 @@ const generateStudents = () => {
       return { grade: 'F', score: Math.floor(Math.random() * 50) + 0 };
     };
 
-    const courses = Array.from({ length: Math.floor(Math.random() * 3) + 3 }, (_, courseIndex) => {
+    const courses = Array.from({ length: Math.floor(Math.random() * 3) + 8 }, (_, courseIndex) => {
       const { grade, score } = generateGrade(gpa);
       return {
         courseCode: `${department.substring(0, 3).toUpperCase()}${levelNum}0${courseIndex + 1}`,
@@ -268,7 +268,7 @@ const generateStudents = () => {
 // Generate the students
 export const mockStudents = generateStudents();
 
-// Expanded lecturers to 25 distributed across departments with Nigerian rating system
+// Expanded lecturers to 40 distributed across departments with Nigerian rating system
 export const mockLecturers: Lecturer[] = [
   {
     id: '1',
@@ -303,14 +303,14 @@ export const mockLecturers: Lecturer[] = [
     rating: 4.9,
     studentsCount: 95
   },
-  // Adding 22 more lecturers distributed across all departments
-  ...Array.from({ length: 22 }, (_, i) => {
+  // Adding 37 more lecturers distributed across all departments
+  ...Array.from({ length: 37 }, (_, i) => {
     const department = allDepartments[i % allDepartments.length];
     const faculty = mockFaculties.find(f => f.departments.includes(department))?.name || 'COPAS';
     
     const titles = ['Dr.', 'Prof.', 'Mr.', 'Mrs.', 'Ms.'];
-    const firstNames = ['John', 'Jane', 'David', 'Mary', 'Robert', 'Lisa', 'James', 'Patricia', 'Michael', 'Jennifer', 'William', 'Linda', 'Richard', 'Barbara', 'Joseph', 'Susan', 'Thomas', 'Jessica', 'Christopher', 'Karen', 'Daniel', 'Nancy'];
-    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Thompson'];
+    const firstNames = ['John', 'Jane', 'David', 'Mary', 'Robert', 'Lisa', 'James', 'Patricia', 'Michael', 'Jennifer', 'William', 'Linda', 'Richard', 'Barbara', 'Joseph', 'Susan', 'Thomas', 'Jessica', 'Christopher', 'Karen', 'Daniel', 'Nancy', 'Mark', 'Betty', 'Donald', 'Helen', 'Steven', 'Sandra', 'Paul', 'Donna', 'Andrew', 'Carol', 'Joshua', 'Ruth', 'Kenneth', 'Sharon', 'Kevin'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Perez', 'Hall', 'Young', 'Allen', 'King', 'Wright', 'Scott'];
     
     const title = titles[i % titles.length];
     const firstName = firstNames[i % firstNames.length];
@@ -539,9 +539,10 @@ export const mockPerformanceData: PerformanceData[] = [
 
 export const semesterProgressData = [
   { semester: 'First Semester 2023', gpa: 3.2 },
-  { semester: 'Second Semester 2023', gpa: 3.5 },
-  { semester: 'First Semester 2024', gpa: 3.8 },
-  { semester: 'Second Semester 2024', gpa: 4.1 },
+  { semester: 'Second Semester 2023', gpa: 2.8 },
+  { semester: 'First Semester 2024', gpa: 3.6 },
+  { semester: 'Second Semester 2024', gpa: 3.1 },
+  { semester: 'Current', gpa: 3.8 },
 ];
 
 export const scoreDistributionData = [
@@ -560,9 +561,127 @@ export const admissionsByYearData = [
   { year: '2024', 'Computer Science': 180, 'Biochemistry': 112, 'Cyber Security': 102, 'Software Engineering': 155, 'Information Systems': 102 }
 ];
 
+// Course schedules for each faculty
+export const facultySchedules = {
+  COPAS: [
+    { day: 'Monday', time: '8:00-10:00', course: 'CS401', lecturer: 'Dr. Sarah Wilson', room: 'Lab 1' },
+    { day: 'Monday', time: '10:00-12:00', course: 'BIO201', lecturer: 'Dr. Emily Chen', room: 'Bio Lab' },
+    { day: 'Tuesday', time: '8:00-10:00', course: 'CS402', lecturer: 'Dr. Sarah Wilson', room: 'Lab 2' },
+    { day: 'Tuesday', time: '10:00-12:00', course: 'BIO202', lecturer: 'Dr. Emily Chen', room: 'Bio Lab' },
+    { day: 'Wednesday', time: '8:00-10:00', course: 'CYB301', lecturer: 'Dr. John Smith', room: 'Cyber Lab' },
+    { day: 'Wednesday', time: '10:00-12:00', course: 'SWE401', lecturer: 'Prof. Jane Williams', room: 'Software Lab' },
+    { day: 'Thursday', time: '8:00-10:00', course: 'INF201', lecturer: 'Dr. David Brown', room: 'Info Lab' },
+    { day: 'Thursday', time: '10:00-12:00', course: 'ENV301', lecturer: 'Dr. Lisa Garcia', room: 'Env Lab' },
+    { day: 'Friday', time: '8:00-10:00', course: 'ICH401', lecturer: 'Prof. Robert Miller', room: 'Chem Lab' },
+    { day: 'Friday', time: '10:00-12:00', course: 'MIB301', lecturer: 'Dr. Maria Davis', room: 'Micro Lab' }
+  ],
+  COLENSMA: [
+    { day: 'Monday', time: '8:00-10:00', course: 'ARC301', lecturer: 'Prof. Michael Brown', room: 'Design Studio 1' },
+    { day: 'Monday', time: '10:00-12:00', course: 'EST201', lecturer: 'Dr. William Rodriguez', room: 'Estate Room' },
+    { day: 'Tuesday', time: '8:00-10:00', course: 'ARC302', lecturer: 'Prof. Michael Brown', room: 'Design Studio 2' },
+    { day: 'Tuesday', time: '10:00-12:00', course: 'EST301', lecturer: 'Dr. William Rodriguez', room: 'Estate Room' },
+    { day: 'Wednesday', time: '8:00-10:00', course: 'ARC401', lecturer: 'Dr. Jennifer Martinez', room: 'Design Studio 3' },
+    { day: 'Wednesday', time: '10:00-12:00', course: 'EST401', lecturer: 'Prof. Richard Hernandez', room: 'Estate Lab' },
+    { day: 'Thursday', time: '8:00-10:00', course: 'ARC201', lecturer: 'Dr. Linda Lopez', room: 'Drawing Studio' },
+    { day: 'Thursday', time: '10:00-12:00', course: 'EST202', lecturer: 'Dr. Barbara Gonzalez', room: 'Survey Lab' },
+    { day: 'Friday', time: '8:00-10:00', course: 'ARC101', lecturer: 'Prof. Joseph Wilson', room: 'Theory Room' },
+    { day: 'Friday', time: '10:00-12:00', course: 'EST101', lecturer: 'Dr. Susan Anderson', room: 'Intro Room' }
+  ],
+  CASMAS: [
+    { day: 'Monday', time: '8:00-10:00', course: 'BUS301', lecturer: 'Prof. Thomas Thomas', room: 'Business Hall 1' },
+    { day: 'Monday', time: '10:00-12:00', course: 'ACC201', lecturer: 'Dr. Jessica Taylor', room: 'Accounting Lab' },
+    { day: 'Tuesday', time: '8:00-10:00', course: 'ECO301', lecturer: 'Dr. Christopher Moore', room: 'Economics Room' },
+    { day: 'Tuesday', time: '10:00-12:00', course: 'PSY201', lecturer: 'Prof. Karen Jackson', room: 'Psychology Lab' },
+    { day: 'Wednesday', time: '8:00-10:00', course: 'MCM301', lecturer: 'Dr. Daniel Martin', room: 'Media Studio' },
+    { day: 'Wednesday', time: '10:00-12:00', course: 'BNF201', lecturer: 'Dr. Nancy Lee', room: 'Finance Room' },
+    { day: 'Thursday', time: '8:00-10:00', course: 'CRS301', lecturer: 'Prof. Mark Thompson', room: 'Security Room' },
+    { day: 'Thursday', time: '10:00-12:00', course: 'INR201', lecturer: 'Dr. Betty White', room: 'Relations Hall' },
+    { day: 'Friday', time: '8:00-10:00', course: 'PSC301', lecturer: 'Dr. Donald Harris', room: 'Politics Room' },
+    { day: 'Friday', time: '10:00-12:00', course: 'PAD201', lecturer: 'Prof. Helen Sanchez', room: 'Admin Hall' }
+  ],
+  COLAW: [
+    { day: 'Monday', time: '8:00-10:00', course: 'PPL301', lecturer: 'Prof. Steven Clark', room: 'Moot Court 1' },
+    { day: 'Monday', time: '10:00-12:00', course: 'PIL201', lecturer: 'Dr. Sandra Ramirez', room: 'Law Library' },
+    { day: 'Tuesday', time: '8:00-10:00', course: 'PPL401', lecturer: 'Prof. Steven Clark', room: 'Moot Court 2' },
+    { day: 'Tuesday', time: '10:00-12:00', course: 'PIL301', lecturer: 'Dr. Sandra Ramirez', room: 'International Law Room' },
+    { day: 'Wednesday', time: '8:00-10:00', course: 'PPL201', lecturer: 'Dr. Paul Lewis', room: 'Property Law Room' },
+    { day: 'Wednesday', time: '10:00-12:00', course: 'PIL401', lecturer: 'Prof. Donna Robinson', room: 'Private Law Hall' },
+    { day: 'Thursday', time: '8:00-10:00', course: 'LAW101', lecturer: 'Dr. Andrew Walker', room: 'Introduction Hall' },
+    { day: 'Thursday', time: '10:00-12:00', course: 'LAW201', lecturer: 'Prof. Carol Perez', room: 'Constitutional Law' },
+    { day: 'Friday', time: '8:00-10:00', course: 'LAW301', lecturer: 'Dr. Joshua Hall', room: 'Criminal Law Room' },
+    { day: 'Friday', time: '10:00-12:00', course: 'LAW401', lecturer: 'Prof. Ruth Young', room: 'Commercial Law' }
+  ],
+  NURSING: [
+    { day: 'Monday', time: '8:00-10:00', course: 'MCH301', lecturer: 'Prof. Kenneth Allen', room: 'Maternity Ward' },
+    { day: 'Monday', time: '10:00-12:00', course: 'CPH201', lecturer: 'Dr. Sharon King', room: 'Community Health Lab' },
+    { day: 'Tuesday', time: '8:00-10:00', course: 'AHM301', lecturer: 'Dr. Kevin Wright', room: 'Medical Ward' },
+    { day: 'Tuesday', time: '10:00-12:00', course: 'MHP201', lecturer: 'Prof. Betty Scott', room: 'Psychiatric Unit' },
+    { day: 'Wednesday', time: '8:00-10:00', course: 'NME301', lecturer: 'Dr. Donald Green', room: 'Management Room' },
+    { day: 'Wednesday', time: '10:00-12:00', course: 'HPH201', lecturer: 'Prof. Helen Adams', room: 'Physiology Lab' },
+    { day: 'Thursday', time: '8:00-10:00', course: 'HAN301', lecturer: 'Dr. Steven Baker', room: 'Anatomy Lab' },
+    { day: 'Thursday', time: '10:00-12:00', course: 'NUR101', lecturer: 'Prof. Sandra Gonzalez', room: 'Nursing Skills Lab' },
+    { day: 'Friday', time: '8:00-10:00', course: 'NUR201', lecturer: 'Dr. Paul Nelson', room: 'Clinical Skills' },
+    { day: 'Friday', time: '10:00-12:00', course: 'NUR301', lecturer: 'Prof. Donna Carter', room: 'Advanced Nursing' }
+  ]
+};
+
+// Course syllabi for lecturers
+export const courseSyllabi = {
+  'CS401': [
+    { topic: 'Introduction to Advanced Programming', completed: true, scheduled: true },
+    { topic: 'Object-Oriented Design Patterns', completed: true, scheduled: true },
+    { topic: 'Data Structures and Algorithms', completed: true, scheduled: true },
+    { topic: 'Database Design and Implementation', completed: false, scheduled: true },
+    { topic: 'Web Development Frameworks', completed: false, scheduled: true },
+    { topic: 'Software Testing and Quality Assurance', completed: false, scheduled: false },
+    { topic: 'Project Management in Software Development', completed: false, scheduled: false },
+    { topic: 'Final Project Presentation', completed: false, scheduled: false }
+  ],
+  'CS402': [
+    { topic: 'Computer Networks Fundamentals', completed: true, scheduled: true },
+    { topic: 'Network Protocols and Standards', completed: true, scheduled: true },
+    { topic: 'Network Security Principles', completed: false, scheduled: true },
+    { topic: 'Wireless and Mobile Networks', completed: false, scheduled: true },
+    { topic: 'Network Performance Analysis', completed: false, scheduled: false },
+    { topic: 'Network Administration', completed: false, scheduled: false }
+  ],
+  'BIO201': [
+    { topic: 'Cell Biology and Molecular Structure', completed: true, scheduled: true },
+    { topic: 'Protein Structure and Function', completed: true, scheduled: true },
+    { topic: 'Enzyme Kinetics and Metabolism', completed: true, scheduled: true },
+    { topic: 'Genetic Engineering Techniques', completed: false, scheduled: true },
+    { topic: 'Biotechnology Applications', completed: false, scheduled: true },
+    { topic: 'Laboratory Techniques and Safety', completed: false, scheduled: false }
+  ],
+  'ARC301': [
+    { topic: 'Architectural Design Principles', completed: true, scheduled: true },
+    { topic: 'Building Materials and Construction', completed: true, scheduled: true },
+    { topic: 'Structural Systems in Architecture', completed: false, scheduled: true },
+    { topic: 'Environmental Design and Sustainability', completed: false, scheduled: true },
+    { topic: 'Urban Planning and Development', completed: false, scheduled: false },
+    { topic: 'Architectural History and Theory', completed: false, scheduled: false }
+  ]
+};
+
 // Helper function to get students by course
 export const getStudentsByCourse = (courseCode: string): Student[] => {
   return mockStudents.filter(student => 
     student.courses.some(course => course.courseCode === courseCode)
   );
+};
+
+// Get best performing student and lecturer for each faculty
+export const getFacultyTopPerformers = (facultyName: string) => {
+  const facultyStudents = mockStudents.filter(s => s.faculty === facultyName);
+  const facultyLecturers = mockLecturers.filter(l => l.faculty === facultyName);
+  
+  const topStudent = facultyStudents.reduce((prev, current) => 
+    prev.gpa > current.gpa ? prev : current
+  );
+  
+  const topLecturer = facultyLecturers.reduce((prev, current) => 
+    prev.rating > current.rating ? prev : current
+  );
+  
+  return { topStudent, topLecturer };
 };

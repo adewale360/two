@@ -12,7 +12,7 @@ const Reports: React.FC = () => {
   const [peopleFilter, setPeopleFilter] = useState('All');
   const [topicFilter, setTopicFilter] = useState('All');
 
-  // Enhanced metrics data with additional metrics and increased height
+  // Enhanced metrics data with additional metrics and increased height (30px more)
   const metricsData = [
     { title: 'Active Users', value: '27', total: '/80', percentage: 64, color: '#3b82f6' },
     { title: 'Questions Answered', value: '3,298', total: '', percentage: 86, color: '#10b981' },
@@ -46,31 +46,69 @@ const Reports: React.FC = () => {
     return baseData;
   };
 
-  // Performance topics data - filtered based on topicFilter
-  const getWeakestTopics = () => {
-    const allTopics = [
-      { name: 'Advanced Mathematics', icon: '📐', percentage: 74, color: 'bg-red-500' },
-      { name: 'Physics Fundamentals', icon: '⚛️', percentage: 52, color: 'bg-orange-500' },
-      { name: 'Computer Networks', icon: '🌐', percentage: 36, color: 'bg-red-600' },
-      { name: 'Engineering Mechanics', icon: '⚙️', percentage: 68, color: 'bg-red-400' },
-      { name: 'Biology Lab', icon: '🧬', percentage: 45, color: 'bg-orange-600' },
-    ];
+  // High and Low Performance Courses
+  const getHighPerformanceCourses = () => {
+    const coursePerformance = mockStudents.flatMap(student => 
+      student.courses.map(course => ({
+        name: course.courseCode,
+        department: student.department,
+        averageScore: course.score,
+        studentCount: 1
+      }))
+    ).reduce((acc, curr) => {
+      const existing = acc.find(item => item.name === curr.name);
+      if (existing) {
+        existing.averageScore = (existing.averageScore + curr.averageScore) / 2;
+        existing.studentCount += 1;
+      } else {
+        acc.push(curr);
+      }
+      return acc;
+    }, [] as Array<{ name: string; department: string; averageScore: number; studentCount: number }>);
 
-    if (topicFilter === 'All') return allTopics.slice(0, 3);
-    return allTopics.filter(topic => topic.name.toLowerCase().includes(topicFilter.toLowerCase())).slice(0, 3);
+    return coursePerformance
+      .filter(course => course.averageScore >= 80)
+      .sort((a, b) => b.averageScore - a.averageScore)
+      .slice(0, 3)
+      .map(course => ({
+        name: course.name,
+        icon: '📚',
+        percentage: Math.round(course.averageScore),
+        color: 'bg-green-500',
+        students: course.studentCount
+      }));
   };
 
-  const getStrongestTopics = () => {
-    const allTopics = [
-      { name: 'Programming Basics', icon: '💻', percentage: 95, color: 'bg-green-500' },
-      { name: 'Database Design', icon: '🗄️', percentage: 92, color: 'bg-green-400' },
-      { name: 'Web Development', icon: '🌍', percentage: 89, color: 'bg-green-600' },
-      { name: 'Architecture Design', icon: '🏗️', percentage: 88, color: 'bg-green-500' },
-      { name: 'Business Management', icon: '📊', percentage: 91, color: 'bg-green-400' },
-    ];
+  const getLowPerformanceCourses = () => {
+    const coursePerformance = mockStudents.flatMap(student => 
+      student.courses.map(course => ({
+        name: course.courseCode,
+        department: student.department,
+        averageScore: course.score,
+        studentCount: 1
+      }))
+    ).reduce((acc, curr) => {
+      const existing = acc.find(item => item.name === curr.name);
+      if (existing) {
+        existing.averageScore = (existing.averageScore + curr.averageScore) / 2;
+        existing.studentCount += 1;
+      } else {
+        acc.push(curr);
+      }
+      return acc;
+    }, [] as Array<{ name: string; department: string; averageScore: number; studentCount: number }>);
 
-    if (topicFilter === 'All') return allTopics.slice(0, 3);
-    return allTopics.filter(topic => topic.name.toLowerCase().includes(topicFilter.toLowerCase())).slice(0, 3);
+    return coursePerformance
+      .filter(course => course.averageScore < 70)
+      .sort((a, b) => a.averageScore - b.averageScore)
+      .slice(0, 3)
+      .map(course => ({
+        name: course.name,
+        icon: '📖',
+        percentage: Math.round(course.averageScore),
+        color: 'bg-red-500',
+        students: course.studentCount
+      }));
   };
 
   // Filtered leaderboard data
@@ -144,8 +182,8 @@ const Reports: React.FC = () => {
     trend: Math.random() > 0.5 ? 'up' : 'down'
   }));
 
-  const weakestTopics = getWeakestTopics();
-  const strongestTopics = getStrongestTopics();
+  const highPerformanceCourses = getHighPerformanceCourses();
+  const lowPerformanceCourses = getLowPerformanceCourses();
 
   return (
     <div className="compact-spacing bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -208,10 +246,10 @@ const Reports: React.FC = () => {
         </div>
       </div>
 
-      {/* Enhanced Metrics Cards with increased height */}
+      {/* Enhanced Metrics Cards with increased height (30px more) */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
         {metricsData.map((metric, index) => (
-          <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700" style={{ minHeight: '130px' }}>
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">{metric.title}</h3>
               <span className="text-xs text-gray-500 dark:text-gray-500">Month</span>
@@ -222,10 +260,10 @@ const Reports: React.FC = () => {
             </div>
             {/* Mini trend line with different colors and increased height */}
             <div className="flex items-center space-x-2">
-              <div className="flex-1 h-6 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
-                <svg className="w-full h-full" viewBox="0 0 100 30">
+              <div className="flex-1 h-8 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
+                <svg className="w-full h-full" viewBox="0 0 100 40">
                   <path
-                    d="M0,20 Q25,10 50,15 T100,8"
+                    d="M0,25 Q25,15 50,20 T100,12"
                     stroke={metric.color}
                     strokeWidth="2"
                     fill="none"
@@ -242,7 +280,7 @@ const Reports: React.FC = () => {
         ))}
       </div>
 
-      {/* Activity Chart with Topics beside it */}
+      {/* Activity Chart with High/Low Performance Courses beside it */}
       <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid mb-4">
         <CustomBarChart
           data={getActivityData()}
@@ -253,23 +291,26 @@ const Reports: React.FC = () => {
         />
 
         <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Weakest Topics</h3>
+          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Low Performance Courses</h3>
           <div className="tight-spacing">
-            {weakestTopics.map((topic, index) => (
+            {lowPerformanceCourses.map((course, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs">
-                  {topic.icon}
+                  {course.icon}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-900 dark:text-white">{topic.name}</span>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{topic.percentage}%</span>
+                    <span className="text-xs font-medium text-gray-900 dark:text-white">{course.name}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{course.percentage}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                    <div 
-                      className={`h-1 rounded-full ${topic.color}`}
-                      style={{ width: `${topic.percentage}%` }}
-                    ></div>
+                  <div className="flex items-center justify-between">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1 mr-2">
+                      <div 
+                        className={`h-1 rounded-full ${course.color}`}
+                        style={{ width: `${course.percentage}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{course.students} students</span>
                   </div>
                 </div>
               </div>
@@ -278,29 +319,64 @@ const Reports: React.FC = () => {
         </div>
 
         <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Strongest Topics</h3>
+          <h3 className="compact-header text-gray-900 dark:text-white mb-3">High Performance Courses</h3>
           <div className="tight-spacing">
-            {strongestTopics.map((topic, index) => (
+            {highPerformanceCourses.map((course, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs">
-                  {topic.icon}
+                  {course.icon}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-900 dark:text-white">{topic.name}</span>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{topic.percentage}%</span>
+                    <span className="text-xs font-medium text-gray-900 dark:text-white">{course.name}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{course.percentage}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                    <div 
-                      className={`h-1 rounded-full ${topic.color}`}
-                      style={{ width: `${topic.percentage}%` }}
-                    ></div>
+                  <div className="flex items-center justify-between">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1 mr-2">
+                      <div 
+                        className={`h-1 rounded-full ${course.color}`}
+                        style={{ width: `${course.percentage}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{course.students} students</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Additional Metrics and Results */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 compact-grid mb-4">
+        <StatCard
+          title="Pass Rate"
+          value="94.2%"
+          icon={TrendingUp}
+          change={{ value: "2.1%", type: "increase" }}
+          color="green"
+        />
+        <StatCard
+          title="Honor Roll Students"
+          value="156"
+          icon={Award}
+          change={{ value: "12", type: "increase" }}
+          color="yellow"
+        />
+        <StatCard
+          title="At Risk Students"
+          value="23"
+          icon={Users}
+          change={{ value: "5", type: "decrease" }}
+          color="red"
+        />
+        <StatCard
+          title="Course Offerings"
+          value="89"
+          icon={BookOpen}
+          change={{ value: "3", type: "increase" }}
+          color="blue"
+        />
       </div>
 
       {/* Leaderboards */}

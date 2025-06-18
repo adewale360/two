@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Users, BookOpen, GraduationCap, TrendingUp, MapPin, Award, School, Mail, Phone } from 'lucide-react';
+import { Users, BookOpen, GraduationCap, TrendingUp, MapPin, Award, School, Mail, Phone, Trophy, Star } from 'lucide-react';
 import Card from '../components/Common/Card';
 import StatCard from '../components/Common/StatCard';
 import CustomBarChart from '../components/Charts/BarChart';
 import CustomLineChart from '../components/Charts/LineChart';
 import DonutChart from '../components/Charts/DonutChart';
-import { mockStudents, mockLecturers, mockFaculties, admissionsByYearData } from '../data/mockData';
+import { mockStudents, mockLecturers, mockFaculties, admissionsByYearData, getFacultyTopPerformers, facultySchedules } from '../data/mockData';
 
 const FacultyPage: React.FC = () => {
   const [selectedFaculty, setSelectedFaculty] = useState('COPAS');
@@ -13,6 +13,7 @@ const FacultyPage: React.FC = () => {
   const currentFaculty = mockFaculties.find(f => f.name === selectedFaculty) || mockFaculties[0];
   const facultyStudents = mockStudents.filter(s => s.faculty === selectedFaculty);
   const facultyLecturers = mockLecturers.filter(l => l.faculty === selectedFaculty);
+  const { topStudent, topLecturer } = getFacultyTopPerformers(selectedFaculty);
 
   const departmentData = currentFaculty.departments.map(dept => ({
     name: dept.length > 15 ? dept.substring(0, 15) + '...' : dept,
@@ -24,6 +25,16 @@ const FacultyPage: React.FC = () => {
     { name: 'Level 200', value: facultyStudents.filter(s => s.level === '200').length, fill: '#10B981' },
     { name: 'Level 300', value: facultyStudents.filter(s => s.level === '300').length, fill: '#F59E0B' },
     { name: 'Level 400', value: facultyStudents.filter(s => s.level === '400').length, fill: '#EF4444' }
+  ];
+
+  // Activity data for the selected faculty
+  const activityData = [
+    { month: 'JAN', value: Math.floor(Math.random() * 100) + 50 },
+    { month: 'FEB', value: Math.floor(Math.random() * 100) + 60 },
+    { month: 'MAR', value: Math.floor(Math.random() * 100) + 70 },
+    { month: 'APR', value: Math.floor(Math.random() * 100) + 80 },
+    { month: 'MAY', value: Math.floor(Math.random() * 100) + 90 },
+    { month: 'JUN', value: Math.floor(Math.random() * 100) + 85 },
   ];
 
   // Prepare admissions data for the selected faculty
@@ -50,6 +61,8 @@ const FacultyPage: React.FC = () => {
   const averageRating = facultyLecturers.length > 0
     ? (facultyLecturers.reduce((sum, l) => sum + l.rating, 0) / facultyLecturers.length).toFixed(1)
     : '0.0';
+
+  const currentSchedule = facultySchedules[selectedFaculty] || [];
 
   return (
     <div className="compact-spacing">
@@ -121,6 +134,53 @@ const FacultyPage: React.FC = () => {
         </div>
       </Card>
 
+      {/* Top Performers for Faculty */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid">
+        <Card title="Top Student in Faculty">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <GraduationCap className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="compact-subheader text-gray-900 dark:text-white">
+                {topStudent.name}
+              </h4>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                {topStudent.department} • Level {topStudent.level}
+              </p>
+              <div className="flex items-center mt-1">
+                <Trophy className="h-3 w-3 text-yellow-500 mr-1" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white">
+                  GPA: {topStudent.gpa}/5.0
+                </span>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card title="Top Lecturer in Faculty">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-full flex items-center justify-center">
+              <Users className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="compact-subheader text-gray-900 dark:text-white">
+                {topLecturer.name}
+              </h4>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                {topLecturer.department}
+              </p>
+              <div className="flex items-center mt-1">
+                <Star className="h-3 w-3 text-yellow-500 mr-1" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white">
+                  Rating: {topLecturer.rating}/5.0
+                </span>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid">
         <CustomBarChart 
@@ -131,10 +191,10 @@ const FacultyPage: React.FC = () => {
           color="#3b82f6"
         />
         <CustomLineChart 
-          data={admissionsData}
-          dataKey="admissions"
-          xAxisKey="year"
-          title="Admissions by Year"
+          data={activityData}
+          dataKey="value"
+          xAxisKey="month"
+          title="Faculty Activity"
           color="#10b981"
         />
         <DonutChart 
@@ -142,6 +202,34 @@ const FacultyPage: React.FC = () => {
           title="Student Level Distribution"
         />
       </div>
+
+      {/* Course Schedule */}
+      <Card title={`${selectedFaculty} Course Schedule`}>
+        <div className="overflow-x-auto">
+          <table className="w-full compact-table">
+            <thead>
+              <tr className="border-b border-gray-200 dark:border-gray-700">
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Day</th>
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Time</th>
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Course</th>
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Lecturer</th>
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Room</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentSchedule.map((schedule, index) => (
+                <tr key={index} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td className="py-2 px-3 text-sm font-medium text-gray-900 dark:text-white">{schedule.day}</td>
+                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{schedule.time}</td>
+                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{schedule.course}</td>
+                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{schedule.lecturer}</td>
+                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{schedule.room}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
       {/* Departments Grid */}
       <Card title="Departments">

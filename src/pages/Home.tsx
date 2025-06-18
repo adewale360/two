@@ -53,14 +53,14 @@ const Home: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 compact-grid mb-4">
         <StatCard
           title="Total Students"
-          value="1,250"
+          value={mockStudents.length.toLocaleString()}
           icon={GraduationCap}
           change={{ value: "12%", type: "increase" }}
           color="blue"
         />
         <StatCard
           title="Active Lecturers"
-          value="85"
+          value={mockLecturers.length.toString()}
           icon={Users}
           change={{ value: "5%", type: "increase" }}
           color="green"

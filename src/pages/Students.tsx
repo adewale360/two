@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, Download, GraduationCap, TrendingUp } from 'lucide-react';
+import { Search, Filter, Download, GraduationCap, TrendingUp, CheckCircle, Clock, BookOpen } from 'lucide-react';
 import Card from '../components/Common/Card';
 import CustomBarChart from '../components/Charts/BarChart';
 import CustomLineChart from '../components/Charts/LineChart';
 import DonutChart from '../components/Charts/DonutChart';
-import { mockStudents, mockPerformanceData, semesterProgressData, scoreDistributionData } from '../data/mockData';
+import { mockStudents, mockPerformanceData, courseSyllabi } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
 
 const Students: React.FC = () => {
@@ -22,11 +22,8 @@ const Students: React.FC = () => {
 
   // Get available semesters based on selected level - Fixed to show 1st and 2nd
   const availableSemesters = useMemo(() => {
-    if (!filters.level) return ['1', '2'];
-    
-    // Always return 1st and 2nd semester regardless of level
-    return ['1', '2'];
-  }, [filters.level]);
+    return ['1', '2']; // Always show 1st and 2nd semester
+  }, []);
 
   // Reset semester when level changes
   const handleLevelChange = (level: string) => {
@@ -58,6 +55,22 @@ const Students: React.FC = () => {
     return matchesSearch && matchesDepartment && matchesLevel && matchesSemester;
   });
 
+  // Enhanced zigzag performance data for realistic academic performance
+  const enhancedProgressData = [
+    { semester: 'First Semester 2023', gpa: 3.2 },
+    { semester: 'Second Semester 2023', gpa: 2.8 },
+    { semester: 'First Semester 2024', gpa: 3.6 },
+    { semester: 'Second Semester 2024', gpa: 3.1 },
+    { semester: 'Current', gpa: currentStudent.gpa },
+  ];
+
+  // Get coursemates in same department and level
+  const coursemates = mockStudents.filter(s => 
+    s.department === currentStudent.department && 
+    s.level === currentStudent.level &&
+    s.id !== currentStudent.id
+  ).sort((a, b) => b.gpa - a.gpa);
+
   return (
     <div className="compact-spacing">
       {/* Header */}
@@ -78,9 +91,9 @@ const Students: React.FC = () => {
 
       {!isStudent && (
         <>
-          {/* Filters - Auto-fit padding */}
+          {/* Filters - Reduced padding */}
           <Card>
-            <div className="flex flex-wrap items-center gap-3 py-2">
+            <div className="flex flex-wrap items-center gap-3 py-1">
               <div className="relative min-w-0 flex-1">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                 <input
@@ -103,15 +116,29 @@ const Students: React.FC = () => {
                 <option value="Software Engineering">Software Engineering</option>
                 <option value="Cyber Security">Cyber Security</option>
                 <option value="Information Systems">Information Systems</option>
+                <option value="Environmental Management and Toxicology">Environmental Management</option>
+                <option value="Industrial Chemistry">Industrial Chemistry</option>
+                <option value="Microbiology and Industrial Biotechnology">Microbiology</option>
                 <option value="Business Administration">Business Administration</option>
                 <option value="Accounting">Accounting</option>
                 <option value="Economics">Economics</option>
                 <option value="Mass Communication">Mass Communication</option>
                 <option value="Psychology">Psychology</option>
+                <option value="Banking and Finance">Banking and Finance</option>
+                <option value="Criminology and Security Studies">Criminology</option>
+                <option value="International Relations">International Relations</option>
+                <option value="Peace Studies and Conflict Resolution">Peace Studies</option>
+                <option value="Political Science">Political Science</option>
+                <option value="Public Administration">Public Administration</option>
+                <option value="Taxation">Taxation</option>
                 <option value="Estate Management">Estate Management</option>
                 <option value="Public and Property Law">Public and Property Law</option>
                 <option value="Private and International Law">Private and International Law</option>
-                <option value="Nursing Science">Nursing Science</option>
+                <option value="Maternal and Child Health Nursing">Maternal Health Nursing</option>
+                <option value="Community and Public Health Nursing">Community Health Nursing</option>
+                <option value="Adult Health/Medical and Surgical Nursing">Medical Nursing</option>
+                <option value="Mental Health and Psychiatric Nursing">Psychiatric Nursing</option>
+                <option value="Nursing Management and Education">Nursing Management</option>
                 <option value="Human Physiology">Human Physiology</option>
                 <option value="Human Anatomy">Human Anatomy</option>
               </select>
@@ -130,7 +157,6 @@ const Students: React.FC = () => {
                 value={filters.semester}
                 onChange={(e) => setFilters({ ...filters, semester: e.target.value })}
                 className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
-                disabled={!filters.level}
               >
                 <option value="">All Semesters</option>
                 <option value="1">1st Semester</option>
@@ -214,10 +240,49 @@ const Students: React.FC = () => {
         </>
       )}
 
+      {/* Course Syllabus Checklist for Students */}
+      {isStudent && (
+        <Card title="Course Progress Tracker">
+          <div className="grid grid-cols-1 md:grid-cols-2 compact-grid">
+            {currentStudent.courses.slice(0, 4).map((course, index) => {
+              const syllabus = courseSyllabi[course.courseCode] || [];
+              return (
+                <div key={index} className="bg-gray-50 dark:bg-gray-700 minimal-padding rounded">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{course.courseCode}</h4>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                      {syllabus.filter(s => s.completed).length}/{syllabus.length} topics
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    {syllabus.slice(0, 3).map((topic, topicIndex) => (
+                      <div key={topicIndex} className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1">
+                          <CheckCircle className={`h-3 w-3 ${topic.completed ? 'text-green-500' : 'text-gray-300'}`} />
+                          <Clock className={`h-3 w-3 ${topic.scheduled ? 'text-blue-500' : 'text-gray-300'}`} />
+                        </div>
+                        <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                          {topic.topic}
+                        </span>
+                      </div>
+                    ))}
+                    {syllabus.length > 3 && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        +{syllabus.length - 3} more topics
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
       {/* Performance Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid">
         <CustomBarChart
-          data={currentStudent.courses.map(course => ({ 
+          data={currentStudent.courses.slice(0, 6).map(course => ({ 
             course: course.courseCode, 
             score: course.score 
           }))}
@@ -228,7 +293,7 @@ const Students: React.FC = () => {
         />
         
         <CustomLineChart
-          data={semesterProgressData}
+          data={enhancedProgressData}
           dataKey="gpa"
           xAxisKey="semester"
           title="GPA Progress Over Time"
@@ -236,8 +301,14 @@ const Students: React.FC = () => {
         />
         
         <DonutChart
-          data={scoreDistributionData}
-          title="Score Distribution"
+          data={[
+            { name: 'A (90-100)', value: currentStudent.courses.filter(c => c.score >= 90).length, fill: '#10b981' },
+            { name: 'B (80-89)', value: currentStudent.courses.filter(c => c.score >= 80 && c.score < 90).length, fill: '#3b82f6' },
+            { name: 'C (70-79)', value: currentStudent.courses.filter(c => c.score >= 70 && c.score < 80).length, fill: '#f59e0b' },
+            { name: 'D (60-69)', value: currentStudent.courses.filter(c => c.score >= 60 && c.score < 70).length, fill: '#ef4444' },
+            { name: 'F (0-59)', value: currentStudent.courses.filter(c => c.score < 60).length, fill: '#6b7280' },
+          ]}
+          title="Grade Distribution"
         />
       </div>
 
@@ -322,6 +393,70 @@ const Students: React.FC = () => {
           </table>
         </div>
       </Card>
+
+      {/* Coursemates Performance Comparison */}
+      {isStudent && (
+        <Card title="Department Leaderboard - Your Level">
+          <div className="overflow-x-auto">
+            <table className="w-full compact-table">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Rank</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Student</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">GPA</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Show current student's position */}
+                {(() => {
+                  const allStudentsInLevel = mockStudents.filter(s => 
+                    s.department === currentStudent.department && s.level === currentStudent.level
+                  ).sort((a, b) => b.gpa - a.gpa);
+                  const currentRank = allStudentsInLevel.findIndex(s => s.id === currentStudent.id) + 1;
+                  
+                  return (
+                    <tr className="border-b border-gray-100 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
+                      <td className="py-2 px-3 text-sm font-bold text-blue-600">{currentRank}</td>
+                      <td className="py-2 px-3 text-sm font-bold text-blue-600">{currentStudent.name} (You)</td>
+                      <td className="py-2 px-3 text-sm font-bold text-blue-600">{currentStudent.gpa.toFixed(2)}</td>
+                      <td className="py-2 px-3">
+                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+                          Current Position
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })()}
+                {coursemates.slice(0, 10).map((student, index) => {
+                  const rank = mockStudents.filter(s => 
+                    s.department === currentStudent.department && 
+                    s.level === currentStudent.level &&
+                    s.gpa > student.gpa
+                  ).length + 1;
+                  
+                  return (
+                    <tr key={student.id} className="border-b border-gray-100 dark:border-gray-700">
+                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{rank}</td>
+                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.name}</td>
+                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.gpa.toFixed(2)}</td>
+                      <td className="py-2 px-3">
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          student.gpa >= 4.0 ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                          student.gpa >= 3.0 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
+                          'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
+                        }`}>
+                          {student.gpa >= 4.0 ? 'Excellent' : student.gpa >= 3.0 ? 'Good' : 'Fair'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
     </div>
   );
 };
