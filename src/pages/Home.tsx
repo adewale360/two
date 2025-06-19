@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Calendar, TrendingUp, Award, Users, BookOpen, GraduationCap, Plus, X, School, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Calendar, TrendingUp, Award, Users, BookOpen, GraduationCap, Plus, X, School, ChevronRight, ArrowLeft, Target, Clock, CheckCircle, AlertTriangle, Star, Trophy } from 'lucide-react';
 import StatCard from '../components/Common/StatCard';
 import Card from '../components/Common/Card';
-import { mockNews, mockStudents, mockLecturers, mockFaculties } from '../data/mockData';
+import CustomBarChart from '../components/Charts/BarChart';
+import CustomLineChart from '../components/Charts/LineChart';
+import { mockNews, mockStudents, mockLecturers, mockFaculties, getDashboardMetrics } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
 
 const Home: React.FC = () => {
@@ -23,8 +25,6 @@ const Home: React.FC = () => {
     prev.rating > current.rating ? prev : current
   );
 
-  const featuredNews = mockNews.filter(news => news.featured);
-
   const handleNewsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('News submitted:', newsForm);
@@ -33,78 +33,312 @@ const Home: React.FC = () => {
   };
 
   const isAdmin = user?.role === 'admin';
+  const isStudent = user?.role === 'student';
+  const isLecturer = user?.role === 'lecturer';
 
   const missionStatement = "To provide world-class education that empowers students with knowledge, skills, and values necessary for leadership and service in a global society.";
   const visionStatement = "To be a leading university recognized for academic excellence, innovative research, and transformative impact on society.";
+
+  // Get role-specific metrics
+  const metrics = getDashboardMetrics(user?.role || 'admin', user?.id);
+
+  // Role-specific performance data
+  const getPerformanceData = () => {
+    if (isStudent) {
+      const student = mockStudents.find(s => s.email === user?.email) || mockStudents[0];
+      return [
+        { month: 'Sep', value: 3.2 },
+        { month: 'Oct', value: 2.8 },
+        { month: 'Nov', value: 3.6 },
+        { month: 'Dec', value: 3.1 },
+        { month: 'Jan', value: student.gpa },
+      ];
+    } else if (isLecturer) {
+      return [
+        { month: 'Sep', value: 4.2 },
+        { month: 'Oct', value: 4.5 },
+        { month: 'Nov', value: 4.3 },
+        { month: 'Dec', value: 4.7 },
+        { month: 'Jan', value: 4.6 },
+      ];
+    } else {
+      return [
+        { month: 'Sep', value: 3.4 },
+        { month: 'Oct', value: 3.6 },
+        { month: 'Nov', value: 3.5 },
+        { month: 'Dec', value: 3.8 },
+        { month: 'Jan', value: 3.7 },
+      ];
+    }
+  };
+
+  // Role-specific motivational content
+  const getMotivationalContent = () => {
+    if (isStudent) {
+      const student = mockStudents.find(s => s.email === user?.email) || mockStudents[0];
+      const rank = mockStudents.filter(s => s.department === student.department && s.level === student.level && s.gpa > student.gpa).length + 1;
+      return {
+        title: "Your Academic Journey",
+        message: `You're ranked #${rank} in your department! Keep pushing towards excellence.`,
+        progress: Math.round((student.gpa / 5.0) * 100),
+        nextGoal: student.gpa < 4.0 ? "Reach 4.0 GPA" : "Maintain Excellence"
+      };
+    } else if (isLecturer) {
+      const lecturer = mockLecturers.find(l => l.email === user?.email) || mockLecturers[0];
+      return {
+        title: "Teaching Impact",
+        message: `Your rating of ${lecturer.rating}/5.0 shows your dedication to student success!`,
+        progress: Math.round((lecturer.rating / 5.0) * 100),
+        nextGoal: "Inspire More Students"
+      };
+    } else {
+      return {
+        title: "Institutional Excellence",
+        message: "Leading the university towards greater achievements and academic success.",
+        progress: 85,
+        nextGoal: "Enhance Overall Performance"
+      };
+    }
+  };
+
+  const motivationalContent = getMotivationalContent();
 
   return (
     <div className="compact-spacing">
       {/* Header */}
       <div className="mb-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          University Dashboard
+          {isStudent ? 'My Academic Dashboard' : isLecturer ? 'Teaching Dashboard' : 'University Dashboard'}
         </h1>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          Welcome to your academic performance tracking system
+          {isStudent ? 'Track your academic progress and achievements' : 
+           isLecturer ? 'Monitor your teaching impact and student performance' :
+           'Welcome to your academic performance tracking system'}
         </p>
       </div>
 
-      {/* Stats Grid */}
+      {/* Motivational Card */}
+      <div className="motivation-card mb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <h3 className="text-lg font-bold mb-2">{motivationalContent.title}</h3>
+            <p className="text-sm opacity-90 mb-3">{motivationalContent.message}</p>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-16 h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-white rounded-full transition-all duration-500"
+                    style={{ width: `${motivationalContent.progress}%` }}
+                  ></div>
+                </div>
+                <span className="text-sm font-medium">{motivationalContent.progress}%</span>
+              </div>
+              <div className="text-sm">
+                <Target className="h-4 w-4 inline mr-1" />
+                {motivationalContent.nextGoal}
+              </div>
+            </div>
+          </div>
+          <div className="text-right">
+            <Trophy className="h-12 w-12 opacity-80" />
+          </div>
+        </div>
+      </div>
+
+      {/* Role-Specific Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 compact-grid mb-4">
-        <StatCard
-          title="Total Students"
-          value={mockStudents.length.toLocaleString()}
-          icon={GraduationCap}
-          change={{ value: "12%", type: "increase" }}
-          color="blue"
-        />
-        <StatCard
-          title="Active Lecturers"
-          value={mockLecturers.length.toString()}
-          icon={Users}
-          change={{ value: "5%", type: "increase" }}
-          color="green"
-        />
-        <StatCard
-          title="Courses Offered"
-          value="156"
-          icon={BookOpen}
-          change={{ value: "8%", type: "increase" }}
-          color="purple"
-        />
-        <StatCard
-          title="Average GPA"
-          value="3.75"
-          icon={TrendingUp}
-          change={{ value: "0.2", type: "increase" }}
-          color="yellow"
-        />
+        {isStudent ? (
+          <>
+            <StatCard
+              title="My GPA"
+              value={metrics.myGPA?.toFixed(2) || '0.00'}
+              icon={TrendingUp}
+              change={{ value: "0.2", type: "increase" }}
+              color="blue"
+            />
+            <StatCard
+              title="My Courses"
+              value={metrics.myCourses?.toString() || '0'}
+              icon={BookOpen}
+              color="green"
+            />
+            <StatCard
+              title="Department Rank"
+              value={`#${metrics.myRank || 'N/A'}`}
+              icon={Award}
+              change={{ value: "2", type: "increase" }}
+              color="yellow"
+            />
+            <StatCard
+              title="Attendance"
+              value="94%"
+              icon={CheckCircle}
+              change={{ value: "2%", type: "increase" }}
+              color="purple"
+            />
+          </>
+        ) : isLecturer ? (
+          <>
+            <StatCard
+              title="My Students"
+              value={metrics.myStudents?.toString() || '0'}
+              icon={Users}
+              change={{ value: "5", type: "increase" }}
+              color="blue"
+            />
+            <StatCard
+              title="My Rating"
+              value={`${metrics.myRating?.toFixed(1) || '0.0'}/5.0`}
+              icon={Star}
+              change={{ value: "0.2", type: "increase" }}
+              color="yellow"
+            />
+            <StatCard
+              title="Courses Teaching"
+              value={metrics.myCourses?.toString() || '0'}
+              icon={BookOpen}
+              color="green"
+            />
+            <StatCard
+              title="Class Average"
+              value="78%"
+              icon={TrendingUp}
+              change={{ value: "3%", type: "increase" }}
+              color="purple"
+            />
+          </>
+        ) : (
+          <>
+            <StatCard
+              title="Total Students"
+              value={mockStudents.length.toLocaleString()}
+              icon={GraduationCap}
+              change={{ value: "12%", type: "increase" }}
+              color="blue"
+            />
+            <StatCard
+              title="Active Lecturers"
+              value={mockLecturers.length.toString()}
+              icon={Users}
+              change={{ value: "5%", type: "increase" }}
+              color="green"
+            />
+            <StatCard
+              title="Average GPA"
+              value={metrics.averageGPA?.toFixed(2) || '0.00'}
+              icon={TrendingUp}
+              change={{ value: "0.15", type: "increase" }}
+              color="yellow"
+            />
+            <StatCard
+              title="At Risk Students"
+              value={metrics.failingStudents?.toString() || '0'}
+              icon={AlertTriangle}
+              change={{ value: "3", type: "decrease" }}
+              color="red"
+            />
+          </>
+        )}
+      </div>
+
+      {/* Performance Chart and Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid mb-4">
+        <div className="lg:col-span-2">
+          <CustomLineChart
+            data={getPerformanceData()}
+            dataKey="value"
+            xAxisKey="month"
+            title={isStudent ? "My GPA Trend" : isLecturer ? "My Rating Trend" : "University Performance Trend"}
+            color="#10b981"
+          />
+        </div>
+
+        <div>
+          {isStudent ? (
+            <Card title="My Progress">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Credit Hours</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">45/120</span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '37.5%' }}></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Assignments Due</span>
+                  <span className="font-semibold text-red-600">3</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Next Exam</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">5 days</span>
+                </div>
+              </div>
+            </Card>
+          ) : isLecturer ? (
+            <Card title="Teaching Insights">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Class Average</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">78%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Attendance Rate</span>
+                  <span className="font-semibold text-green-600">92%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Pending Grades</span>
+                  <span className="font-semibold text-yellow-600">12</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">At-Risk Students</span>
+                  <span className="font-semibold text-red-600">3</span>
+                </div>
+              </div>
+            </Card>
+          ) : (
+            <Card title="Quick Actions">
+              <div className="space-y-3">
+                <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
+                  Generate Reports
+                </button>
+                <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
+                  Review Performance
+                </button>
+                <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
+                  Manage Users
+                </button>
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
 
       {/* Faculties Overview */}
-      <div className="mb-4">
-        <Card title="Faculties Overview">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 compact-grid">
-            {mockFaculties.map((faculty) => (
-              <div key={faculty.id} className="bg-gray-50 dark:bg-gray-700 minimal-padding rounded-lg">
-                <div className="flex items-center mb-2">
-                  <School className="h-4 w-4 text-primary-600 mr-2" />
-                  <h4 className="compact-subheader text-gray-900 dark:text-white">
-                    {faculty.name}
-                  </h4>
+      {!isStudent && (
+        <div className="mb-4">
+          <Card title="Faculties Overview">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 compact-grid">
+              {mockFaculties.map((faculty) => (
+                <div key={faculty.id} className="bg-gray-50 dark:bg-gray-700 minimal-padding rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <School className="h-4 w-4 text-primary-600 mr-2" />
+                    <h4 className="compact-subheader text-gray-900 dark:text-white">
+                      {faculty.name}
+                    </h4>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                    {faculty.fullName}
+                  </p>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <p><strong>Dean:</strong> {faculty.dean.name}</p>
+                    <p><strong>Departments:</strong> {faculty.departments.length}</p>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                  {faculty.fullName}
-                </p>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  <p><strong>Dean:</strong> {faculty.dean.name}</p>
-                  <p><strong>Departments:</strong> {faculty.departments.length}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Top Performers */}
       <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid mb-4">
@@ -169,7 +403,7 @@ const Home: React.FC = () => {
             )}
           >
             <div className="tight-spacing max-h-96 overflow-y-auto">
-              {mockNews.map((news) => (
+              {mockNews.slice(0, 10).map((news) => (
                 <div 
                   key={news.id} 
                   className="border-l-2 border-primary-500 pl-3 py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-r transition-colors"

@@ -98,6 +98,35 @@
   max-width: 400px;
 }
 
+/* Dark mode font fixes - ensure all text is white in dark mode */
+.dark {
+  color-scheme: dark;
+}
+
+.dark * {
+  border-color: rgb(55, 65, 81);
+}
+
+.dark .text-gray-900 {
+  @apply text-white;
+}
+
+.dark .text-gray-800 {
+  @apply text-gray-100;
+}
+
+.dark .text-gray-700 {
+  @apply text-gray-200;
+}
+
+.dark .text-gray-600 {
+  @apply text-gray-300;
+}
+
+.dark .text-black {
+  @apply text-white;
+}
+
 /* Responsive grid improvements */
 @media (max-width: 768px) {
   .compact-grid {
@@ -157,4 +186,57 @@
 
 .dark .modal-content {
   background: rgb(31, 41, 55);
+}
+
+/* Role-based dashboard enhancements */
+.motivation-card {
+  @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg shadow-lg;
+}
+
+.achievement-badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dasharray 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Performance indicators */
+.performance-excellent {
+  @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
+}
+
+.performance-good {
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400;
+}
+
+.performance-average {
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400;
+}
+
+.performance-poor {
+  @apply bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400;
+}
+
+/* Attendance indicators */
+.attendance-excellent {
+  @apply text-green-600 dark:text-green-400;
+}
+
+.attendance-good {
+  @apply text-blue-600 dark:text-blue-400;
+}
+
+.attendance-warning {
+  @apply text-yellow-600 dark:text-yellow-400;
+}
+
+.attendance-critical {
+  @apply text-red-600 dark:text-red-400;
 }
