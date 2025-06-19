@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Filter, Download, GraduationCap, TrendingUp, CheckCircle, Clock, BookOpen, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import Card from '../components/Common/Card';
+import Avatar from '../components/Common/Avatar';
 import CustomBarChart from '../components/Charts/BarChart';
 import CustomLineChart from '../components/Charts/LineChart';
 import DonutChart from '../components/Charts/DonutChart';
@@ -78,10 +79,10 @@ const Students: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text">
             {isStudent ? 'My Performance' : 'Student Performance'}
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-dark-muted">
             {isStudent ? 'Track your academic progress' : 'Monitor and analyze student performance'}
           </p>
         </div>
@@ -112,35 +113,35 @@ const Students: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 compact-grid">
             <div className="text-center minimal-padding bg-blue-50 dark:bg-blue-900/20 rounded">
               <p className="text-lg font-bold text-blue-600">{academicCalendar.currentSemester}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Current Semester</p>
+              <p className="text-xs text-gray-600 dark:text-dark-muted">Current Semester</p>
             </div>
             <div className="text-center minimal-padding bg-green-50 dark:bg-green-900/20 rounded">
               <p className="text-lg font-bold text-green-600">{academicCalendar.currentSession}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Academic Session</p>
+              <p className="text-xs text-gray-600 dark:text-dark-muted">Academic Session</p>
             </div>
             <div className="text-center minimal-padding bg-yellow-50 dark:bg-yellow-900/20 rounded">
               <p className="text-lg font-bold text-yellow-600">{mockStudents.length}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Total Students</p>
+              <p className="text-xs text-gray-600 dark:text-dark-muted">Total Students</p>
             </div>
             <div className="text-center minimal-padding bg-purple-50 dark:bg-purple-900/20 rounded">
               <p className="text-lg font-bold text-purple-600">
                 {academicCalendar.events.filter(e => new Date(e.date) > new Date()).length}
               </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Upcoming Events</p>
+              <p className="text-xs text-gray-600 dark:text-dark-muted">Upcoming Events</p>
             </div>
           </div>
         )}
 
         {activeTab === 'calendar' && (
           <div className="space-y-3">
-            <h4 className="compact-subheader text-gray-900 dark:text-white">Upcoming Events</h4>
+            <h4 className="compact-subheader text-gray-900 dark:text-dark-text">Upcoming Events</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 compact-grid">
               {academicCalendar.events.filter(e => new Date(e.date) > new Date()).slice(0, 6).map((event, index) => (
-                <div key={index} className="flex items-center space-x-3 minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                <div key={index} className="flex items-center space-x-3 minimal-padding bg-gray-50 dark:bg-dark-card rounded">
                   <Calendar className="h-4 w-4 text-primary-600" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{event.title}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                    <p className="text-sm font-medium text-gray-900 dark:text-dark-text">{event.title}</p>
+                    <p className="text-xs text-gray-600 dark:text-dark-muted">
                       {new Date(event.date).toLocaleDateString()}
                     </p>
                   </div>
@@ -163,13 +164,13 @@ const Students: React.FC = () => {
                   placeholder="Search students..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-300 dark:border-dark-border rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-dark-surface dark:text-dark-text"
                 />
               </div>
-              <select
+              <select 
                 value={filters.department}
                 onChange={(e) => setFilters({ ...filters, department: e.target.value })}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-dark-border rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-dark-surface dark:text-dark-text min-w-0"
               >
                 <option value="">All Departments</option>
                 <option value="Computer Science">Computer Science</option>
@@ -207,7 +208,7 @@ const Students: React.FC = () => {
               <select
                 value={filters.level}
                 onChange={(e) => handleLevelChange(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-dark-border rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-dark-surface dark:text-dark-text min-w-0"
               >
                 <option value="">All Levels</option>
                 <option value="100">100 Level</option>
@@ -218,13 +219,13 @@ const Students: React.FC = () => {
               <select
                 value={filters.semester}
                 onChange={(e) => setFilters({ ...filters, semester: e.target.value })}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white min-w-0"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-dark-border rounded focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-dark-surface dark:text-dark-text min-w-0"
               >
                 <option value="">All Semesters</option>
                 <option value="1">1st Semester</option>
                 <option value="2">2nd Semester</option>
               </select>
-              <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+              <div className="text-sm text-gray-600 dark:text-dark-muted whitespace-nowrap">
                 Showing {filteredStudents.length} of {mockStudents.length} students
               </div>
             </div>
@@ -235,33 +236,31 @@ const Students: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full compact-table">
                 <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Student</th>
-                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">ID</th>
-                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Department</th>
-                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Level</th>
-                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">GPA</th>
-                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Status</th>
-                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Action</th>
+                  <tr className="border-b border-gray-200 dark:border-dark-border">
+                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Student</th>
+                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">ID</th>
+                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Department</th>
+                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Level</th>
+                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">GPA</th>
+                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Status</th>
+                    <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredStudents.map((student) => (
-                    <tr key={student.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <tr key={student.id} className="border-b border-gray-100 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-card">
                       <td className="py-2 px-3">
                         <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
-                            <GraduationCap className="h-3 w-3 text-primary-600" />
-                          </div>
+                          <Avatar name={student.name} type="student" size="sm" />
                           <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">{student.name}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{student.email}</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-dark-text">{student.name}</p>
+                            <p className="text-xs text-gray-500 dark:text-dark-muted">{student.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.studentId}</td>
-                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.department}</td>
-                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.level}</td>
+                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-dark-text">{student.studentId}</td>
+                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-dark-text">{student.department}</td>
+                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-dark-text">{student.level}</td>
                       <td className="py-2 px-3">
                         <span className={`text-sm font-semibold ${
                           student.gpa >= 4.0 ? 'text-green-600' : 
@@ -309,10 +308,10 @@ const Students: React.FC = () => {
             {currentStudent.courses.slice(0, 4).map((course, index) => {
               const syllabus = courseSyllabi[course.courseCode] || [];
               return (
-                <div key={index} className="bg-gray-50 dark:bg-gray-700 minimal-padding rounded">
+                <div key={index} className="bg-gray-50 dark:bg-dark-card minimal-padding rounded">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{course.courseCode}</h4>
-                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-dark-text">{course.courseCode}</h4>
+                    <span className="text-xs text-gray-600 dark:text-dark-muted">
                       {syllabus.filter(s => s.completed).length}/{syllabus.length} topics
                     </span>
                   </div>
@@ -323,13 +322,13 @@ const Students: React.FC = () => {
                           <CheckCircle className={`h-3 w-3 ${topic.completed ? 'text-green-500' : 'text-gray-300'}`} />
                           <Clock className={`h-3 w-3 ${topic.scheduled ? 'text-blue-500' : 'text-gray-300'}`} />
                         </div>
-                        <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                        <span className="text-xs text-gray-600 dark:text-dark-muted truncate">
                           {topic.topic}
                         </span>
                       </div>
                     ))}
                     {syllabus.length > 3 && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-gray-500 dark:text-dark-muted">
                         +{syllabus.length - 3} more topics
                       </p>
                     )}
@@ -346,16 +345,16 @@ const Students: React.FC = () => {
         <Card title="Previous Semester Reports">
           <div className="space-y-3">
             {currentStudent.semesterReports.map((report, index) => (
-              <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div key={index} className="border border-gray-200 dark:border-dark-border rounded-lg">
                 <button
                   onClick={() => setSelectedSemesterReport(selectedSemesterReport === report.semester ? null : report.semester)}
-                  className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-dark-card transition-colors"
                 >
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-dark-text">
                       Semester {report.semester} Report
                     </h4>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                    <p className="text-xs text-gray-600 dark:text-dark-muted">
                       GPA: {report.gpa.toFixed(2)} • {report.courses.length} courses
                     </p>
                   </div>
@@ -371,17 +370,17 @@ const Students: React.FC = () => {
                     <div className="overflow-x-auto">
                       <table className="w-full compact-table">
                         <thead>
-                          <tr className="border-b border-gray-200 dark:border-gray-700">
-                            <th className="text-left py-1 px-2 text-xs font-medium text-gray-600 dark:text-gray-400">Course</th>
-                            <th className="text-left py-1 px-2 text-xs font-medium text-gray-600 dark:text-gray-400">Score</th>
-                            <th className="text-left py-1 px-2 text-xs font-medium text-gray-600 dark:text-gray-400">Grade</th>
+                          <tr className="border-b border-gray-200 dark:border-dark-border">
+                            <th className="text-left py-1 px-2 text-xs font-medium text-gray-600 dark:text-dark-muted">Course</th>
+                            <th className="text-left py-1 px-2 text-xs font-medium text-gray-600 dark:text-dark-muted">Score</th>
+                            <th className="text-left py-1 px-2 text-xs font-medium text-gray-600 dark:text-dark-muted">Grade</th>
                           </tr>
                         </thead>
                         <tbody>
                           {report.courses.map((course, courseIndex) => (
-                            <tr key={courseIndex} className="border-b border-gray-100 dark:border-gray-700">
-                              <td className="py-1 px-2 text-xs text-gray-900 dark:text-white">{course.courseCode}</td>
-                              <td className="py-1 px-2 text-xs text-gray-900 dark:text-white">{course.score}%</td>
+                            <tr key={courseIndex} className="border-b border-gray-100 dark:border-dark-border">
+                              <td className="py-1 px-2 text-xs text-gray-900 dark:text-dark-text">{course.courseCode}</td>
+                              <td className="py-1 px-2 text-xs text-gray-900 dark:text-dark-text">{course.score}%</td>
                               <td className="py-1 px-2 text-xs">
                                 <span className={`px-1 py-0.5 rounded text-xs ${
                                   course.grade === 'A+' || course.grade === 'A' 
@@ -443,24 +442,33 @@ const Students: React.FC = () => {
 
       {/* Student Details */}
       <Card title={`${currentStudent.name} - Performance Details`}>
+        <div className="flex items-center space-x-4 mb-4">
+          <Avatar name={currentStudent.name} type="student" size="xl" />
+          <div>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-dark-text">{currentStudent.name}</h3>
+            <p className="text-sm text-gray-600 dark:text-dark-muted">{currentStudent.department} • Level {currentStudent.level}</p>
+            <p className="text-xs text-gray-500 dark:text-dark-muted">{currentStudent.studentId}</p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 compact-grid mb-4">
-          <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+          <div className="text-center minimal-padding bg-gray-50 dark:bg-dark-card rounded">
             <p className="text-lg font-bold text-primary-600">{currentStudent.gpa.toFixed(2)}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Current GPA</p>
+            <p className="text-xs text-gray-600 dark:text-dark-muted">Current GPA</p>
           </div>
-          <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+          <div className="text-center minimal-padding bg-gray-50 dark:bg-dark-card rounded">
             <p className="text-lg font-bold text-green-600">{currentStudent.level}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Level</p>
+            <p className="text-xs text-gray-600 dark:text-dark-muted">Level</p>
           </div>
-          <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+          <div className="text-center minimal-padding bg-gray-50 dark:bg-dark-card rounded">
             <p className="text-lg font-bold text-yellow-600">{currentStudent.semester}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Semester</p>
+            <p className="text-xs text-gray-600 dark:text-dark-muted">Semester</p>
           </div>
-          <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+          <div className="text-center minimal-padding bg-gray-50 dark:bg-dark-card rounded">
             <p className="text-lg font-bold text-purple-600">{currentStudent.courses.length}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Courses</p>
+            <p className="text-xs text-gray-600 dark:text-dark-muted">Courses</p>
           </div>
-          <div className="text-center minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+          <div className="text-center minimal-padding bg-gray-50 dark:bg-dark-card rounded">
             <p className={`text-lg font-bold ${
               currentStudent.gpa >= 4.0 ? 'text-green-600' :
               currentStudent.gpa >= 3.0 ? 'text-yellow-600' :
@@ -472,27 +480,27 @@ const Students: React.FC = () => {
                currentStudent.gpa >= 2.0 ? 'Fair' :
                'At Risk'}
             </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Status</p>
+            <p className="text-xs text-gray-600 dark:text-dark-muted">Status</p>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full compact-table">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Course Code</th>
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Course Name</th>
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Score</th>
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Grade</th>
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Status</th>
+              <tr className="border-b border-gray-200 dark:border-dark-border">
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Course Code</th>
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Course Name</th>
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Score</th>
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Grade</th>
+                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Status</th>
               </tr>
             </thead>
             <tbody>
               {currentStudent.courses.map((course, index) => (
-                <tr key={index} className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="py-2 px-3 text-sm font-medium text-gray-900 dark:text-white">{course.courseCode}</td>
-                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{course.courseName}</td>
-                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{course.score}%</td>
+                <tr key={index} className="border-b border-gray-100 dark:border-dark-border">
+                  <td className="py-2 px-3 text-sm font-medium text-gray-900 dark:text-dark-text">{course.courseCode}</td>
+                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-dark-text">{course.courseName}</td>
+                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-dark-text">{course.score}%</td>
                   <td className="py-2 px-3">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                       course.grade === 'A+' || course.grade === 'A' 
@@ -529,11 +537,11 @@ const Students: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full compact-table">
               <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Rank</th>
-                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Student</th>
-                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">GPA</th>
-                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Status</th>
+                <tr className="border-b border-gray-200 dark:border-dark-border">
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Rank</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Student</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">GPA</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-dark-text">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -545,9 +553,14 @@ const Students: React.FC = () => {
                   const currentRank = allStudentsInLevel.findIndex(s => s.id === currentStudent.id) + 1;
                   
                   return (
-                    <tr className="border-b border-gray-100 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
+                    <tr className="border-b border-gray-100 dark:border-dark-border bg-blue-50 dark:bg-blue-900/20">
                       <td className="py-2 px-3 text-sm font-bold text-blue-600">{currentRank}</td>
-                      <td className="py-2 px-3 text-sm font-bold text-blue-600">{currentStudent.name} (You)</td>
+                      <td className="py-2 px-3">
+                        <div className="flex items-center space-x-2">
+                          <Avatar name={currentStudent.name} type="student" size="sm" />
+                          <span className="text-sm font-bold text-blue-600">{currentStudent.name} (You)</span>
+                        </div>
+                      </td>
                       <td className="py-2 px-3 text-sm font-bold text-blue-600">{currentStudent.gpa.toFixed(2)}</td>
                       <td className="py-2 px-3">
                         <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
@@ -565,10 +578,15 @@ const Students: React.FC = () => {
                   ).length + 1;
                   
                   return (
-                    <tr key={student.id} className="border-b border-gray-100 dark:border-gray-700">
-                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{rank}</td>
-                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.name}</td>
-                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.gpa.toFixed(2)}</td>
+                    <tr key={student.id} className="border-b border-gray-100 dark:border-dark-border">
+                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-dark-text">{rank}</td>
+                      <td className="py-2 px-3">
+                        <div className="flex items-center space-x-2">
+                          <Avatar name={student.name} type="student" size="sm" />
+                          <span className="text-sm text-gray-900 dark:text-dark-text">{student.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-2 px-3 text-sm text-gray-900 dark:text-dark-text">{student.gpa.toFixed(2)}</td>
                       <td className="py-2 px-3">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           student.gpa >= 4.0 ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :

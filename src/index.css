@@ -2,6 +2,134 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Clean Dark Mode Theme */
+.dark {
+  color-scheme: dark;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1b3a 100%);
+}
+
+/* Dark mode overrides for clean, sharp design */
+.dark body {
+  @apply bg-dark-bg text-dark-text;
+}
+
+.dark .bg-white {
+  @apply bg-dark-surface border-dark-border;
+}
+
+.dark .bg-gray-50 {
+  @apply bg-dark-card;
+}
+
+.dark .bg-gray-100 {
+  @apply bg-dark-surface;
+}
+
+.dark .bg-gray-800 {
+  @apply bg-dark-surface;
+}
+
+.dark .bg-gray-900 {
+  @apply bg-dark-bg;
+}
+
+.dark .text-gray-900 {
+  @apply text-dark-text;
+}
+
+.dark .text-gray-800 {
+  @apply text-dark-text;
+}
+
+.dark .text-gray-700 {
+  @apply text-dark-text;
+}
+
+.dark .text-gray-600 {
+  @apply text-dark-muted;
+}
+
+.dark .text-gray-500 {
+  @apply text-dark-muted;
+}
+
+.dark .text-gray-400 {
+  @apply text-dark-muted;
+}
+
+.dark .text-black {
+  @apply text-dark-text;
+}
+
+.dark .border-gray-200 {
+  @apply border-dark-border;
+}
+
+.dark .border-gray-300 {
+  @apply border-dark-border;
+}
+
+.dark .border-gray-600 {
+  @apply border-dark-border;
+}
+
+.dark .border-gray-700 {
+  @apply border-dark-border;
+}
+
+/* Glass morphism effects for dark mode */
+.dark .glass-card {
+  background: rgba(37, 38, 89, 0.3);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Avatar component styles */
+.avatar {
+  @apply relative inline-flex items-center justify-center overflow-hidden rounded-full;
+}
+
+.avatar-sm {
+  @apply w-8 h-8 text-xs;
+}
+
+.avatar-md {
+  @apply w-10 h-10 text-sm;
+}
+
+.avatar-lg {
+  @apply w-12 h-12 text-base;
+}
+
+.avatar-xl {
+  @apply w-16 h-16 text-lg;
+}
+
+.avatar-2xl {
+  @apply w-20 h-20 text-xl;
+}
+
+.avatar-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.avatar-student {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.avatar-lecturer {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+}
+
+.avatar-admin {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.avatar-department {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
 /* Professional compact design system */
 .compact-spacing {
   @apply space-y-3;
@@ -89,62 +217,18 @@
 
 /* Compact metrics cards */
 .metrics-card {
-  @apply bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
+  @apply bg-white dark:bg-dark-surface p-3 rounded-lg shadow-sm border border-gray-200 dark:border-dark-border;
 }
 
 /* Professional chart containers */
 .chart-container {
-  @apply bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
+  @apply bg-white dark:bg-dark-surface p-4 rounded-lg shadow-sm border border-gray-200 dark:border-dark-border;
   max-width: 400px;
-}
-
-/* Dark mode font fixes - ensure all text is white in dark mode */
-.dark {
-  color-scheme: dark;
-}
-
-.dark * {
-  border-color: rgb(55, 65, 81);
-}
-
-.dark .text-gray-900 {
-  @apply text-white;
-}
-
-.dark .text-gray-800 {
-  @apply text-gray-100;
-}
-
-.dark .text-gray-700 {
-  @apply text-gray-200;
-}
-
-.dark .text-gray-600 {
-  @apply text-gray-300;
-}
-
-.dark .text-black {
-  @apply text-white;
-}
-
-/* Responsive grid improvements */
-@media (max-width: 768px) {
-  .compact-grid {
-    @apply gap-2;
-  }
-  
-  .compact-card {
-    @apply p-3;
-  }
-  
-  .minimal-padding {
-    @apply p-2;
-  }
 }
 
 /* Academic calendar tab styling - matching reports page */
 .calendar-tab {
-  @apply flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-4;
+  @apply flex space-x-1 bg-gray-100 dark:bg-dark-card p-1 rounded-lg mb-4;
 }
 
 .calendar-tab-button {
@@ -152,11 +236,11 @@
 }
 
 .calendar-tab-button.active {
-  @apply bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm;
+  @apply bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text shadow-sm;
 }
 
 .calendar-tab-button.inactive {
-  @apply text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white;
+  @apply text-gray-600 dark:text-dark-muted hover:text-gray-900 dark:hover:text-dark-text;
 }
 
 /* Modal positioning fix - ensure it appears above navigation */
@@ -185,12 +269,14 @@
 }
 
 .dark .modal-content {
-  background: rgb(31, 41, 55);
+  background: #1a1b3a;
+  border: 1px solid #2d2f5f;
 }
 
 /* Role-based dashboard enhancements */
 .motivation-card {
-  @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg shadow-lg;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  @apply text-white p-4 rounded-lg shadow-lg;
 }
 
 .achievement-badge {
@@ -239,4 +325,32 @@
 
 .attendance-critical {
   @apply text-red-600 dark:text-red-400;
+}
+
+/* Responsive grid improvements */
+@media (max-width: 768px) {
+  .compact-grid {
+    @apply gap-2;
+  }
+  
+  .compact-card {
+    @apply p-3;
+  }
+  
+  .minimal-padding {
+    @apply p-2;
+  }
+}
+
+/* Clean card styles for dark mode */
+.dark .card-clean {
+  background: rgba(37, 38, 89, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
