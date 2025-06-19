@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Search, Plus, User, Star, TrendingUp, Users, Calendar, CheckCircle, BarChart3, BookOpen, Clock } from 'lucide-react';
+import { Search, Plus, User, Star, TrendingUp, Users, Calendar, CheckCircle, BarChart3, BookOpen, Clock, X } from 'lucide-react';
 import Card from '../components/Common/Card';
 import CustomBarChart from '../components/Charts/BarChart';
-import { mockLecturers, mockPerformanceData, getStudentsByCourse, courseSyllabi } from '../data/mockData';
+import { mockLecturers, mockPerformanceData, getStudentsByCourse, courseSyllabi, mockStudents } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
 
 const Lecturers: React.FC = () => {
@@ -15,6 +15,7 @@ const Lecturers: React.FC = () => {
   const [selectedStudent, setSelectedStudent] = useState('');
   const [showSyllabusModal, setShowSyllabusModal] = useState(false);
   const [selectedSyllabusCourse, setSelectedSyllabusCourse] = useState('');
+  const [syllabusState, setSyllabusState] = useState(courseSyllabi);
   const [resultForm, setResultForm] = useState({
     courseCode: '',
     semester: '1st',
@@ -23,6 +24,7 @@ const Lecturers: React.FC = () => {
   });
 
   const isLecturer = user?.role === 'lecturer';
+  const isAdmin = user?.role === 'admin';
   const currentLecturer = isLecturer ? mockLecturers.find(l => l.email === user?.email) || mockLecturers[0] : selectedLecturer;
 
   // Filter lecturers based on search and department
@@ -39,12 +41,18 @@ const Lecturers: React.FC = () => {
   const studentsForCourse = selectedCourse ? getStudentsByCourse(selectedCourse) : [];
 
   // Mock syllabus coverage data for heat map
-  const syllabusData = currentLecturer.courses.map(course => ({
-    course,
-    coverage: Math.floor(Math.random() * 30) + 70, // 70-100% coverage
-    classesTaken: Math.floor(Math.random() * 5) + 10, // 10-15 classes
-    totalClasses: 15
-  }));
+  const syllabusData = currentLecturer.courses.map(course => {
+    const syllabus = syllabusState[course] || [];
+    const completedCount = syllabus.filter(s => s.completed).length;
+    const scheduledCount = syllabus.filter(s => s.scheduled).length;
+    
+    return {
+      course,
+      coverage: syllabus.length > 0 ? Math.round((completedCount / syllabus.length) * 100) : 0,
+      classesTaken: scheduledCount,
+      totalClasses: syllabus.length
+    };
+  });
 
   const handleResultSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,9 +68,23 @@ const Lecturers: React.FC = () => {
   };
 
   const handleSyllabusUpdate = (courseCode: string, topicIndex: number, field: 'completed' | 'scheduled') => {
-    // This would update the syllabus completion in real-time
-    console.log(`Updated ${field} for ${courseCode} topic ${topicIndex}`);
+    setSyllabusState(prev => ({
+      ...prev,
+      [courseCode]: prev[courseCode]?.map((topic, index) => 
+        index === topicIndex 
+          ? { ...topic, [field]: !topic[field] }
+          : topic
+      ) || []
+    }));
   };
+
+  // Get all students for lecturer's department (for lecturer role)
+  const departmentStudents = isLecturer 
+    ? mockStudents.filter(s => s.department === currentLecturer.department)
+    : [];
+
+  // Get all students for admin
+  const allStudentsForReports = isAdmin ? mockStudents : [];
 
   return (
     <div className="compact-spacing">
@@ -354,28 +376,63 @@ const Lecturers: React.FC = () => {
         </Card>
       </div>
 
+      {/* Student Reports Section for Lecturers and Admins */}
+      {(isLecturer || isAdmin) && (
+        <Card title={isLecturer ? "Department Student Reports" : "All Student Reports"}>
+          <div className="overflow-x-auto">
+            <table className="w-full compact-table">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Student</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Department</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Level</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Current GPA</th>
+                  <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Semester Reports</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(isLecturer ? departmentStudents : allStudentsForReports).slice(0, 20).map((student) => (
+                  <tr key={student.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.name}</td>
+                    <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.department}</td>
+                    <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.level}</td>
+                    <td className="py-2 px-3 text-sm font-semibold text-gray-900 dark:text-white">{student.gpa.toFixed(2)}</td>
+                    <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">
+                      {student.semesterReports?.length || 0} previous semesters
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
       {/* Syllabus Management Modal */}
       {showSyllabusModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="compact-header text-gray-900 dark:text-white">Manage Course Syllabus</h3>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Manage Course Syllabus</h3>
               <button
                 onClick={() => setShowSyllabusModal(false)}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
               >
-                ×
+                <X className="h-5 w-5 text-gray-500" />
               </button>
             </div>
 
             {/* Course Selection */}
-            <div className="mb-4">
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Select Course
+              </label>
               <select
                 value={selectedSyllabusCourse}
                 onChange={(e) => setSelectedSyllabusCourse(e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
               >
-                <option value="">Select a course</option>
+                <option value="">Choose a course to manage</option>
                 {currentLecturer.courses.map(course => (
                   <option key={course} value={course}>{course}</option>
                 ))}
@@ -383,37 +440,43 @@ const Lecturers: React.FC = () => {
             </div>
 
             {/* Syllabus Content */}
-            {selectedSyllabusCourse && courseSyllabi[selectedSyllabusCourse] && (
-              <div className="space-y-3">
-                <h4 className="compact-subheader text-gray-900 dark:text-white">
-                  {selectedSyllabusCourse} Syllabus
-                </h4>
-                <div className="space-y-2">
-                  {courseSyllabi[selectedSyllabusCourse].map((topic, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded">
+            {selectedSyllabusCourse && syllabusState[selectedSyllabusCourse] && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {selectedSyllabusCourse} Syllabus
+                  </h4>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    {syllabusState[selectedSyllabusCourse].filter(t => t.completed).length} of {syllabusState[selectedSyllabusCourse].length} topics completed
+                  </div>
+                </div>
+                
+                <div className="grid gap-3">
+                  {syllabusState[selectedSyllabusCourse].map((topic, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                       <div className="flex-1">
                         <span className="text-sm font-medium text-gray-900 dark:text-white">
                           {topic.topic}
                         </span>
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <label className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-6">
+                        <label className="flex items-center space-x-2 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={topic.scheduled}
                             onChange={() => handleSyllabusUpdate(selectedSyllabusCourse, index, 'scheduled')}
-                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                            className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 focus:ring-2"
                           />
-                          <span className="text-xs text-gray-600 dark:text-gray-400">Scheduled</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">Scheduled</span>
                         </label>
-                        <label className="flex items-center space-x-2">
+                        <label className="flex items-center space-x-2 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={topic.completed}
                             onChange={() => handleSyllabusUpdate(selectedSyllabusCourse, index, 'completed')}
-                            className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                            className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500 focus:ring-2"
                           />
-                          <span className="text-xs text-gray-600 dark:text-gray-400">Completed</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">Completed</span>
                         </label>
                       </div>
                     </div>

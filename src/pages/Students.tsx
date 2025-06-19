@@ -1,16 +1,17 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, Download, GraduationCap, TrendingUp, CheckCircle, Clock, BookOpen } from 'lucide-react';
+import { Search, Filter, Download, GraduationCap, TrendingUp, CheckCircle, Clock, BookOpen, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import Card from '../components/Common/Card';
 import CustomBarChart from '../components/Charts/BarChart';
 import CustomLineChart from '../components/Charts/LineChart';
 import DonutChart from '../components/Charts/DonutChart';
-import { mockStudents, mockPerformanceData, courseSyllabi } from '../data/mockData';
+import { mockStudents, mockPerformanceData, courseSyllabi, academicCalendar } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
 
 const Students: React.FC = () => {
   const { user } = useAuth();
   const [selectedStudent, setSelectedStudent] = useState(mockStudents[0]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSemesterReport, setSelectedSemesterReport] = useState<number | null>(null);
   const [filters, setFilters] = useState({
     department: '',
     level: '',
@@ -30,7 +31,7 @@ const Students: React.FC = () => {
     setFilters(prev => ({ ...prev, level, semester: '' }));
   };
 
-  // Filter students based on search and filters
+  // Filter students based on search and filters - Show all 820 students
   const filteredStudents = mockStudents.filter(student => {
     const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -88,6 +89,30 @@ const Students: React.FC = () => {
           <span>Export Report</span>
         </button>
       </div>
+
+      {/* Academic Calendar Widget */}
+      <Card title="Academic Calendar">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 compact-grid">
+          <div className="text-center minimal-padding bg-blue-50 dark:bg-blue-900/20 rounded">
+            <p className="text-lg font-bold text-blue-600">{academicCalendar.currentSemester}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Current Semester</p>
+          </div>
+          <div className="text-center minimal-padding bg-green-50 dark:bg-green-900/20 rounded">
+            <p className="text-lg font-bold text-green-600">{academicCalendar.currentSession}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Academic Session</p>
+          </div>
+          <div className="text-center minimal-padding bg-yellow-50 dark:bg-yellow-900/20 rounded">
+            <p className="text-lg font-bold text-yellow-600">{mockStudents.length}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Total Students</p>
+          </div>
+          <div className="text-center minimal-padding bg-purple-50 dark:bg-purple-900/20 rounded">
+            <p className="text-lg font-bold text-purple-600">
+              {academicCalendar.events.filter(e => new Date(e.date) > new Date()).length}
+            </p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Upcoming Events</p>
+          </div>
+        </div>
+      </Card>
 
       {!isStudent && (
         <>
@@ -168,7 +193,7 @@ const Students: React.FC = () => {
             </div>
           </Card>
 
-          {/* Student List */}
+          {/* Student List - Show all filtered students */}
           <Card title="Students">
             <div className="overflow-x-auto">
               <table className="w-full compact-table">
@@ -184,7 +209,7 @@ const Students: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredStudents.slice(0, 15).map((student) => (
+                  {filteredStudents.map((student) => (
                     <tr key={student.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="py-2 px-3">
                         <div className="flex items-center space-x-2">
@@ -275,6 +300,73 @@ const Students: React.FC = () => {
                 </div>
               );
             })}
+          </div>
+        </Card>
+      )}
+
+      {/* Semester Reports for Students */}
+      {isStudent && currentStudent.semesterReports && currentStudent.semesterReports.length > 0 && (
+        <Card title="Previous Semester Reports">
+          <div className="space-y-3">
+            {currentStudent.semesterReports.map((report, index) => (
+              <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg">
+                <button
+                  onClick={() => setSelectedSemesterReport(selectedSemesterReport === report.semester ? null : report.semester)}
+                  className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                      Semester {report.semester} Report
+                    </h4>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      GPA: {report.gpa.toFixed(2)} • {report.courses.length} courses
+                    </p>
+                  </div>
+                  {selectedSemesterReport === report.semester ? (
+                    <ChevronUp className="h-4 w-4 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                  )}
+                </button>
+                
+                {selectedSemesterReport === report.semester && (
+                  <div className="px-3 pb-3">
+                    <div className="overflow-x-auto">
+                      <table className="w-full compact-table">
+                        <thead>
+                          <tr className="border-b border-gray-200 dark:border-gray-700">
+                            <th className="text-left py-1 px-2 text-xs font-medium text-gray-600 dark:text-gray-400">Course</th>
+                            <th className="text-left py-1 px-2 text-xs font-medium text-gray-600 dark:text-gray-400">Score</th>
+                            <th className="text-left py-1 px-2 text-xs font-medium text-gray-600 dark:text-gray-400">Grade</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {report.courses.map((course, courseIndex) => (
+                            <tr key={courseIndex} className="border-b border-gray-100 dark:border-gray-700">
+                              <td className="py-1 px-2 text-xs text-gray-900 dark:text-white">{course.courseCode}</td>
+                              <td className="py-1 px-2 text-xs text-gray-900 dark:text-white">{course.score}%</td>
+                              <td className="py-1 px-2 text-xs">
+                                <span className={`px-1 py-0.5 rounded text-xs ${
+                                  course.grade === 'A+' || course.grade === 'A' 
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                                    : course.grade === 'B+' || course.grade === 'B'
+                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+                                    : course.grade === 'C+' || course.grade === 'C'
+                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                                    : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                                }`}>
+                                  {course.grade}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </Card>
       )}

@@ -64,6 +64,17 @@ const FacultyPage: React.FC = () => {
 
   const currentSchedule = facultySchedules[selectedFaculty] || [];
 
+  // Group schedule by day
+  const scheduleByDay = currentSchedule.reduce((acc, schedule) => {
+    if (!acc[schedule.day]) {
+      acc[schedule.day] = [];
+    }
+    acc[schedule.day].push(schedule);
+    return acc;
+  }, {} as Record<string, typeof currentSchedule>);
+
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
   return (
     <div className="compact-spacing">
       {/* Header */}
@@ -203,31 +214,32 @@ const FacultyPage: React.FC = () => {
         />
       </div>
 
-      {/* Course Schedule */}
+      {/* Course Schedule - Fixed to show each day once */}
       <Card title={`${selectedFaculty} Course Schedule`}>
-        <div className="overflow-x-auto">
-          <table className="w-full compact-table">
-            <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Day</th>
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Time</th>
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Course</th>
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Lecturer</th>
-                <th className="text-left py-2 px-3 compact-subheader text-gray-900 dark:text-white">Room</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentSchedule.map((schedule, index) => (
-                <tr key={index} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="py-2 px-3 text-sm font-medium text-gray-900 dark:text-white">{schedule.day}</td>
-                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{schedule.time}</td>
-                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{schedule.course}</td>
-                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{schedule.lecturer}</td>
-                  <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{schedule.room}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-4">
+          {daysOfWeek.map(day => (
+            <div key={day} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <div className="bg-gray-50 dark:bg-gray-700 px-4 py-2">
+                <h4 className="compact-subheader text-gray-900 dark:text-white">{day}</h4>
+              </div>
+              <div className="p-4">
+                {scheduleByDay[day] && scheduleByDay[day].length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {scheduleByDay[day].map((schedule, index) => (
+                      <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-600">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">{schedule.time}</div>
+                        <div className="text-sm text-primary-600 dark:text-primary-400">{schedule.course}</div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">{schedule.lecturer}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-500">{schedule.room}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">No classes scheduled</p>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </Card>
 

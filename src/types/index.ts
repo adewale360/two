@@ -9,6 +9,18 @@ export interface Student {
   semester: number;
   gpa: number;
   courses: CourseGrade[];
+  semesterReports?: SemesterReport[];
+}
+
+export interface SemesterReport {
+  semester: number;
+  gpa: number;
+  courses: {
+    courseCode: string;
+    courseName: string;
+    grade: string;
+    score: number;
+  }[];
 }
 
 export interface Lecturer {
@@ -77,4 +89,21 @@ export interface PerformanceData {
   score: number;
   students: number;
   semester: string;
+}
+
+export interface AcademicCalendar {
+  currentSemester: string;
+  currentSession: string;
+  semesters: {
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+    status: 'active' | 'upcoming' | 'completed';
+  }[];
+  events: {
+    date: string;
+    title: string;
+    type: 'academic' | 'break' | 'exam';
+  }[];
 }

@@ -1,5 +1,51 @@
 import { Student, Lecturer, Department, NewsItem, PerformanceData, Faculty } from '../types';
 
+// School Calendar System
+export const academicCalendar = {
+  currentSemester: 'First Semester 2024/2025',
+  currentSession: '2024/2025',
+  semesters: [
+    {
+      id: 'first-2024',
+      name: 'First Semester 2024/2025',
+      startDate: '2024-09-22',
+      endDate: '2025-01-15',
+      status: 'active'
+    },
+    {
+      id: 'second-2024',
+      name: 'Second Semester 2024/2025',
+      startDate: '2025-02-01',
+      endDate: '2025-06-15',
+      status: 'upcoming'
+    },
+    {
+      id: 'first-2023',
+      name: 'First Semester 2023/2024',
+      startDate: '2023-09-22',
+      endDate: '2024-01-15',
+      status: 'completed'
+    },
+    {
+      id: 'second-2023',
+      name: 'Second Semester 2023/2024',
+      startDate: '2024-02-01',
+      endDate: '2024-06-15',
+      status: 'completed'
+    }
+  ],
+  events: [
+    { date: '2024-09-15', title: 'Registration Deadline', type: 'academic' },
+    { date: '2024-09-22', title: 'First Semester Begins', type: 'academic' },
+    { date: '2024-11-15', title: 'Mid-Semester Break Starts', type: 'break' },
+    { date: '2024-11-22', title: 'Mid-Semester Break Ends', type: 'break' },
+    { date: '2024-12-20', title: 'Christmas Break Starts', type: 'break' },
+    { date: '2025-01-08', title: 'Classes Resume', type: 'academic' },
+    { date: '2025-01-15', title: 'First Semester Ends', type: 'academic' },
+    { date: '2025-02-01', title: 'Second Semester Begins', type: 'academic' }
+  ]
+};
+
 // Updated Faculty structure with new information
 export const mockFaculties: Faculty[] = [
   {
@@ -113,7 +159,7 @@ const allDepartments = [
   'Mental Health and Psychiatric Nursing', 'Nursing Management and Education', 'Human Physiology', 'Human Anatomy'
 ];
 
-// Generate students ensuring at least 5 per department per level
+// Generate students ensuring at least 5 per department per level - Total 820 students
 const generateStudents = () => {
   const students: Student[] = [];
   let studentCounter = 1;
@@ -130,15 +176,15 @@ const generateStudents = () => {
         // Generate realistic GPA with some failing students
         let gpa: number;
         const random = Math.random();
-        if (random < 0.05) { // 5% failing students (below 2.0)
+        if (random < 0.08) { // 8% failing students (below 2.0)
           gpa = Number((Math.random() * 1.5 + 0.5).toFixed(2)); // 0.5 - 2.0
-        } else if (random < 0.15) { // 10% struggling students (2.0 - 2.5)
+        } else if (random < 0.18) { // 10% struggling students (2.0 - 2.5)
           gpa = Number((Math.random() * 0.5 + 2.0).toFixed(2)); // 2.0 - 2.5
-        } else if (random < 0.35) { // 20% below average (2.5 - 3.0)
+        } else if (random < 0.38) { // 20% below average (2.5 - 3.0)
           gpa = Number((Math.random() * 0.5 + 2.5).toFixed(2)); // 2.5 - 3.0
-        } else if (random < 0.70) { // 35% average (3.0 - 4.0)
+        } else if (random < 0.73) { // 35% average (3.0 - 4.0)
           gpa = Number((Math.random() * 1.0 + 3.0).toFixed(2)); // 3.0 - 4.0
-        } else { // 30% excellent (4.0 - 5.0)
+        } else { // 27% excellent (4.0 - 5.0)
           gpa = Number((Math.random() * 1.0 + 4.0).toFixed(2)); // 4.0 - 5.0
         }
 
@@ -173,6 +219,25 @@ const generateStudents = () => {
           };
         });
 
+        // Generate semester reports for previous semesters
+        const semesterReports = [];
+        for (let sem = 1; sem < semester; sem++) {
+          const semesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+          semesterReports.push({
+            semester: sem,
+            gpa: Number(semesterGPA.toFixed(2)),
+            courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
+              const { grade, score } = generateGrade(semesterGPA);
+              return {
+                courseCode: `${department.substring(0, 3).toUpperCase()}${Math.floor((sem + 1) / 2)}0${idx + 1}`,
+                courseName: `${department} Course ${idx + 1}`,
+                grade,
+                score
+              };
+            })
+          });
+        }
+
         students.push({
           id: studentCounter.toString(),
           name: `${firstName} ${lastName}`,
@@ -183,7 +248,8 @@ const generateStudents = () => {
           level,
           semester,
           gpa,
-          courses
+          courses,
+          semesterReports
         });
 
         studentCounter++;
@@ -191,8 +257,8 @@ const generateStudents = () => {
     });
   });
 
-  // Add some additional random students to reach a good total
-  const additionalStudents = 200;
+  // Add additional students to reach 820 total
+  const additionalStudents = 820 - students.length;
   for (let i = 0; i < additionalStudents; i++) {
     const department = allDepartments[Math.floor(Math.random() * allDepartments.length)];
     const faculty = mockFaculties.find(f => f.departments.includes(department))?.name || 'COPAS';
@@ -246,6 +312,25 @@ const generateStudents = () => {
       };
     });
 
+    // Generate semester reports for previous semesters
+    const semesterReports = [];
+    for (let sem = 1; sem < semester; sem++) {
+      const semesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+      semesterReports.push({
+        semester: sem,
+        gpa: Number(semesterGPA.toFixed(2)),
+        courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
+          const { grade, score } = generateGrade(semesterGPA);
+          return {
+            courseCode: `${department.substring(0, 3).toUpperCase()}${Math.floor((sem + 1) / 2)}0${idx + 1}`,
+            courseName: `${department} Course ${idx + 1}`,
+            grade,
+            score
+          };
+        })
+      });
+    }
+
     students.push({
       id: studentCounter.toString(),
       name: `${firstName} ${lastName}`,
@@ -256,7 +341,8 @@ const generateStudents = () => {
       level,
       semester,
       gpa,
-      courses
+      courses,
+      semesterReports
     });
 
     studentCounter++;
@@ -561,7 +647,7 @@ export const admissionsByYearData = [
   { year: '2024', 'Computer Science': 180, 'Biochemistry': 112, 'Cyber Security': 102, 'Software Engineering': 155, 'Information Systems': 102 }
 ];
 
-// Course schedules for each faculty
+// Course schedules for each faculty - Fixed to show each day once
 export const facultySchedules = {
   COPAS: [
     { day: 'Monday', time: '8:00-10:00', course: 'CS401', lecturer: 'Dr. Sarah Wilson', room: 'Lab 1' },
@@ -625,7 +711,7 @@ export const facultySchedules = {
   ]
 };
 
-// Course syllabi for lecturers
+// Course syllabi for lecturers - Fixed structure
 export const courseSyllabi = {
   'CS401': [
     { topic: 'Introduction to Advanced Programming', completed: true, scheduled: true },
@@ -684,4 +770,47 @@ export const getFacultyTopPerformers = (facultyName: string) => {
   );
   
   return { topStudent, topLecturer };
+};
+
+// Role-based dashboard metrics
+export const getDashboardMetrics = (userRole: string, userId?: string) => {
+  const baseMetrics = {
+    totalStudents: mockStudents.length,
+    totalLecturers: mockLecturers.length,
+    totalCourses: 156,
+    averageGPA: Number((mockStudents.reduce((sum, s) => sum + s.gpa, 0) / mockStudents.length).toFixed(2))
+  };
+
+  switch (userRole) {
+    case 'student':
+      const student = mockStudents.find(s => s.id === userId) || mockStudents[0];
+      return {
+        ...baseMetrics,
+        myGPA: student.gpa,
+        myCourses: student.courses.length,
+        myRank: mockStudents.filter(s => s.department === student.department && s.level === student.level && s.gpa > student.gpa).length + 1,
+        departmentAverage: Number((mockStudents.filter(s => s.department === student.department).reduce((sum, s) => sum + s.gpa, 0) / mockStudents.filter(s => s.department === student.department).length).toFixed(2))
+      };
+    
+    case 'lecturer':
+      const lecturer = mockLecturers.find(l => l.id === userId) || mockLecturers[0];
+      const myStudents = mockStudents.filter(s => s.department === lecturer.department);
+      return {
+        ...baseMetrics,
+        myStudents: myStudents.length,
+        myCourses: lecturer.courses.length,
+        myRating: lecturer.rating,
+        departmentStudents: myStudents.length
+      };
+    
+    case 'admin':
+    default:
+      return {
+        ...baseMetrics,
+        failingStudents: mockStudents.filter(s => s.gpa < 2.0).length,
+        excellentStudents: mockStudents.filter(s => s.gpa >= 4.0).length,
+        departmentCount: allDepartments.length,
+        facultyCount: mockFaculties.length
+      };
+  }
 };
