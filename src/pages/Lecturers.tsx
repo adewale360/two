@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Plus, User, Star, TrendingUp, Users, Calendar, CheckCircle, BarChart3, BookOpen, Clock, X } from 'lucide-react';
 import Card from '../components/Common/Card';
+import Avatar from '../components/Common/Avatar';
 import CustomBarChart from '../components/Charts/BarChart';
 import { mockLecturers, mockPerformanceData, getStudentsByCourse, courseSyllabi, mockStudents } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
@@ -92,10 +93,10 @@ const Lecturers: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text">
             {isLecturer ? 'Course Management' : 'Lecturers'}
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-dark-muted">
             {isLecturer ? 'Manage your courses and track student performance' : 'Monitor lecturer performance and course management'}
           </p>
         </div>
@@ -184,9 +185,7 @@ const Lecturers: React.FC = () => {
                     <tr key={lecturer.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="py-2 px-3">
                         <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
-                            <User className="h-3 w-3 text-primary-600" />
-                          </div>
+                          <Avatar name={lecturer.name} type="lecturer" size="sm" />
                           <div>
                             <p className="text-sm font-medium text-gray-900 dark:text-white">{lecturer.name}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{lecturer.email}</p>
@@ -271,7 +270,7 @@ const Lecturers: React.FC = () => {
         </Card>
       </div>
 
-      {/* Course Performance, Syllabus Coverage, and Course Details - Side by Side */}
+      {/* Course Performance, Syllabus Coverage, and Course Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid">
         {/* Course Performance */}
         <CustomBarChart
@@ -394,7 +393,12 @@ const Lecturers: React.FC = () => {
               <tbody>
                 {(isLecturer ? departmentStudents : allStudentsForReports).slice(0, 20).map((student) => (
                   <tr key={student.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.name}</td>
+                    <td className="py-2 px-3">
+                      <div className="flex items-center space-x-2">
+                        <Avatar name={student.name} type="student" size="sm" />
+                        <span className="text-sm text-gray-900 dark:text-white">{student.name}</span>
+                      </div>
+                    </td>
                     <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.department}</td>
                     <td className="py-2 px-3 text-sm text-gray-900 dark:text-white">{student.level}</td>
                     <td className="py-2 px-3 text-sm font-semibold text-gray-900 dark:text-white">{student.gpa.toFixed(2)}</td>

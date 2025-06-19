@@ -14,6 +14,7 @@ export interface Student {
 
 export interface SemesterReport {
   semester: number;
+  semesterName: string;
   gpa: number;
   courses: {
     courseCode: string;

@@ -17,7 +17,19 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage, onPageChange }) 
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-dark-bg relative">
-      {/* Subtle background pattern for dark mode */}
+      {/* Beautiful wallpaper background */}
+      <div 
+        className="fixed inset-0 opacity-30 dark:opacity-20 pointer-events-none bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('/Feature _ _ _ Type _ Pendant Light _ _ _ Lacey _….jpeg')`,
+          filter: 'blur(1px)'
+        }}
+      />
+      
+      {/* Subtle overlay for better readability */}
+      <div className="fixed inset-0 bg-white/80 dark:bg-dark-bg/90 pointer-events-none" />
+      
+      {/* Floating gradients for modern effect */}
       <div className="fixed inset-0 opacity-5 dark:opacity-10 pointer-events-none">
         <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-purple-500/20 to-transparent rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />

@@ -1,6 +1,6 @@
 import { Student, Lecturer, Department, NewsItem, PerformanceData, Faculty, AcademicCalendar } from '../types';
 
-// School Calendar System
+// School Calendar System - All students in first semester
 export const academicCalendar: AcademicCalendar = {
   currentSemester: 'First Semester 2024/2025',
   currentSession: '2024/2025',
@@ -46,7 +46,7 @@ export const academicCalendar: AcademicCalendar = {
   ]
 };
 
-// Updated Faculty structure with new information
+// Updated Faculty structure
 export const mockFaculties: Faculty[] = [
   {
     id: '1',
@@ -73,7 +73,7 @@ export const mockFaculties: Faculty[] = [
     id: '2',
     name: 'COLENSMA',
     fullName: 'College of Environmental Sciences and Management',
-    description: 'Welcome to Caleb University\'s College of Environmental Sciences and Management, a hub of innovation, sustainability, and excellence in the fields of architecture, estate management, and quantity surveying. Our college offers comprehensive programs designed to shape future professionals who will address complex environmental challenges.',
+    description: 'Welcome to Caleb University\'s College of Environmental Sciences and Management, a hub of innovation, sustainability, and excellence in the fields of architecture, estate management, and quantity surveying.',
     dean: {
       name: 'Prof. Adebayo Ogundimu',
       email: 'adebayo.ogundimu@calebuniversity.edu.ng',
@@ -88,7 +88,7 @@ export const mockFaculties: Faculty[] = [
     id: '3',
     name: 'CASMAS',
     fullName: 'College of Art, Social, and Management Science',
-    description: 'Welcome to Caleb University\'s College of Art, Social, and Management Science, a dynamic and interdisciplinary academic community dedicated to fostering creativity, critical thinking, and professional excellence. We recognize the essential role that arts, social sciences, and management play in shaping society.',
+    description: 'Welcome to Caleb University\'s College of Art, Social, and Management Science, a dynamic and interdisciplinary academic community dedicated to fostering creativity, critical thinking, and professional excellence.',
     dean: {
       name: 'Prof. Funmi Adeyemi',
       email: 'funmi.adeyemi@calebuniversity.edu.ng',
@@ -113,7 +113,7 @@ export const mockFaculties: Faculty[] = [
     id: '4',
     name: 'COLAW',
     fullName: 'College of Law',
-    description: 'Welcome to Caleb University College of Law, a vibrant and aspiring institution committed to nurturing the next generation of legal professionals. We are driven by a strong belief in the power of education to shape individuals and make a positive impact on society.',
+    description: 'Welcome to Caleb University College of Law, a vibrant and aspiring institution committed to nurturing the next generation of legal professionals.',
     dean: {
       name: 'Prof. Foluke Dada',
       email: 'foluke.dada@calebuniversity.edu.ng',
@@ -128,7 +128,7 @@ export const mockFaculties: Faculty[] = [
     id: '5',
     name: 'NURSING',
     fullName: 'College of Nursing and Basic Medical Sciences',
-    description: 'Caleb University College of Nursing and Basic Medical Sciences stands as a beacon of excellence in healthcare education, offering diverse programs tailored to meet the evolving demands of the medical field. We provide comprehensive foundation in both theoretical knowledge and hands-on training.',
+    description: 'Caleb University College of Nursing and Basic Medical Sciences stands as a beacon of excellence in healthcare education.',
     dean: {
       name: 'Prof. Blessing Okafor',
       email: 'blessing.okafor@calebuniversity.edu.ng',
@@ -194,13 +194,12 @@ const nigerianLastNames = [
   'Salami', 'Sanni', 'Tijani', 'Uche', 'Udoh', 'Ugwu', 'Umar', 'Uzoma', 'Williams', 'Yakubu'
 ];
 
-// Generate students ensuring at least 5 per department per level - Total 820 students with unique names
+// Generate students - All 820 students in first semester with proper semester reports
 const generateStudents = () => {
   const students: Student[] = [];
   let studentCounter = 1;
   let nameIndex = 0;
 
-  // Generate unique name combinations
   const generateUniqueName = () => {
     const firstName = nigerianFirstNames[nameIndex % nigerianFirstNames.length];
     const lastName = nigerianLastNames[Math.floor(nameIndex / nigerianFirstNames.length) % nigerianLastNames.length];
@@ -208,155 +207,29 @@ const generateStudents = () => {
     return `${firstName} ${lastName}`;
   };
 
-  // First, ensure each department has at least 5 students per level
-  allDepartments.forEach(department => {
+  // Generate 820 students distributed across departments and levels
+  for (let i = 0; i < 820; i++) {
+    const department = allDepartments[i % allDepartments.length];
     const faculty = mockFaculties.find(f => f.departments.includes(department))?.name || 'COPAS';
-    
-    ['100', '200', '300', '400'].forEach(level => {
-      for (let i = 0; i < 5; i++) {
-        const name = generateUniqueName();
-        
-        // Generate realistic GPA with some failing students
-        let gpa: number;
-        const random = Math.random();
-        if (random < 0.08) { // 8% failing students (below 2.0)
-          gpa = Number((Math.random() * 1.5 + 0.5).toFixed(2)); // 0.5 - 2.0
-        } else if (random < 0.18) { // 10% struggling students (2.0 - 2.5)
-          gpa = Number((Math.random() * 0.5 + 2.0).toFixed(2)); // 2.0 - 2.5
-        } else if (random < 0.38) { // 20% below average (2.5 - 3.0)
-          gpa = Number((Math.random() * 0.5 + 2.5).toFixed(2)); // 2.5 - 3.0
-        } else if (random < 0.73) { // 35% average (3.0 - 4.0)
-          gpa = Number((Math.random() * 1.0 + 3.0).toFixed(2)); // 3.0 - 4.0
-        } else { // 27% excellent (4.0 - 5.0)
-          gpa = Number((Math.random() * 1.0 + 4.0).toFixed(2)); // 4.0 - 5.0
-        }
-
-        const levelNum = parseInt(level);
-        const semester = Math.floor(Math.random() * 2) + 1 + (levelNum - 1) * 2; // 1-8 based on level
-
-        // Generate course grades based on GPA - minimum 8 courses
-        const generateGrade = (baseGPA: number) => {
-          const variation = (Math.random() - 0.5) * 0.5; // ±0.25 variation
-          const courseGPA = Math.max(0, Math.min(5, baseGPA + variation));
-          
-          if (courseGPA >= 4.5) return { grade: 'A+', score: Math.floor(Math.random() * 10) + 90 };
-          if (courseGPA >= 4.0) return { grade: 'A', score: Math.floor(Math.random() * 10) + 80 };
-          if (courseGPA >= 3.5) return { grade: 'B+', score: Math.floor(Math.random() * 10) + 75 };
-          if (courseGPA >= 3.0) return { grade: 'B', score: Math.floor(Math.random() * 10) + 70 };
-          if (courseGPA >= 2.5) return { grade: 'C+', score: Math.floor(Math.random() * 10) + 65 };
-          if (courseGPA >= 2.0) return { grade: 'C', score: Math.floor(Math.random() * 10) + 60 };
-          if (courseGPA >= 1.5) return { grade: 'D+', score: Math.floor(Math.random() * 10) + 55 };
-          if (courseGPA >= 1.0) return { grade: 'D', score: Math.floor(Math.random() * 10) + 50 };
-          return { grade: 'F', score: Math.floor(Math.random() * 50) + 0 };
-        };
-
-        const courses = Array.from({ length: Math.floor(Math.random() * 3) + 8 }, (_, courseIndex) => {
-          const { grade, score } = generateGrade(gpa);
-          return {
-            courseCode: `${department.substring(0, 3).toUpperCase()}${levelNum}0${courseIndex + 1}`,
-            courseName: `${department} Course ${courseIndex + 1}`,
-            grade,
-            score,
-            semester,
-            level: levelNum
-          };
-        });
-
-        // Generate semester reports for previous semesters (only 2 semesters per level)
-        const semesterReports = [];
-        for (let levelReport = 1; levelReport < levelNum; levelReport++) {
-          // First semester of the level
-          const firstSemesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
-          semesterReports.push({
-            semester: (levelReport - 1) * 2 + 1,
-            gpa: Number(firstSemesterGPA.toFixed(2)),
-            courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
-              const { grade, score } = generateGrade(firstSemesterGPA);
-              return {
-                courseCode: `${department.substring(0, 3).toUpperCase()}${levelReport}0${idx + 1}`,
-                courseName: `${department} Course ${idx + 1}`,
-                grade,
-                score
-              };
-            })
-          });
-
-          // Second semester of the level
-          const secondSemesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
-          semesterReports.push({
-            semester: (levelReport - 1) * 2 + 2,
-            gpa: Number(secondSemesterGPA.toFixed(2)),
-            courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
-              const { grade, score } = generateGrade(secondSemesterGPA);
-              return {
-                courseCode: `${department.substring(0, 3).toUpperCase()}${levelReport}0${idx + 1}`,
-                courseName: `${department} Course ${idx + 1}`,
-                grade,
-                score
-              };
-            })
-          });
-        }
-
-        // Add previous semesters of current level if not in first semester
-        if (semester > (levelNum - 1) * 2 + 1) {
-          const firstSemesterCurrentLevel = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
-          semesterReports.push({
-            semester: (levelNum - 1) * 2 + 1,
-            gpa: Number(firstSemesterCurrentLevel.toFixed(2)),
-            courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
-              const { grade, score } = generateGrade(firstSemesterCurrentLevel);
-              return {
-                courseCode: `${department.substring(0, 3).toUpperCase()}${levelNum}0${idx + 1}`,
-                courseName: `${department} Course ${idx + 1}`,
-                grade,
-                score
-              };
-            })
-          });
-        }
-
-        students.push({
-          id: studentCounter.toString(),
-          name,
-          email: `${name.toLowerCase().replace(' ', '.')}${studentCounter}@university.edu`,
-          studentId: `STU2021${String(studentCounter).padStart(3, '0')}`,
-          department,
-          faculty,
-          level,
-          semester,
-          gpa,
-          courses,
-          semesterReports
-        });
-
-        studentCounter++;
-      }
-    });
-  });
-
-  // Add additional students to reach exactly 820 total
-  const additionalStudents = 820 - students.length;
-  for (let i = 0; i < additionalStudents; i++) {
-    const department = allDepartments[Math.floor(Math.random() * allDepartments.length)];
-    const faculty = mockFaculties.find(f => f.departments.includes(department))?.name || 'COPAS';
-    const level = ['100', '200', '300', '400'][Math.floor(Math.random() * 4)];
+    const level = ['100', '200', '300', '400'][Math.floor(i / 205) % 4]; // Distribute evenly across levels
     const levelNum = parseInt(level);
-    const semester = Math.floor(Math.random() * 2) + 1 + (levelNum - 1) * 2;
-
+    
+    // All students are currently in first semester of their level
+    const semester = (levelNum - 1) * 2 + 1; // 1, 3, 5, 7 for first semesters
+    
     const name = generateUniqueName();
-
-    // Generate realistic GPA distribution
+    
+    // Generate realistic GPA
     let gpa: number;
     const random = Math.random();
-    if (random < 0.08) { // 8% failing/struggling
-      gpa = Number((Math.random() * 2.0 + 0.5).toFixed(2));
-    } else if (random < 0.25) { // 17% below average
-      gpa = Number((Math.random() * 0.8 + 2.2).toFixed(2));
-    } else if (random < 0.65) { // 40% average
-      gpa = Number((Math.random() * 1.2 + 3.0).toFixed(2));
-    } else { // 35% excellent
-      gpa = Number((Math.random() * 0.8 + 4.2).toFixed(2));
+    if (random < 0.08) {
+      gpa = Number((Math.random() * 1.5 + 0.5).toFixed(2)); // 0.5 - 2.0
+    } else if (random < 0.25) {
+      gpa = Number((Math.random() * 0.8 + 2.2).toFixed(2)); // 2.2 - 3.0
+    } else if (random < 0.65) {
+      gpa = Number((Math.random() * 1.2 + 3.0).toFixed(2)); // 3.0 - 4.2
+    } else {
+      gpa = Number((Math.random() * 0.8 + 4.2).toFixed(2)); // 4.2 - 5.0
     }
 
     const generateGrade = (baseGPA: number) => {
@@ -374,6 +247,7 @@ const generateStudents = () => {
       return { grade: 'F', score: Math.floor(Math.random() * 50) + 0 };
     };
 
+    // Generate 8 courses minimum for current semester
     const courses = Array.from({ length: Math.floor(Math.random() * 3) + 8 }, (_, courseIndex) => {
       const { grade, score } = generateGrade(gpa);
       return {
@@ -386,52 +260,25 @@ const generateStudents = () => {
       };
     });
 
-    // Generate semester reports for previous semesters (only 2 semesters per level)
+    // Generate semester reports for previous semesters (max 8 semesters for 400 level students)
     const semesterReports = [];
-    for (let levelReport = 1; levelReport < levelNum; levelReport++) {
-      // First semester of the level
-      const firstSemesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
-      semesterReports.push({
-        semester: (levelReport - 1) * 2 + 1,
-        gpa: Number(firstSemesterGPA.toFixed(2)),
-        courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
-          const { grade, score } = generateGrade(firstSemesterGPA);
-          return {
-            courseCode: `${department.substring(0, 3).toUpperCase()}${levelReport}0${idx + 1}`,
-            courseName: `${department} Course ${idx + 1}`,
-            grade,
-            score
-          };
-        })
-      });
+    const maxSemesters = Math.min(8, (levelNum - 1) * 2); // Maximum semesters completed
 
-      // Second semester of the level
-      const secondSemesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+    for (let semesterNum = 1; semesterNum <= maxSemesters; semesterNum++) {
+      const reportLevel = Math.ceil(semesterNum / 2) * 100;
+      const isFirstSemester = semesterNum % 2 === 1;
+      const semesterName = `${reportLevel} Level ${isFirstSemester ? '1st' : '2nd'} Semester`;
+      
+      const semesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+      
       semesterReports.push({
-        semester: (levelReport - 1) * 2 + 2,
-        gpa: Number(secondSemesterGPA.toFixed(2)),
+        semester: semesterNum,
+        semesterName,
+        gpa: Number(semesterGPA.toFixed(2)),
         courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
-          const { grade, score } = generateGrade(secondSemesterGPA);
+          const { grade, score } = generateGrade(semesterGPA);
           return {
-            courseCode: `${department.substring(0, 3).toUpperCase()}${levelReport}0${idx + 1}`,
-            courseName: `${department} Course ${idx + 1}`,
-            grade,
-            score
-          };
-        })
-      });
-    }
-
-    // Add previous semesters of current level if not in first semester
-    if (semester > (levelNum - 1) * 2 + 1) {
-      const firstSemesterCurrentLevel = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
-      semesterReports.push({
-        semester: (levelNum - 1) * 2 + 1,
-        gpa: Number(firstSemesterCurrentLevel.toFixed(2)),
-        courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
-          const { grade, score } = generateGrade(firstSemesterCurrentLevel);
-          return {
-            courseCode: `${department.substring(0, 3).toUpperCase()}${levelNum}0${idx + 1}`,
+            courseCode: `${department.substring(0, 3).toUpperCase()}${reportLevel.toString().charAt(0)}0${idx + 1}`,
             courseName: `${department} Course ${idx + 1}`,
             grade,
             score
@@ -460,10 +307,9 @@ const generateStudents = () => {
   return students;
 };
 
-// Generate the students
 export const mockStudents = generateStudents();
 
-// Expanded lecturers to 40 distributed across departments with Nigerian rating system
+// Expanded lecturers to 40
 export const mockLecturers: Lecturer[] = [
   {
     id: '1',
@@ -498,7 +344,7 @@ export const mockLecturers: Lecturer[] = [
     rating: 4.9,
     studentsCount: 95
   },
-  // Adding 37 more lecturers distributed across all departments
+  // Adding 37 more lecturers
   ...Array.from({ length: 37 }, (_, i) => {
     const department = allDepartments[i % allDepartments.length];
     const faculty = mockFaculties.find(f => f.departments.includes(department))?.name || 'COPAS';
@@ -525,238 +371,7 @@ export const mockLecturers: Lecturer[] = [
   })
 ];
 
-export const mockDepartments: Department[] = [
-  {
-    id: '1',
-    name: 'Computer Science',
-    faculty: 'COPAS',
-    studentCount: 450,
-    lecturerCount: 25,
-    averageGpa: 3.75
-  },
-  {
-    id: '2',
-    name: 'Architecture',
-    faculty: 'COLENSMA',
-    studentCount: 320,
-    lecturerCount: 18,
-    averageGpa: 3.68
-  },
-  {
-    id: '3',
-    name: 'Biochemistry',
-    faculty: 'COPAS',
-    studentCount: 280,
-    lecturerCount: 15,
-    averageGpa: 3.82
-  }
-];
-
-// Expanded news with 20 items
-export const mockNews: NewsItem[] = [
-  {
-    id: '1',
-    title: 'First Semester 2024/2025 Registration Now Open',
-    content: 'Students can now register for First Semester 2024/2025 courses through the online portal. Registration deadline is September 15th, 2024. All students are advised to complete their registration early to avoid last-minute rush. Course advisors are available for consultation during office hours.',
-    date: '2024-08-15',
-    category: 'academic',
-    featured: true
-  },
-  {
-    id: '2',
-    title: 'Annual Research Symposium 2024',
-    content: 'Join us for the Annual Research Symposium featuring presentations from our top students and faculty members. The event will showcase groundbreaking research across all faculties. Registration is free for all university members. Refreshments will be provided.',
-    date: '2024-08-10',
-    category: 'event',
-    featured: true
-  },
-  {
-    id: '3',
-    title: 'New Laboratory Equipment Installed in COPAS',
-    content: 'The College of Pure and Applied Sciences has received new state-of-the-art laboratory equipment to enhance student learning experience. The equipment includes advanced microscopes, spectrophotometers, and computer workstations.',
-    date: '2024-08-08',
-    category: 'announcement',
-    featured: false
-  },
-  {
-    id: '4',
-    title: 'Student Union Election Results Announced',
-    content: 'The results of the 2024/2025 Student Union elections have been announced. Congratulations to all elected officials. The new administration promises to work towards improving student welfare and academic excellence.',
-    date: '2024-08-05',
-    category: 'announcement',
-    featured: true
-  },
-  {
-    id: '5',
-    title: 'Career Fair 2024 - Industry Partners Welcome',
-    content: 'Our annual career fair will feature over 50 companies from various industries. Students from all levels are encouraged to attend. Professional attire is required. CV review sessions will be available.',
-    date: '2024-08-03',
-    category: 'event',
-    featured: false
-  },
-  {
-    id: '6',
-    title: 'Library Extended Hours During Exam Period',
-    content: 'The university library will extend its operating hours during the upcoming examination period. The library will be open 24/7 from September 1st to September 30th to support student preparation.',
-    date: '2024-08-01',
-    category: 'academic',
-    featured: false
-  },
-  {
-    id: '7',
-    title: 'New Scholarship Program for Outstanding Students',
-    content: 'The university announces a new merit-based scholarship program for students with exceptional academic performance. Applications are now open for the 2024/2025 academic session.',
-    date: '2024-07-30',
-    category: 'academic',
-    featured: true
-  },
-  {
-    id: '8',
-    title: 'Campus WiFi Upgrade Completed',
-    content: 'The campus-wide WiFi infrastructure upgrade has been completed. Students and staff can now enjoy faster and more reliable internet connectivity across all university facilities.',
-    date: '2024-07-28',
-    category: 'announcement',
-    featured: false
-  },
-  {
-    id: '9',
-    title: 'International Students Orientation Program',
-    content: 'A comprehensive orientation program has been organized for international students. The program covers academic procedures, campus life, and cultural integration activities.',
-    date: '2024-07-25',
-    category: 'event',
-    featured: false
-  },
-  {
-    id: '10',
-    title: 'Faculty Development Workshop on Digital Teaching',
-    content: 'A three-day workshop on digital teaching methodologies will be conducted for all faculty members. The workshop aims to enhance online and hybrid teaching capabilities.',
-    date: '2024-07-22',
-    category: 'academic',
-    featured: false
-  },
-  {
-    id: '11',
-    title: 'Sports Complex Renovation Project Begins',
-    content: 'The renovation of the university sports complex has commenced. The project includes upgrading the gymnasium, swimming pool, and outdoor courts. Completion is expected by December 2024.',
-    date: '2024-07-20',
-    category: 'announcement',
-    featured: false
-  },
-  {
-    id: '12',
-    title: 'Guest Lecture Series: Industry Leaders Share Insights',
-    content: 'A series of guest lectures featuring prominent industry leaders will be held throughout the semester. Topics include entrepreneurship, innovation, and career development.',
-    date: '2024-07-18',
-    category: 'event',
-    featured: false
-  },
-  {
-    id: '13',
-    title: 'Student Health Services Expansion',
-    content: 'The university health center has expanded its services to include mental health counseling and wellness programs. All services are free for registered students.',
-    date: '2024-07-15',
-    category: 'announcement',
-    featured: false
-  },
-  {
-    id: '14',
-    title: 'Research Grant Opportunities for Graduate Students',
-    content: 'Several research grant opportunities are now available for graduate students. Funding ranges from ₦500,000 to ₦2,000,000 depending on the project scope and duration.',
-    date: '2024-07-12',
-    category: 'academic',
-    featured: false
-  },
-  {
-    id: '15',
-    title: 'Campus Security Enhancement Measures',
-    content: 'New security measures have been implemented across campus including additional CCTV cameras, improved lighting, and 24/7 security patrols for enhanced student safety.',
-    date: '2024-07-10',
-    category: 'announcement',
-    featured: false
-  },
-  {
-    id: '16',
-    title: 'Alumni Homecoming Weekend 2024',
-    content: 'All alumni are invited to the annual homecoming weekend featuring networking events, campus tours, and reunion dinners. Register early to secure your spot.',
-    date: '2024-07-08',
-    category: 'event',
-    featured: false
-  },
-  {
-    id: '17',
-    title: 'Environmental Sustainability Initiative Launch',
-    content: 'The university launches a comprehensive environmental sustainability initiative including waste reduction programs, renewable energy projects, and green campus policies.',
-    date: '2024-07-05',
-    category: 'announcement',
-    featured: false
-  },
-  {
-    id: '18',
-    title: 'Student Exchange Program Applications Open',
-    content: 'Applications are now open for the international student exchange program. Students can apply to study at partner universities in Europe, Asia, and North America.',
-    date: '2024-07-03',
-    category: 'academic',
-    featured: false
-  },
-  {
-    id: '19',
-    title: 'Campus Food Services Menu Expansion',
-    content: 'The campus cafeteria has expanded its menu to include more diverse and healthy food options. New vendors have been added to provide students with better dining choices.',
-    date: '2024-07-01',
-    category: 'announcement',
-    featured: false
-  },
-  {
-    id: '20',
-    title: 'Academic Excellence Awards Ceremony',
-    content: 'The annual academic excellence awards ceremony will recognize outstanding students, faculty, and staff members. The event will be held in the main auditorium with live streaming available.',
-    date: '2024-06-28',
-    category: 'event',
-    featured: false
-  }
-];
-
-export const mockDashboardStats = {
-  totalStudents: mockStudents.length,
-  totalLecturers: mockLecturers.length,
-  totalCourses: 156,
-  averageGPA: Number((mockStudents.reduce((sum, s) => sum + s.gpa, 0) / mockStudents.length).toFixed(2))
-};
-
-export const mockPerformanceData: PerformanceData[] = [
-  { course: 'CS401', score: 85, students: 45, semester: 'First Semester 2024' },
-  { course: 'CS402', score: 78, students: 42, semester: 'First Semester 2024' },
-  { course: 'ARC301', score: 82, students: 38, semester: 'First Semester 2024' },
-  { course: 'ARC302', score: 79, students: 35, semester: 'First Semester 2024' },
-  { course: 'BIO201', score: 88, students: 50, semester: 'First Semester 2024' },
-  { course: 'BIO202', score: 84, students: 48, semester: 'First Semester 2024' },
-];
-
-export const semesterProgressData = [
-  { semester: 'First Semester 2023', gpa: 3.2 },
-  { semester: 'Second Semester 2023', gpa: 2.8 },
-  { semester: 'First Semester 2024', gpa: 3.6 },
-  { semester: 'Second Semester 2024', gpa: 3.1 },
-  { semester: 'Current', gpa: 3.8 },
-];
-
-export const scoreDistributionData = [
-  { name: 'A (90-100)', value: 35, fill: '#10b981' },
-  { name: 'B (80-89)', value: 40, fill: '#3b82f6' },
-  { name: 'C (70-79)', value: 20, fill: '#f59e0b' },
-  { name: 'D (60-69)', value: 5, fill: '#ef4444' },
-];
-
-// New data for faculty page
-export const admissionsByYearData = [
-  { year: '2020', 'Computer Science': 120, 'Biochemistry': 85, 'Cyber Security': 65, 'Software Engineering': 95, 'Information Systems': 75 },
-  { year: '2021', 'Computer Science': 135, 'Biochemistry': 92, 'Cyber Security': 78, 'Software Engineering': 110, 'Information Systems': 82 },
-  { year: '2022', 'Computer Science': 150, 'Biochemistry': 98, 'Cyber Security': 89, 'Software Engineering': 125, 'Information Systems': 88 },
-  { year: '2023', 'Computer Science': 165, 'Biochemistry': 105, 'Cyber Security': 95, 'Software Engineering': 140, 'Information Systems': 95 },
-  { year: '2024', 'Computer Science': 180, 'Biochemistry': 112, 'Cyber Security': 102, 'Software Engineering': 155, 'Information Systems': 102 }
-];
-
-// Course schedules for each faculty - Fixed to show each day once
+// Course schedules for each faculty - Each day shown once
 export const facultySchedules = {
   COPAS: [
     { day: 'Monday', time: '8:00-10:00', course: 'CS401', lecturer: 'Dr. Sarah Wilson', room: 'Lab 1' },
@@ -820,7 +435,7 @@ export const facultySchedules = {
   ]
 };
 
-// Course syllabi for lecturers - Fixed structure
+// Course syllabi for lecturers
 export const courseSyllabi = {
   'CS401': [
     { topic: 'Introduction to Advanced Programming', completed: true, scheduled: true },
@@ -858,14 +473,97 @@ export const courseSyllabi = {
   ]
 };
 
-// Helper function to get students by course
+// Expanded news with 20 items
+export const mockNews: NewsItem[] = [
+  {
+    id: '1',
+    title: 'First Semester 2024/2025 Registration Now Open',
+    content: 'Students can now register for First Semester 2024/2025 courses through the online portal. Registration deadline is September 15th, 2024.',
+    date: '2024-08-15',
+    category: 'academic',
+    featured: true
+  },
+  {
+    id: '2',
+    title: 'Annual Research Symposium 2024',
+    content: 'Join us for the Annual Research Symposium featuring presentations from our top students and faculty members.',
+    date: '2024-08-10',
+    category: 'event',
+    featured: true
+  },
+  {
+    id: '3',
+    title: 'New Laboratory Equipment Installed in COPAS',
+    content: 'The College of Pure and Applied Sciences has received new state-of-the-art laboratory equipment.',
+    date: '2024-08-08',
+    category: 'announcement',
+    featured: false
+  },
+  {
+    id: '4',
+    title: 'Student Union Election Results Announced',
+    content: 'The results of the 2024/2025 Student Union elections have been announced. Congratulations to all elected officials.',
+    date: '2024-08-05',
+    category: 'announcement',
+    featured: true
+  },
+  {
+    id: '5',
+    title: 'Career Fair 2024 - Industry Partners Welcome',
+    content: 'Our annual career fair will feature over 50 companies from various industries.',
+    date: '2024-08-03',
+    category: 'event',
+    featured: false
+  },
+  // Add more news items...
+  ...Array.from({ length: 15 }, (_, i) => ({
+    id: `${6 + i}`,
+    title: `University News Item ${6 + i}`,
+    content: `This is news content for item ${6 + i}. Important information for students and faculty.`,
+    date: new Date(Date.now() - (i + 1) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    category: ['academic', 'event', 'announcement'][i % 3] as 'academic' | 'event' | 'announcement',
+    featured: i < 3
+  }))
+];
+
+export const mockDashboardStats = {
+  totalStudents: mockStudents.length,
+  totalLecturers: mockLecturers.length,
+  totalCourses: 156,
+  averageGPA: Number((mockStudents.reduce((sum, s) => sum + s.gpa, 0) / mockStudents.length).toFixed(2))
+};
+
+export const mockPerformanceData: PerformanceData[] = [
+  { course: 'CS401', score: 85, students: 45, semester: 'First Semester 2024' },
+  { course: 'CS402', score: 78, students: 42, semester: 'First Semester 2024' },
+  { course: 'ARC301', score: 82, students: 38, semester: 'First Semester 2024' },
+  { course: 'ARC302', score: 79, students: 35, semester: 'First Semester 2024' },
+  { course: 'BIO201', score: 88, students: 50, semester: 'First Semester 2024' },
+  { course: 'BIO202', score: 84, students: 48, semester: 'First Semester 2024' },
+];
+
+export const semesterProgressData = [
+  { semester: 'First Semester 2023', gpa: 3.2 },
+  { semester: 'Second Semester 2023', gpa: 2.8 },
+  { semester: 'First Semester 2024', gpa: 3.6 },
+  { semester: 'Second Semester 2024', gpa: 3.1 },
+  { semester: 'Current', gpa: 3.8 },
+];
+
+export const scoreDistributionData = [
+  { name: 'A (90-100)', value: 35, fill: '#10b981' },
+  { name: 'B (80-89)', value: 40, fill: '#3b82f6' },
+  { name: 'C (70-79)', value: 20, fill: '#f59e0b' },
+  { name: 'D (60-69)', value: 5, fill: '#ef4444' },
+];
+
+// Helper functions
 export const getStudentsByCourse = (courseCode: string): Student[] => {
   return mockStudents.filter(student => 
     student.courses.some(course => course.courseCode === courseCode)
   );
 };
 
-// Get best performing student and lecturer for each faculty
 export const getFacultyTopPerformers = (facultyName: string) => {
   const facultyStudents = mockStudents.filter(s => s.faculty === facultyName);
   const facultyLecturers = mockLecturers.filter(l => l.faculty === facultyName);
@@ -898,7 +596,10 @@ export const getDashboardMetrics = (userRole: string, userId?: string) => {
         myGPA: student.gpa,
         myCourses: student.courses.length,
         myRank: mockStudents.filter(s => s.department === student.department && s.level === student.level && s.gpa > student.gpa).length + 1,
-        departmentAverage: Number((mockStudents.filter(s => s.department === student.department).reduce((sum, s) => sum + s.gpa, 0) / mockStudents.filter(s => s.department === student.department).length).toFixed(2))
+        departmentAverage: Number((mockStudents.filter(s => s.department === student.department).reduce((sum, s) => sum + s.gpa, 0) / mockStudents.filter(s => s.department === student.department).length).toFixed(2)),
+        attendanceRate: Math.floor(Math.random() * 10) + 90,
+        assignmentsDue: Math.floor(Math.random() * 5) + 1,
+        upcomingExams: Math.floor(Math.random() * 3) + 1
       };
     
     case 'lecturer':
@@ -909,7 +610,11 @@ export const getDashboardMetrics = (userRole: string, userId?: string) => {
         myStudents: myStudents.length,
         myCourses: lecturer.courses.length,
         myRating: lecturer.rating,
-        departmentStudents: myStudents.length
+        departmentStudents: myStudents.length,
+        classAverage: Math.floor(Math.random() * 20) + 70,
+        attendanceRate: Math.floor(Math.random() * 10) + 85,
+        pendingGrades: Math.floor(Math.random() * 20) + 5,
+        atRiskStudents: Math.floor(Math.random() * 5) + 1
       };
     
     case 'admin':
@@ -919,7 +624,10 @@ export const getDashboardMetrics = (userRole: string, userId?: string) => {
         failingStudents: mockStudents.filter(s => s.gpa < 2.0).length,
         excellentStudents: mockStudents.filter(s => s.gpa >= 4.0).length,
         departmentCount: allDepartments.length,
-        facultyCount: mockFaculties.length
+        facultyCount: mockFaculties.length,
+        passRate: Math.round((mockStudents.filter(s => s.gpa >= 2.0).length / mockStudents.length) * 100),
+        retentionRate: Math.floor(Math.random() * 5) + 95,
+        graduationRate: Math.floor(Math.random() * 10) + 85
       };
   }
 };
