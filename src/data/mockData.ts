@@ -1,7 +1,7 @@
-import { Student, Lecturer, Department, NewsItem, PerformanceData, Faculty } from '../types';
+import { Student, Lecturer, Department, NewsItem, PerformanceData, Faculty, AcademicCalendar } from '../types';
 
 // School Calendar System
-export const academicCalendar = {
+export const academicCalendar: AcademicCalendar = {
   currentSemester: 'First Semester 2024/2025',
   currentSession: '2024/2025',
   semesters: [
@@ -159,10 +159,54 @@ const allDepartments = [
   'Mental Health and Psychiatric Nursing', 'Nursing Management and Education', 'Human Physiology', 'Human Anatomy'
 ];
 
-// Generate students ensuring at least 5 per department per level - Total 820 students
+// Unique Nigerian names for 820 students
+const nigerianFirstNames = [
+  'Adebayo', 'Adunni', 'Aisha', 'Akeem', 'Amara', 'Amina', 'Ayo', 'Babatunde', 'Blessing', 'Chidi',
+  'Chioma', 'David', 'Ebere', 'Emeka', 'Esther', 'Fatima', 'Folake', 'Grace', 'Ibrahim', 'Ifeanyi',
+  'Ifeoma', 'Ikechukwu', 'James', 'Kemi', 'Kunle', 'Lola', 'Mary', 'Mohammed', 'Ngozi', 'Nneka',
+  'Obinna', 'Olumide', 'Omolara', 'Patience', 'Peter', 'Rasheed', 'Ruth', 'Samuel', 'Sarah', 'Seun',
+  'Tayo', 'Temitope', 'Tosin', 'Uche', 'Victor', 'Yemi', 'Zainab', 'Adaora', 'Adebola', 'Adejoke',
+  'Ademola', 'Adesola', 'Adetola', 'Adunola', 'Afolabi', 'Akinola', 'Akintola', 'Alaba', 'Aliu', 'Amaka',
+  'Aminat', 'Anayo', 'Anthonia', 'Arinze', 'Asabe', 'Audu', 'Awolowo', 'Azuka', 'Bamidele', 'Bankole',
+  'Bassey', 'Bello', 'Bimbo', 'Bolaji', 'Bukola', 'Bunmi', 'Busayo', 'Chiamaka', 'Chinelo', 'Chinwe',
+  'Chinyere', 'Chukwu', 'Damilola', 'Daniel', 'Deborah', 'Dele', 'Dupe', 'Ebuka', 'Edith', 'Ejike',
+  'Ekene', 'Elizabeth', 'Emmanuel', 'Enoch', 'Esosa', 'Eucharia', 'Ezekiel', 'Femi', 'Funmi', 'Gabriel',
+  'Gbenga', 'Godwin', 'Hafsat', 'Halima', 'Hannah', 'Hassan', 'Helen', 'Henry', 'Idris', 'Ijeoma',
+  'Ikenna', 'Innocent', 'Isaac', 'Ismail', 'Iyabo', 'Jide', 'John', 'Joseph', 'Joy', 'Juliana',
+  'Khadijah', 'Kingsley', 'Lanre', 'Latifa', 'Leah', 'Lilian', 'Loveth', 'Lucky', 'Lydia', 'Maryam',
+  'Michael', 'Miracle', 'Moses', 'Musa', 'Nkem', 'Nnamdi', 'Nonso', 'Nora', 'Nurat', 'Obioma',
+  'Ogechi', 'Okechukwu', 'Olabisi', 'Oladele', 'Olaide', 'Olajide', 'Olalekan', 'Olamide', 'Olaniyi', 'Olarenwaju',
+  'Olasunkanmi', 'Olatunde', 'Olawale', 'Olayemi', 'Olayinka', 'Olubunmi', 'Oluchi', 'Oludare', 'Olufemi', 'Olumuyiwa',
+  'Olusegun', 'Oluseyi', 'Olusola', 'Olutayo', 'Omolola', 'Omowunmi', 'Onyeka', 'Onyinye', 'Opeyemi', 'Osaze',
+  'Paul', 'Peace', 'Precious', 'Promise', 'Queen', 'Rachel', 'Rebecca', 'Richard', 'Rita', 'Rose',
+  'Salisu', 'Sani', 'Segun', 'Shade', 'Shola', 'Solomon', 'Stephen', 'Sunday', 'Taiwo', 'Tunde',
+  'Umar', 'Uzoma', 'Vera', 'Vincent', 'Wale', 'Wasiu', 'William', 'Yakubu', 'Yusuf', 'Zara'
+];
+
+const nigerianLastNames = [
+  'Adebayo', 'Adeleye', 'Ademola', 'Adesanya', 'Afolabi', 'Agbaje', 'Ajayi', 'Akande', 'Akinola', 'Alabi',
+  'Aluko', 'Amadi', 'Anyanwu', 'Asante', 'Awolowo', 'Babatunde', 'Balogun', 'Bankole', 'Bassey', 'Bello',
+  'Chukwu', 'Dada', 'Daramola', 'Ebong', 'Egbuna', 'Eke', 'Emeka', 'Ezeh', 'Falade', 'Fashola',
+  'Gbenga', 'Hassan', 'Ibrahim', 'Idowu', 'Igwe', 'Ijeoma', 'Ikechukwu', 'Jegede', 'Johnson', 'Kalu',
+  'Lawal', 'Madu', 'Mohammed', 'Ndubuisi', 'Nnamdi', 'Nwachukwu', 'Nwosu', 'Obasi', 'Obi', 'Obiora',
+  'Odunsi', 'Ogbonna', 'Okafor', 'Okeke', 'Okonkwo', 'Okoro', 'Okwu', 'Oladele', 'Olajide', 'Olatunji',
+  'Olawale', 'Olayemi', 'Olumide', 'Olusegun', 'Omolara', 'Onwuka', 'Onyeka', 'Opara', 'Osaze', 'Oyebanji',
+  'Salami', 'Sanni', 'Tijani', 'Uche', 'Udoh', 'Ugwu', 'Umar', 'Uzoma', 'Williams', 'Yakubu'
+];
+
+// Generate students ensuring at least 5 per department per level - Total 820 students with unique names
 const generateStudents = () => {
   const students: Student[] = [];
   let studentCounter = 1;
+  let nameIndex = 0;
+
+  // Generate unique name combinations
+  const generateUniqueName = () => {
+    const firstName = nigerianFirstNames[nameIndex % nigerianFirstNames.length];
+    const lastName = nigerianLastNames[Math.floor(nameIndex / nigerianFirstNames.length) % nigerianLastNames.length];
+    nameIndex++;
+    return `${firstName} ${lastName}`;
+  };
 
   // First, ensure each department has at least 5 students per level
   allDepartments.forEach(department => {
@@ -170,8 +214,7 @@ const generateStudents = () => {
     
     ['100', '200', '300', '400'].forEach(level => {
       for (let i = 0; i < 5; i++) {
-        const firstName = ['Alice', 'Bob', 'Carol', 'David', 'Emma', 'Frank', 'Grace', 'Henry', 'Ivy', 'Jack'][i % 10];
-        const lastName = ['Johnson', 'Smith', 'Davis', 'Wilson', 'Brown', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White'][i % 10];
+        const name = generateUniqueName();
         
         // Generate realistic GPA with some failing students
         let gpa: number;
@@ -219,17 +262,52 @@ const generateStudents = () => {
           };
         });
 
-        // Generate semester reports for previous semesters
+        // Generate semester reports for previous semesters (only 2 semesters per level)
         const semesterReports = [];
-        for (let sem = 1; sem < semester; sem++) {
-          const semesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+        for (let levelReport = 1; levelReport < levelNum; levelReport++) {
+          // First semester of the level
+          const firstSemesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
           semesterReports.push({
-            semester: sem,
-            gpa: Number(semesterGPA.toFixed(2)),
+            semester: (levelReport - 1) * 2 + 1,
+            gpa: Number(firstSemesterGPA.toFixed(2)),
             courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
-              const { grade, score } = generateGrade(semesterGPA);
+              const { grade, score } = generateGrade(firstSemesterGPA);
               return {
-                courseCode: `${department.substring(0, 3).toUpperCase()}${Math.floor((sem + 1) / 2)}0${idx + 1}`,
+                courseCode: `${department.substring(0, 3).toUpperCase()}${levelReport}0${idx + 1}`,
+                courseName: `${department} Course ${idx + 1}`,
+                grade,
+                score
+              };
+            })
+          });
+
+          // Second semester of the level
+          const secondSemesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+          semesterReports.push({
+            semester: (levelReport - 1) * 2 + 2,
+            gpa: Number(secondSemesterGPA.toFixed(2)),
+            courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
+              const { grade, score } = generateGrade(secondSemesterGPA);
+              return {
+                courseCode: `${department.substring(0, 3).toUpperCase()}${levelReport}0${idx + 1}`,
+                courseName: `${department} Course ${idx + 1}`,
+                grade,
+                score
+              };
+            })
+          });
+        }
+
+        // Add previous semesters of current level if not in first semester
+        if (semester > (levelNum - 1) * 2 + 1) {
+          const firstSemesterCurrentLevel = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+          semesterReports.push({
+            semester: (levelNum - 1) * 2 + 1,
+            gpa: Number(firstSemesterCurrentLevel.toFixed(2)),
+            courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
+              const { grade, score } = generateGrade(firstSemesterCurrentLevel);
+              return {
+                courseCode: `${department.substring(0, 3).toUpperCase()}${levelNum}0${idx + 1}`,
                 courseName: `${department} Course ${idx + 1}`,
                 grade,
                 score
@@ -240,8 +318,8 @@ const generateStudents = () => {
 
         students.push({
           id: studentCounter.toString(),
-          name: `${firstName} ${lastName}`,
-          email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${studentCounter}@university.edu`,
+          name,
+          email: `${name.toLowerCase().replace(' ', '.')}${studentCounter}@university.edu`,
           studentId: `STU2021${String(studentCounter).padStart(3, '0')}`,
           department,
           faculty,
@@ -257,7 +335,7 @@ const generateStudents = () => {
     });
   });
 
-  // Add additional students to reach 820 total
+  // Add additional students to reach exactly 820 total
   const additionalStudents = 820 - students.length;
   for (let i = 0; i < additionalStudents; i++) {
     const department = allDepartments[Math.floor(Math.random() * allDepartments.length)];
@@ -266,11 +344,7 @@ const generateStudents = () => {
     const levelNum = parseInt(level);
     const semester = Math.floor(Math.random() * 2) + 1 + (levelNum - 1) * 2;
 
-    const firstNames = ['Michael', 'Sarah', 'James', 'Lisa', 'Robert', 'Maria', 'William', 'Jennifer', 'Richard', 'Linda', 'Charles', 'Barbara', 'Joseph', 'Susan', 'Thomas', 'Jessica', 'Christopher', 'Karen', 'Daniel', 'Nancy'];
-    const lastNames = ['Garcia', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall', 'Allen', 'Young', 'Hernandez', 'King', 'Wright', 'Lopez', 'Hill', 'Scott', 'Green', 'Adams', 'Baker', 'Gonzalez', 'Nelson', 'Carter'];
-    
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const name = generateUniqueName();
 
     // Generate realistic GPA distribution
     let gpa: number;
@@ -312,17 +386,52 @@ const generateStudents = () => {
       };
     });
 
-    // Generate semester reports for previous semesters
+    // Generate semester reports for previous semesters (only 2 semesters per level)
     const semesterReports = [];
-    for (let sem = 1; sem < semester; sem++) {
-      const semesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+    for (let levelReport = 1; levelReport < levelNum; levelReport++) {
+      // First semester of the level
+      const firstSemesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
       semesterReports.push({
-        semester: sem,
-        gpa: Number(semesterGPA.toFixed(2)),
+        semester: (levelReport - 1) * 2 + 1,
+        gpa: Number(firstSemesterGPA.toFixed(2)),
         courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
-          const { grade, score } = generateGrade(semesterGPA);
+          const { grade, score } = generateGrade(firstSemesterGPA);
           return {
-            courseCode: `${department.substring(0, 3).toUpperCase()}${Math.floor((sem + 1) / 2)}0${idx + 1}`,
+            courseCode: `${department.substring(0, 3).toUpperCase()}${levelReport}0${idx + 1}`,
+            courseName: `${department} Course ${idx + 1}`,
+            grade,
+            score
+          };
+        })
+      });
+
+      // Second semester of the level
+      const secondSemesterGPA = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+      semesterReports.push({
+        semester: (levelReport - 1) * 2 + 2,
+        gpa: Number(secondSemesterGPA.toFixed(2)),
+        courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
+          const { grade, score } = generateGrade(secondSemesterGPA);
+          return {
+            courseCode: `${department.substring(0, 3).toUpperCase()}${levelReport}0${idx + 1}`,
+            courseName: `${department} Course ${idx + 1}`,
+            grade,
+            score
+          };
+        })
+      });
+    }
+
+    // Add previous semesters of current level if not in first semester
+    if (semester > (levelNum - 1) * 2 + 1) {
+      const firstSemesterCurrentLevel = Math.max(0, Math.min(5, gpa + (Math.random() - 0.5) * 0.8));
+      semesterReports.push({
+        semester: (levelNum - 1) * 2 + 1,
+        gpa: Number(firstSemesterCurrentLevel.toFixed(2)),
+        courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
+          const { grade, score } = generateGrade(firstSemesterCurrentLevel);
+          return {
+            courseCode: `${department.substring(0, 3).toUpperCase()}${levelNum}0${idx + 1}`,
             courseName: `${department} Course ${idx + 1}`,
             grade,
             score
@@ -333,8 +442,8 @@ const generateStudents = () => {
 
     students.push({
       id: studentCounter.toString(),
-      name: `${firstName} ${lastName}`,
-      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${studentCounter}@university.edu`,
+      name,
+      email: `${name.toLowerCase().replace(' ', '.')}${studentCounter}@university.edu`,
       studentId: `STU2021${String(studentCounter).padStart(3, '0')}`,
       department,
       faculty,

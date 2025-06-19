@@ -59,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
           <div className="flex items-center space-x-2">
             <School className="h-6 w-6 text-primary-600" />
             <span className="text-lg font-bold text-gray-900 dark:text-white">
-              UniTrack
+              Pineappl
             </span>
           </div>
           <button

@@ -38,6 +38,7 @@ const Lecturers: React.FC = () => {
     return matchesSearch && matchesDepartment;
   });
 
+  // Get students for lecturer's courses only (real-time enrollment)
   const studentsForCourse = selectedCourse ? getStudentsByCourse(selectedCourse) : [];
 
   // Mock syllabus coverage data for heat map
@@ -78,7 +79,7 @@ const Lecturers: React.FC = () => {
     }));
   };
 
-  // Get all students for lecturer's department (for lecturer role)
+  // Get students for lecturer's department only (for lecturer role)
   const departmentStudents = isLecturer 
     ? mockStudents.filter(s => s.department === currentLecturer.department)
     : [];
@@ -378,7 +379,7 @@ const Lecturers: React.FC = () => {
 
       {/* Student Reports Section for Lecturers and Admins */}
       {(isLecturer || isAdmin) && (
-        <Card title={isLecturer ? "Department Student Reports" : "All Student Reports"}>
+        <Card title={isLecturer ? "My Students Reports" : "All Student Reports"}>
           <div className="overflow-x-auto">
             <table className="w-full compact-table">
               <thead>
@@ -408,10 +409,10 @@ const Lecturers: React.FC = () => {
         </Card>
       )}
 
-      {/* Syllabus Management Modal */}
+      {/* Syllabus Management Modal - Fixed positioning */}
       {showSyllabusModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="modal-overlay">
+          <div className="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Manage Course Syllabus</h3>
               <button
@@ -488,17 +489,17 @@ const Lecturers: React.FC = () => {
         </div>
       )}
 
-      {/* Result Submission Modal */}
+      {/* Result Submission Modal - Fixed positioning */}
       {showResultForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="modal-overlay">
+          <div className="modal-content bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-3">
               <h3 className="compact-header text-gray-900 dark:text-white">Submit Course Results</h3>
               <button
                 onClick={() => setShowResultForm(false)}
                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
               >
-                ×
+                <X className="h-4 w-4 text-gray-500" />
               </button>
             </div>
 

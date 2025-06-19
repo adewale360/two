@@ -2,49 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Font assignments */
-@layer base {
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-  }
-  
-  body, p, span, div, input, textarea, select, button {
-    font-family: 'Open Sans', sans-serif;
-  }
-}
-
-/* Dark theme overrides */
-.dark {
-  --tw-bg-opacity: 1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
-  color: rgb(248 250 252);
-}
-
-.dark .bg-gray-900 {
-  background-color: rgb(15 23 42);
-}
-
-.dark .bg-gray-800 {
-  background-color: rgb(30 41 59);
-}
-
-.dark .bg-gray-700 {
-  background-color: rgb(51 65 85);
-}
-
-.dark .text-black {
-  color: rgb(248 250 252) !important;
-}
-
-.dark .text-gray-900 {
-  color: rgb(248 250 252) !important;
-}
-
-.dark .text-gray-800 {
-  color: rgb(226 232 240) !important;
-}
-
 /* Professional compact design system */
 .compact-spacing {
   @apply space-y-3;
@@ -75,13 +32,11 @@
 }
 
 .compact-header {
-  @apply text-base font-bold;
-  font-family: 'Montserrat', sans-serif;
+  @apply text-base font-semibold;
 }
 
 .compact-subheader {
-  @apply text-sm font-semibold;
-  font-family: 'Montserrat', sans-serif;
+  @apply text-sm font-medium;
 }
 
 /* Reduced padding and margins */
@@ -134,12 +89,12 @@
 
 /* Compact metrics cards */
 .metrics-card {
-  @apply bg-white dark:bg-dark-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-dark-700;
+  @apply bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
 }
 
 /* Professional chart containers */
 .chart-container {
-  @apply bg-white dark:bg-dark-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-dark-700;
+  @apply bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
   max-width: 400px;
 }
 
@@ -158,30 +113,48 @@
   }
 }
 
-/* School calendar styles */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
+/* Academic calendar tab styling - matching reports page */
+.calendar-tab {
+  @apply flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-4;
 }
 
-.calendar-day {
-  @apply p-2 text-center text-sm border border-gray-200 dark:border-dark-700;
-  min-height: 40px;
+.calendar-tab-button {
+  @apply px-3 py-2 rounded text-sm font-medium transition-colors;
 }
 
-.calendar-day.current-month {
-  @apply bg-white dark:bg-dark-800 text-gray-900 dark:text-white;
+.calendar-tab-button.active {
+  @apply bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm;
 }
 
-.calendar-day.other-month {
-  @apply bg-gray-50 dark:bg-dark-900 text-gray-400 dark:text-dark-400;
+.calendar-tab-button.inactive {
+  @apply text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white;
 }
 
-.calendar-day.today {
-  @apply bg-primary-500 text-white font-semibold;
+/* Modal positioning fix - ensure it appears above navigation */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
-.calendar-day.event {
-  @apply bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400;
+.modal-content {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: 1rem;
+  position: relative;
+  z-index: 10000;
+}
+
+.dark .modal-content {
+  background: rgb(31, 41, 55);
 }

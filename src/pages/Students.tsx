@@ -12,6 +12,7 @@ const Students: React.FC = () => {
   const [selectedStudent, setSelectedStudent] = useState(mockStudents[0]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSemesterReport, setSelectedSemesterReport] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState('current');
   const [filters, setFilters] = useState({
     department: '',
     level: '',
@@ -21,7 +22,7 @@ const Students: React.FC = () => {
   const isStudent = user?.role === 'student';
   const currentStudent = isStudent ? mockStudents.find(s => s.email === user?.email) || mockStudents[0] : selectedStudent;
 
-  // Get available semesters based on selected level - Fixed to show 1st and 2nd
+  // Get available semesters based on selected level
   const availableSemesters = useMemo(() => {
     return ['1', '2']; // Always show 1st and 2nd semester
   }, []);
@@ -90,33 +91,69 @@ const Students: React.FC = () => {
         </button>
       </div>
 
-      {/* Academic Calendar Widget */}
-      <Card title="Academic Calendar">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 compact-grid">
-          <div className="text-center minimal-padding bg-blue-50 dark:bg-blue-900/20 rounded">
-            <p className="text-lg font-bold text-blue-600">{academicCalendar.currentSemester}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Current Semester</p>
-          </div>
-          <div className="text-center minimal-padding bg-green-50 dark:bg-green-900/20 rounded">
-            <p className="text-lg font-bold text-green-600">{academicCalendar.currentSession}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Academic Session</p>
-          </div>
-          <div className="text-center minimal-padding bg-yellow-50 dark:bg-yellow-900/20 rounded">
-            <p className="text-lg font-bold text-yellow-600">{mockStudents.length}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Total Students</p>
-          </div>
-          <div className="text-center minimal-padding bg-purple-50 dark:bg-purple-900/20 rounded">
-            <p className="text-lg font-bold text-purple-600">
-              {academicCalendar.events.filter(e => new Date(e.date) > new Date()).length}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Upcoming Events</p>
-          </div>
+      {/* Academic Calendar Widget with proper tab styling */}
+      <Card>
+        <div className="calendar-tab">
+          <button
+            onClick={() => setActiveTab('current')}
+            className={`calendar-tab-button ${activeTab === 'current' ? 'active' : 'inactive'}`}
+          >
+            Current Semester
+          </button>
+          <button
+            onClick={() => setActiveTab('calendar')}
+            className={`calendar-tab-button ${activeTab === 'calendar' ? 'active' : 'inactive'}`}
+          >
+            Academic Calendar
+          </button>
         </div>
+
+        {activeTab === 'current' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 compact-grid">
+            <div className="text-center minimal-padding bg-blue-50 dark:bg-blue-900/20 rounded">
+              <p className="text-lg font-bold text-blue-600">{academicCalendar.currentSemester}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Current Semester</p>
+            </div>
+            <div className="text-center minimal-padding bg-green-50 dark:bg-green-900/20 rounded">
+              <p className="text-lg font-bold text-green-600">{academicCalendar.currentSession}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Academic Session</p>
+            </div>
+            <div className="text-center minimal-padding bg-yellow-50 dark:bg-yellow-900/20 rounded">
+              <p className="text-lg font-bold text-yellow-600">{mockStudents.length}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Total Students</p>
+            </div>
+            <div className="text-center minimal-padding bg-purple-50 dark:bg-purple-900/20 rounded">
+              <p className="text-lg font-bold text-purple-600">
+                {academicCalendar.events.filter(e => new Date(e.date) > new Date()).length}
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Upcoming Events</p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'calendar' && (
+          <div className="space-y-3">
+            <h4 className="compact-subheader text-gray-900 dark:text-white">Upcoming Events</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 compact-grid">
+              {academicCalendar.events.filter(e => new Date(e.date) > new Date()).slice(0, 6).map((event, index) => (
+                <div key={index} className="flex items-center space-x-3 minimal-padding bg-gray-50 dark:bg-gray-700 rounded">
+                  <Calendar className="h-4 w-4 text-primary-600" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{event.title}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {new Date(event.date).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </Card>
 
       {!isStudent && (
         <>
-          {/* Filters - Reduced padding */}
+          {/* Filters - Consistent spacing */}
           <Card>
             <div className="flex flex-wrap items-center gap-3 py-1">
               <div className="relative min-w-0 flex-1">
