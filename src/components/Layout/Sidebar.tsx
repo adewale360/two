@@ -54,31 +54,29 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
       
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full modern-sidebar
+        fixed top-0 left-0 h-full bg-white dark:bg-dark-surface border-r border-gray-200 dark:border-dark-border shadow-lg
         transform transition-transform duration-300 ease-in-out z-50
         w-64 lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-slate-700">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-              <School className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-slate-100">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-border">
+          <div className="flex items-center space-x-2">
+            <School className="h-6 w-6 text-primary-600" />
+            <span className="text-lg font-bold text-gray-900 dark:text-dark-text">
               Pineappl
             </span>
           </div>
           <button
             onClick={onToggle}
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+            className="lg:hidden p-1 rounded hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
           >
             <X className="h-4 w-4 text-gray-500" />
           </button>
         </div>
 
         {/* User info */}
-        <div className="p-6 border-b border-gray-200 dark:border-slate-700">
+        <div className="p-4 border-b border-gray-200 dark:border-dark-border">
           <div className="flex items-center space-x-3">
             <Avatar 
               name={user?.name || 'Demo User'} 
@@ -86,10 +84,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
               size="md" 
             />
             <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-slate-100">
+              <p className="text-sm font-medium text-gray-900 dark:text-dark-text">
                 {user?.name}
               </p>
-              <p className="text-xs text-gray-500 dark:text-slate-400 capitalize">
+              <p className="text-xs text-gray-500 dark:text-dark-muted capitalize">
                 {user?.role}
               </p>
             </div>
@@ -97,16 +95,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2 flex-1 overflow-y-auto modern-scrollbar">
+        <nav className="p-3 space-y-1 flex-1 overflow-y-auto">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`nav-item w-full ${
-                currentPage === item.id ? 'active' : 'inactive'
-              }`}
+              className={`
+                w-full flex items-center space-x-2 px-3 py-2 rounded text-sm transition-all duration-200 shadow-sm
+                ${currentPage === item.id
+                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border-r-2 border-primary-600 shadow-md' 
+                  : 'text-gray-700 dark:text-dark-muted hover:bg-gray-50 dark:hover:bg-dark-card hover:shadow-md'
+                }
+              `}
             >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
+              <item.icon className="h-4 w-4 flex-shrink-0" />
               <span className="font-medium">{item.label}</span>
             </button>
           ))}
