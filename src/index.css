@@ -45,10 +45,6 @@
   @apply text-gray-400;
 }
 
-.dark .text-gray-400 {
-  @apply text-gray-400;
-}
-
 .dark .text-black {
   @apply text-gray-100;
 }
