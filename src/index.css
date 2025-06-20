@@ -369,13 +369,11 @@
 }
 
 /* Apply subtle shadows to key components */
-.bg-white,
-.dark .bg-dark-surface {
+.bg-white {
   @apply shadow-sm;
 }
 
-.bg-white:hover,
-.dark .bg-dark-surface:hover {
+.bg-white:hover {
   @apply shadow-md;
 }
 
