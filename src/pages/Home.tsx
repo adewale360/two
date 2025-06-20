@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, TrendingUp, Award, Users, BookOpen, GraduationCap, Plus, X, School, ChevronRight, ArrowLeft, Target, Clock, CheckCircle, AlertTriangle, Star, Trophy } from 'lucide-react';
+import { Calendar, TrendingUp, Award, Users, BookOpen, GraduationCap, Plus, X, School, ChevronRight, ArrowLeft, Target, Clock, CheckCircle, AlertTriangle, Star, Trophy, BarChart3 } from 'lucide-react';
 import StatCard from '../components/Common/StatCard';
 import Card from '../components/Common/Card';
 import CustomBarChart from '../components/Charts/BarChart';
@@ -16,6 +16,7 @@ const Home: React.FC = () => {
     content: '',
     category: 'academic' as 'academic' | 'event' | 'announcement'
   });
+  const [news, setNews] = useState(mockNews);
 
   const topStudent = mockStudents.reduce((prev, current) => 
     prev.gpa > current.gpa ? prev : current
@@ -27,7 +28,15 @@ const Home: React.FC = () => {
 
   const handleNewsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('News submitted:', newsForm);
+    const newNewsItem = {
+      id: Date.now().toString(),
+      title: newsForm.title,
+      content: newsForm.content,
+      date: new Date().toISOString().split('T')[0],
+      category: newsForm.category,
+      featured: false
+    };
+    setNews([newNewsItem, ...news]);
     setShowNewsForm(false);
     setNewsForm({ title: '', content: '', category: 'academic' });
   };
@@ -241,7 +250,7 @@ const Home: React.FC = () => {
         )}
       </div>
 
-      {/* Performance Chart and Quick Actions */}
+      {/* Performance Chart and Additional Metrics/Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid mb-4">
         <div className="lg:col-span-2">
           <CustomLineChart
@@ -255,60 +264,129 @@ const Home: React.FC = () => {
 
         <div>
           {isStudent ? (
-            <Card title="My Progress">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Credit Hours</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">45/120</span>
+            <>
+              {/* Additional Student Metric */}
+              <Card title="Academic Standing">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Current CGPA</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{metrics.myGPA?.toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Class Position</span>
+                    <span className="font-semibold text-primary-600">#{metrics.myRank}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Credits Earned</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">45/120</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Graduation Progress</span>
+                    <span className="font-semibold text-green-600">37.5%</span>
+                  </div>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '37.5%' }}></div>
+              </Card>
+              <Card title="My Progress">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Credit Hours</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">45/120</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '37.5%' }}></div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Assignments Due</span>
+                    <span className="font-semibold text-red-600">3</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Next Exam</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">5 days</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Assignments Due</span>
-                  <span className="font-semibold text-red-600">3</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Next Exam</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">5 days</span>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </>
           ) : isLecturer ? (
-            <Card title="Teaching Insights">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Class Average</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">78%</span>
+            <>
+              {/* Additional Lecturer Metric */}
+              <Card title="Teaching Performance">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Student Satisfaction</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{metrics.myRating?.toFixed(1)}/5.0</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Course Load</span>
+                    <span className="font-semibold text-blue-600">{metrics.myCourses} courses</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Research Papers</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">12 published</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Mentees</span>
+                    <span className="font-semibold text-green-600">15 active</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Attendance Rate</span>
-                  <span className="font-semibold text-green-600">92%</span>
+              </Card>
+              <Card title="Teaching Insights">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Class Average</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">78%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Attendance Rate</span>
+                    <span className="font-semibold text-green-600">92%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Pending Grades</span>
+                    <span className="font-semibold text-yellow-600">12</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">At-Risk Students</span>
+                    <span className="font-semibold text-red-600">3</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Pending Grades</span>
-                  <span className="font-semibold text-yellow-600">12</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">At-Risk Students</span>
-                  <span className="font-semibold text-red-600">3</span>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </>
           ) : (
-            <Card title="Quick Actions">
-              <div className="space-y-3">
-                <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
-                  Generate Reports
-                </button>
-                <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
-                  Review Performance
-                </button>
-                <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
-                  Manage Users
-                </button>
-              </div>
-            </Card>
+            <>
+              {/* Additional Admin Metric */}
+              <Card title="System Analytics">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">System Uptime</span>
+                    <span className="font-semibold text-green-600">99.9%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Active Users</span>
+                    <span className="font-semibold text-blue-600">1,247</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Data Processed</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">2.3TB</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Reports Generated</span>
+                    <span className="font-semibold text-purple-600">156</span>
+                  </div>
+                </div>
+              </Card>
+              <Card title="Quick Actions">
+                <div className="space-y-3">
+                  <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
+                    Generate Reports
+                  </button>
+                  <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
+                    Review Performance
+                  </button>
+                  <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
+                    Manage Users
+                  </button>
+                </div>
+              </Card>
+            </>
           )}
         </div>
       </div>
@@ -403,34 +481,34 @@ const Home: React.FC = () => {
             )}
           >
             <div className="tight-spacing max-h-96 overflow-y-auto">
-              {mockNews.slice(0, 10).map((news) => (
+              {news.slice(0, 10).map((newsItem) => (
                 <div 
-                  key={news.id} 
+                  key={newsItem.id} 
                   className="border-l-2 border-primary-500 pl-3 py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-r transition-colors"
-                  onClick={() => setSelectedNews(news)}
+                  onClick={() => setSelectedNews(newsItem)}
                 >
                   <div className="flex items-center justify-between">
                     <h4 className="compact-subheader text-gray-900 dark:text-white">
-                      {news.title}
+                      {newsItem.title}
                     </h4>
                     <div className="flex items-center space-x-2">
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {new Date(news.date).toLocaleDateString()}
+                        {new Date(newsItem.date).toLocaleDateString()}
                       </span>
                       <ChevronRight className="h-3 w-3 text-gray-400" />
                     </div>
                   </div>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
-                    {news.content.substring(0, 100)}...
+                    {newsItem.content.substring(0, 100)}...
                   </p>
                   <span className={`inline-block px-2 py-0.5 text-xs rounded-full mt-1 ${
-                    news.category === 'academic' 
+                    newsItem.category === 'academic' 
                       ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
-                      : news.category === 'event'
+                      : newsItem.category === 'event'
                       ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
                       : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
                   }`}>
-                    {news.category}
+                    {newsItem.category}
                   </span>
                 </div>
               ))}

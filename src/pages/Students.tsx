@@ -57,6 +57,61 @@ const Students: React.FC = () => {
     s.id !== currentStudent.id
   ).sort((a, b) => b.gpa - a.gpa);
 
+  // Generate semester reports based on student level
+  const generateSemesterReports = (student: any) => {
+    const level = parseInt(student.level);
+    const maxSemesters = Math.min(8, (level - 1) * 2); // Maximum semesters completed
+    
+    if (maxSemesters === 0) return []; // 100 level 1st semester has no previous results
+    
+    const reports = [];
+    for (let semesterNum = 1; semesterNum <= maxSemesters; semesterNum++) {
+      const reportLevel = Math.ceil(semesterNum / 2) * 100;
+      const isFirstSemester = semesterNum % 2 === 1;
+      const semesterName = `${reportLevel} Level ${isFirstSemester ? '1st' : '2nd'} Semester`;
+      
+      const semesterGPA = Math.max(0, Math.min(5, student.gpa + (Math.random() - 0.5) * 0.8));
+      
+      reports.push({
+        semester: semesterNum,
+        semesterName,
+        gpa: Number(semesterGPA.toFixed(2)),
+        courses: Array.from({ length: Math.floor(Math.random() * 3) + 6 }, (_, idx) => {
+          const generateGrade = (baseGPA: number) => {
+            const variation = (Math.random() - 0.5) * 0.5;
+            const courseGPA = Math.max(0, Math.min(5, baseGPA + variation));
+            
+            if (courseGPA >= 4.5) return { grade: 'A+', score: Math.floor(Math.random() * 10) + 90 };
+            if (courseGPA >= 4.0) return { grade: 'A', score: Math.floor(Math.random() * 10) + 80 };
+            if (courseGPA >= 3.5) return { grade: 'B+', score: Math.floor(Math.random() * 10) + 75 };
+            if (courseGPA >= 3.0) return { grade: 'B', score: Math.floor(Math.random() * 10) + 70 };
+            if (courseGPA >= 2.5) return { grade: 'C+', score: Math.floor(Math.random() * 10) + 65 };
+            if (courseGPA >= 2.0) return { grade: 'C', score: Math.floor(Math.random() * 10) + 60 };
+            if (courseGPA >= 1.5) return { grade: 'D+', score: Math.floor(Math.random() * 10) + 55 };
+            if (courseGPA >= 1.0) return { grade: 'D', score: Math.floor(Math.random() * 10) + 50 };
+            return { grade: 'F', score: Math.floor(Math.random() * 50) + 0 };
+          };
+          
+          const { grade, score } = generateGrade(semesterGPA);
+          return {
+            courseCode: `${student.department.substring(0, 3).toUpperCase()}${reportLevel.toString().charAt(0)}0${idx + 1}`,
+            courseName: `${student.department} Course ${idx + 1}`,
+            grade,
+            score
+          };
+        })
+      });
+    }
+    
+    return reports;
+  };
+
+  // Update current student with generated semester reports
+  const currentStudentWithReports = {
+    ...currentStudent,
+    semesterReports: generateSemesterReports(currentStudent)
+  };
+
   return (
     <div className="compact-spacing">
       {/* Header */}
@@ -440,11 +495,11 @@ const Students: React.FC = () => {
         </div>
       </Card>
 
-      {/* Previous Semester Reports - For all roles */}
-      {currentStudent.semesterReports && currentStudent.semesterReports.length > 0 && (
+      {/* Previous Semester Reports - For all roles with proper logic */}
+      {currentStudentWithReports.semesterReports && currentStudentWithReports.semesterReports.length > 0 && (
         <Card title="Previous Semester Reports">
           <div className="space-y-3">
-            {currentStudent.semesterReports.map((report, index) => (
+            {currentStudentWithReports.semesterReports.map((report, index) => (
               <div key={index} className="border border-gray-200 dark:border-dark-border rounded-lg">
                 <button
                   onClick={() => setSelectedSemesterReport(selectedSemesterReport === report.semester ? null : report.semester)}
@@ -454,6 +509,7 @@ const Students: React.FC = () => {
                     <h4 className="text-sm font-semibold text-gray-900 dark:text-dark-text">
                       {report.semesterName}
                     </h4>
+                    
                     <p className="text-xs text-gray-600 dark:text-dark-muted">
                       GPA: {report.gpa.toFixed(2)} • {report.courses.length} courses
                     </p>
@@ -503,6 +559,21 @@ const Students: React.FC = () => {
                 )}
               </div>
             ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Show message for 100 level 1st semester students */}
+      {currentStudentWithReports.semesterReports.length === 0 && (
+        <Card title="Previous Semester Reports">
+          <div className="text-center py-8">
+            <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              No Previous Results
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              As a {currentStudent.level} level 1st semester student, you don't have any previous semester results yet.
+            </p>
           </div>
         </Card>
       )}

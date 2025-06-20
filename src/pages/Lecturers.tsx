@@ -85,9 +85,6 @@ const Lecturers: React.FC = () => {
     ? mockStudents.filter(s => s.department === currentLecturer.department)
     : [];
 
-  // Get all students for admin
-  const allStudentsForReports = isAdmin ? mockStudents : [];
-
   return (
     <div className="compact-spacing">
       {/* Header */}
@@ -376,9 +373,9 @@ const Lecturers: React.FC = () => {
         </Card>
       </div>
 
-      {/* Student Reports Section for Lecturers and Admins */}
-      {(isLecturer || isAdmin) && (
-        <Card title={isLecturer ? "My Students Reports" : "All Student Reports"}>
+      {/* Student Reports Section for Lecturers only */}
+      {isLecturer && (
+        <Card title="My Students Reports">
           <div className="overflow-x-auto">
             <table className="w-full compact-table">
               <thead>
@@ -391,7 +388,7 @@ const Lecturers: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {(isLecturer ? departmentStudents : allStudentsForReports).slice(0, 20).map((student) => (
+                {departmentStudents.slice(0, 20).map((student) => (
                   <tr key={student.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="py-2 px-3">
                       <div className="flex items-center space-x-2">
