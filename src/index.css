@@ -2,76 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Professional Dark Mode Theme */
+/* Modern Minimalistic Professional Theme */
 .dark {
   color-scheme: dark;
-  background: #1a1a1a;
+  background: #0f172a;
 }
 
-/* Dark mode overrides for professional, clean design */
+/* Dark mode overrides for modern, clean design */
 .dark body {
-  @apply bg-gray-900 text-gray-100;
+  @apply bg-slate-900 text-slate-100;
 }
 
 .dark .bg-white {
-  @apply bg-gray-800 border-gray-700;
+  @apply bg-slate-800 border-slate-700;
 }
 
 .dark .bg-gray-50 {
-  @apply bg-gray-800;
+  @apply bg-slate-800;
 }
 
 .dark .bg-gray-100 {
-  @apply bg-gray-800;
+  @apply bg-slate-800;
 }
 
 .dark .text-gray-900 {
-  @apply text-gray-100;
+  @apply text-slate-100;
 }
 
 .dark .text-gray-800 {
-  @apply text-gray-100;
+  @apply text-slate-100;
 }
 
 .dark .text-gray-700 {
-  @apply text-gray-200;
+  @apply text-slate-200;
 }
 
 .dark .text-gray-600 {
-  @apply text-gray-300;
+  @apply text-slate-300;
 }
 
 .dark .text-gray-500 {
-  @apply text-gray-400;
+  @apply text-slate-400;
 }
 
 .dark .text-black {
-  @apply text-gray-100;
+  @apply text-slate-100;
 }
 
 .dark .border-gray-200 {
-  @apply border-gray-700;
+  @apply border-slate-700;
 }
 
 .dark .border-gray-300 {
-  @apply border-gray-600;
+  @apply border-slate-600;
 }
 
 .dark .border-gray-600 {
-  @apply border-gray-600;
+  @apply border-slate-600;
 }
 
-/* Professional glass morphism effects */
+/* Modern glass morphism effects */
 .dark .glass-card {
-  background: rgba(31, 41, 55, 0.8);
+  background: rgba(30, 41, 59, 0.8);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(75, 85, 99, 0.3);
+  border: 1px solid rgba(71, 85, 105, 0.3);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-/* Avatar component styles with professional colors */
+/* Avatar component styles with modern colors */
 .avatar {
-  @apply relative inline-flex items-center justify-center overflow-hidden rounded-full;
+  @apply relative inline-flex items-center justify-center overflow-hidden rounded-xl shadow-sm;
 }
 
 .avatar-sm {
@@ -114,17 +114,17 @@
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-/* Professional compact design system */
+/* Modern compact design system */
 .compact-spacing {
-  @apply space-y-3;
+  @apply space-y-4;
 }
 
 .compact-grid {
-  @apply gap-3;
+  @apply gap-4;
 }
 
 .compact-card {
-  @apply p-4;
+  @apply p-6 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800;
 }
 
 .compact-text {
@@ -132,41 +132,41 @@
 }
 
 .compact-chart {
-  height: 160px !important;
+  height: 180px !important;
 }
 
 .mini-chart {
-  height: 120px !important;
+  height: 140px !important;
 }
 
 .compact-stat-card {
-  @apply p-3;
+  @apply p-4 rounded-xl shadow-sm;
 }
 
 .compact-header {
-  @apply text-base font-semibold;
+  @apply text-lg font-semibold;
 }
 
 .compact-subheader {
-  @apply text-sm font-medium;
+  @apply text-base font-medium;
 }
 
-/* Reduced padding and margins */
+/* Modern spacing */
 .tight-spacing {
-  @apply space-y-2;
+  @apply space-y-3;
 }
 
 .minimal-padding {
-  @apply p-3;
+  @apply p-4;
 }
 
-/* Professional table styles */
+/* Modern table styles */
 .compact-table th,
 .compact-table td {
-  @apply py-2 px-3 text-sm;
+  @apply py-3 px-4 text-sm;
 }
 
-/* Reduced font sizes */
+/* Modern font sizes */
 .text-compact {
   @apply text-xs;
 }
@@ -179,62 +179,63 @@
   @apply text-base;
 }
 
-/* Professional animations */
+/* Modern animations */
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.4s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Professional hover effects */
+/* Modern hover effects */
 .hover-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Compact metrics cards */
+/* Modern metrics cards */
 .metrics-card {
-  @apply bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
+  @apply bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700;
 }
 
-/* Professional chart containers */
+/* Modern chart containers */
 .chart-container {
-  @apply bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
-  max-width: 400px;
+  @apply bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700;
+  max-width: 420px;
 }
 
-/* Academic calendar tab styling - matching reports page */
+/* Modern tab styling with subtle shadows */
 .calendar-tab {
-  @apply flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-4;
+  @apply flex space-x-1 bg-gray-100 dark:bg-slate-800 p-1.5 rounded-xl mb-6 shadow-sm;
 }
 
 .calendar-tab-button {
-  @apply px-3 py-2 rounded text-sm font-medium transition-colors;
+  @apply px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200;
 }
 
 .calendar-tab-button.active {
-  @apply bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm;
+  @apply bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 shadow-md;
 }
 
 .calendar-tab-button.inactive {
-  @apply text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100;
+  @apply text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-white/50 dark:hover:bg-slate-700/50;
 }
 
-/* Modal positioning fix - ensure it appears above navigation */
+/* Modern modal with rounded corners */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,7 +244,7 @@
 
 .modal-content {
   background: white;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 90vh;
   overflow-y: auto;
@@ -253,18 +254,18 @@
 }
 
 .dark .modal-content {
-  background: #1f2937;
-  border: 1px solid #374151;
+  background: #1e293b;
+  border: 1px solid #334155;
 }
 
-/* Role-based dashboard enhancements */
+/* Modern dashboard enhancements */
 .motivation-card {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  @apply text-white p-4 rounded-lg shadow-lg;
+  @apply text-white p-6 rounded-xl shadow-lg;
 }
 
 .achievement-badge {
-  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
 }
 
 .progress-ring {
@@ -277,24 +278,24 @@
   transform-origin: 50% 50%;
 }
 
-/* Performance indicators with professional colors */
+/* Modern performance indicators */
 .performance-excellent {
-  @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
+  @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 rounded-lg px-3 py-1;
 }
 
 .performance-good {
-  @apply bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400;
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 rounded-lg px-3 py-1;
 }
 
 .performance-average {
-  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400;
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400 rounded-lg px-3 py-1;
 }
 
 .performance-poor {
-  @apply bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400;
+  @apply bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 rounded-lg px-3 py-1;
 }
 
-/* Attendance indicators */
+/* Modern attendance indicators */
 .attendance-excellent {
   @apply text-green-600 dark:text-green-400;
 }
@@ -311,27 +312,27 @@
   @apply text-red-600 dark:text-red-400;
 }
 
-/* Responsive grid improvements */
+/* Responsive improvements */
 @media (max-width: 768px) {
   .compact-grid {
-    @apply gap-2;
+    @apply gap-3;
   }
   
   .compact-card {
-    @apply p-3;
+    @apply p-4;
   }
   
   .minimal-padding {
-    @apply p-2;
+    @apply p-3;
   }
 }
 
-/* Clean card styles for dark mode with professional colors */
+/* Modern card styles */
 .dark .card-clean {
-  background: rgba(31, 41, 55, 0.8);
+  background: rgba(30, 41, 59, 0.8);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(75, 85, 99, 0.3);
-  border-radius: 12px;
+  border: 1px solid rgba(71, 85, 105, 0.3);
+  border-radius: 1rem;
 }
 
 /* Smooth transitions */
@@ -339,33 +340,139 @@
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-/* Professional button styles */
+/* Modern button styles */
 .btn-primary {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  @apply text-white font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
+  @apply text-white font-medium px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200;
 }
 
 .btn-secondary {
-  @apply bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-medium px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200;
+  @apply bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-200 font-medium px-6 py-3 rounded-xl border border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700 transition-all duration-200 shadow-sm;
 }
 
-/* Professional status indicators */
+/* Modern status indicators */
 .status-active {
-  @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
+  @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 rounded-lg px-3 py-1;
 }
 
 .status-pending {
-  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400;
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400 rounded-lg px-3 py-1;
 }
 
 .status-inactive {
-  @apply bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400;
+  @apply bg-gray-100 text-gray-800 dark:bg-slate-900/20 dark:text-slate-400 rounded-lg px-3 py-1;
 }
 
 .status-warning {
-  @apply bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400;
+  @apply bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400 rounded-lg px-3 py-1;
 }
 
 .status-error {
-  @apply bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400;
+  @apply bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 rounded-lg px-3 py-1;
+}
+
+/* Modern card component */
+.modern-card {
+  @apply bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 hover:shadow-md transition-all duration-200;
+}
+
+/* Modern input styles */
+.modern-input {
+  @apply px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white transition-all duration-200;
+}
+
+/* Modern select styles */
+.modern-select {
+  @apply px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-slate-700 dark:text-white transition-all duration-200;
+}
+
+/* Modern sidebar styles */
+.modern-sidebar {
+  @apply bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 shadow-sm;
+}
+
+/* Modern navigation item */
+.nav-item {
+  @apply flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200;
+}
+
+.nav-item.active {
+  @apply bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 shadow-sm;
+}
+
+.nav-item.inactive {
+  @apply text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-slate-100;
+}
+
+/* Modern table styles */
+.modern-table {
+  @apply w-full bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden;
+}
+
+.modern-table th {
+  @apply bg-gray-50 dark:bg-slate-700 px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider;
+}
+
+.modern-table td {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-100 border-t border-gray-200 dark:border-slate-700;
+}
+
+/* Modern badge styles */
+.modern-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+}
+
+/* Modern notification styles */
+.modern-notification {
+  @apply bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-lg p-4;
+}
+
+/* Modern dropdown styles */
+.modern-dropdown {
+  @apply bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-lg py-2;
+}
+
+.modern-dropdown-item {
+  @apply px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-150;
+}
+
+/* Modern form styles */
+.modern-form {
+  @apply space-y-6;
+}
+
+.modern-form-group {
+  @apply space-y-2;
+}
+
+.modern-form-label {
+  @apply block text-sm font-medium text-gray-700 dark:text-slate-300;
+}
+
+/* Modern loading states */
+.modern-skeleton {
+  @apply animate-pulse bg-gray-200 dark:bg-slate-700 rounded-xl;
+}
+
+/* Modern divider */
+.modern-divider {
+  @apply border-t border-gray-200 dark:border-slate-700;
+}
+
+/* Modern focus styles */
+.modern-focus {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900;
+}
+
+/* Modern scrollbar */
+.modern-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modern-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-slate-800 rounded-full;
+}
+
+.modern-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-slate-600 rounded-full hover:bg-gray-400 dark:hover:bg-slate-500;
 }
