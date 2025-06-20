@@ -65,10 +65,6 @@
   @apply border-gray-600;
 }
 
-.dark .border-gray-700 {
-  @apply border-gray-700;
-}
-
 /* Professional glass morphism effects */
 .dark .glass-card {
   background: rgba(31, 41, 55, 0.8);
