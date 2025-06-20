@@ -7,7 +7,9 @@ import {
   BarChart3, 
   User,
   X,
-  School
+  School,
+  Rss,
+  UserCheck
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Avatar from '../Common/Avatar';
@@ -27,6 +29,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
     { id: 'faculty', icon: School, label: 'Faculty' },
     { id: 'staff', icon: Users, label: 'Staff' },
     { id: 'students', icon: GraduationCap, label: 'Students' },
+    { id: 'feed', icon: Rss, label: 'Feed' },
+    { id: 'alumni', icon: UserCheck, label: 'Alumni' },
     { id: 'reports', icon: BarChart3, label: 'Reports' },
     { id: 'profile', icon: User, label: 'Profile' },
   ];

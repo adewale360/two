@@ -9,6 +9,8 @@ import Lecturers from './pages/Lecturers';
 import Reports from './pages/Reports';
 import FacultyPage from './pages/FacultyPage';
 import Profile from './pages/Profile';
+import Feed from './pages/Feed';
+import Alumni from './pages/Alumni';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -23,6 +25,10 @@ function App() {
         return <Lecturers />;
       case 'students':
         return <Students />;
+      case 'feed':
+        return <Feed />;
+      case 'alumni':
+        return <Alumni />;
       case 'reports':
         return <Reports />;
       case 'profile':
