@@ -146,6 +146,55 @@ export const mockFaculties: Faculty[] = [
   }
 ];
 
+// Admissions data by year for different departments
+export const admissionsByYearData = [
+  {
+    year: '2020',
+    'Computer Science': 45,
+    'Biochemistry': 38,
+    'Architecture': 32,
+    'Business Administration': 55,
+    'Law': 28,
+    'Nursing': 42
+  },
+  {
+    year: '2021',
+    'Computer Science': 52,
+    'Biochemistry': 41,
+    'Architecture': 35,
+    'Business Administration': 62,
+    'Law': 31,
+    'Nursing': 48
+  },
+  {
+    year: '2022',
+    'Computer Science': 58,
+    'Biochemistry': 44,
+    'Architecture': 38,
+    'Business Administration': 68,
+    'Law': 34,
+    'Nursing': 52
+  },
+  {
+    year: '2023',
+    'Computer Science': 65,
+    'Biochemistry': 47,
+    'Architecture': 42,
+    'Business Administration': 72,
+    'Law': 37,
+    'Nursing': 56
+  },
+  {
+    year: '2024',
+    'Computer Science': 72,
+    'Biochemistry': 51,
+    'Architecture': 45,
+    'Business Administration': 78,
+    'Law': 40,
+    'Nursing': 61
+  }
+];
+
 // All departments across faculties
 const allDepartments = [
   'Computer Science', 'Biochemistry', 'Cyber Security', 'Software Engineering', 'Information Systems',
