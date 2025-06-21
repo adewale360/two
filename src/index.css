@@ -25,10 +25,6 @@
   @apply bg-gray-800;
 }
 
-.dark .bg-gray-800 {
-  @apply bg-gray-800;
-}
-
 .dark .text-gray-900 {
   @apply text-gray-100;
 }
