@@ -156,3 +156,161 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Backdrop blur utilities */
+.backdrop-blur-xs {
+  backdrop-filter: blur(2px);
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+}
+
+.backdrop-blur-lg {
+  backdrop-filter: blur(16px);
+}
+
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+}
+
+/* Optimized padding classes for clean design */
+.p-compact {
+  padding: 0.75rem; /* 12px */
+}
+
+.px-compact {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py-compact {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.p-tight {
+  padding: 0.5rem; /* 8px */
+}
+
+.px-tight {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.py-tight {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Spacing utilities for better content organization */
+.space-y-compact > * + * {
+  margin-top: 0.75rem;
+}
+
+.space-y-tight > * + * {
+  margin-top: 0.5rem;
+}
+
+.gap-compact {
+  gap: 0.75rem;
+}
+
+.gap-tight {
+  gap: 0.5rem;
+}
+
+/* Professional card styling */
+.card-clean {
+  @apply bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm;
+}
+
+.card-compact {
+  @apply card-clean p-compact;
+}
+
+.card-tight {
+  @apply card-clean p-tight;
+}
+
+/* Button size optimizations */
+.btn-compact {
+  @apply px-compact py-2 text-sm;
+}
+
+.btn-tight {
+  @apply px-tight py-1 text-xs;
+}
+
+/* Text size optimizations */
+.text-compact {
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.25rem;
+}
+
+.text-micro {
+  font-size: 0.6875rem; /* 11px */
+  line-height: 1rem;
+}
+
+/* Clean form styling */
+.form-input-clean {
+  @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent dark:bg-gray-700 dark:text-white;
+}
+
+.form-input-compact {
+  @apply form-input-clean text-sm py-1.5;
+}
+
+/* Responsive padding adjustments */
+@media (max-width: 640px) {
+  .p-responsive {
+    padding: 0.75rem;
+  }
+  
+  .px-responsive {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .py-responsive {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
+@media (min-width: 641px) {
+  .p-responsive {
+    padding: 1rem;
+  }
+  
+  .px-responsive {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .py-responsive {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .p-responsive {
+    padding: 1.5rem;
+  }
+  
+  .px-responsive {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  .py-responsive {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+}

@@ -21,12 +21,12 @@ const SignIn: React.FC = () => {
     setLoading(true);
     setError('');
 
-    const { error } = await signIn(formData.email, formData.password);
-
-    if (error) {
-      setError(error.message);
+    // Demo login logic - bypass actual authentication for demo
+    if (formData.email && formData.password) {
+      // Simulate successful login
+      navigate('/');
     } else {
-      navigate('/dashboard');
+      setError('Please enter both email and password');
     }
 
     setLoading(false);
@@ -40,9 +40,17 @@ const SignIn: React.FC = () => {
     }));
   };
 
+  const handleDemoLogin = (role: string) => {
+    setFormData({
+      email: `${role}@pineappl.edu`,
+      password: 'demo123',
+      rememberMe: false
+    });
+  };
+
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4"
+      className="min-h-screen flex items-center justify-center p-4 relative"
       style={{
         backgroundImage: `url('/abd66116-4073-484f-b913-ac373540ad02.jpeg')`,
         backgroundSize: 'cover',
@@ -50,12 +58,12 @@ const SignIn: React.FC = () => {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40"></div>
+      {/* Blurred Overlay */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
       
       {/* Sign In Card */}
       <div className="relative z-10 w-full max-w-sm">
-        <div className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-gray-700">
+        <div className="bg-gray-800/95 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-gray-700/50">
           {/* Header */}
           <div className="text-center mb-6">
             <div className="flex items-center justify-center mb-3">
@@ -96,7 +104,7 @@ const SignIn: React.FC = () => {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
                 required
               />
             </div>
@@ -108,7 +116,7 @@ const SignIn: React.FC = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent pr-10 text-sm"
+                className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent pr-10 text-sm backdrop-blur-sm"
                 required
               />
               <button
@@ -159,19 +167,26 @@ const SignIn: React.FC = () => {
 
           {/* Demo Accounts */}
           <div className="mt-4 pt-4 border-t border-gray-700">
-            <p className="text-gray-400 text-xs text-center mb-2">Demo Accounts:</p>
-            <div className="space-y-1 text-xs">
-              <div className="flex justify-between text-gray-300">
-                <span>Admin:</span>
-                <span>admin@pineappl.edu</span>
-              </div>
-              <div className="flex justify-between text-gray-300">
-                <span>Student:</span>
-                <span>student@pineappl.edu</span>
-              </div>
-              <div className="text-center text-gray-400 mt-1">
-                Password: demo123
-              </div>
+            <p className="text-gray-400 text-xs text-center mb-2">Quick Demo Login:</p>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => handleDemoLogin('admin')}
+                className="px-2 py-1 bg-yellow-600/20 text-yellow-300 rounded text-xs hover:bg-yellow-600/30 transition-colors"
+              >
+                Admin
+              </button>
+              <button
+                onClick={() => handleDemoLogin('lecturer')}
+                className="px-2 py-1 bg-blue-600/20 text-blue-300 rounded text-xs hover:bg-blue-600/30 transition-colors"
+              >
+                Lecturer
+              </button>
+              <button
+                onClick={() => handleDemoLogin('student')}
+                className="px-2 py-1 bg-green-600/20 text-green-300 rounded text-xs hover:bg-green-600/30 transition-colors"
+              >
+                Student
+              </button>
             </div>
           </div>
         </div>

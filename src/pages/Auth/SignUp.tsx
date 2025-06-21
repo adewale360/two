@@ -60,26 +60,44 @@ const SignUp: React.FC = () => {
   }, [formData.faculty_id]);
 
   const fetchFaculties = async () => {
-    const { data, error } = await supabase
-      .from('faculties')
-      .select('id, name, full_name')
-      .order('name');
-
-    if (!error && data) {
-      setFaculties(data);
-    }
+    // Mock faculties for demo
+    const mockFaculties = [
+      { id: '1', name: 'COPAS', full_name: 'College of Pure and Applied Sciences' },
+      { id: '2', name: 'COLENSMA', full_name: 'College of Environmental Sciences and Management' },
+      { id: '3', name: 'CASMAS', full_name: 'College of Art, Social, and Management Science' },
+      { id: '4', name: 'COLAW', full_name: 'College of Law' },
+      { id: '5', name: 'NURSING', full_name: 'College of Nursing and Basic Medical Sciences' }
+    ];
+    setFaculties(mockFaculties);
   };
 
   const fetchDepartments = async (facultyId: string) => {
-    const { data, error } = await supabase
-      .from('departments')
-      .select('id, name, faculty_id')
-      .eq('faculty_id', facultyId)
-      .order('name');
-
-    if (!error && data) {
-      setDepartments(data);
-    }
+    // Mock departments for demo
+    const mockDepartments: Record<string, Department[]> = {
+      '1': [
+        { id: '1', name: 'Computer Science', faculty_id: '1' },
+        { id: '2', name: 'Biochemistry', faculty_id: '1' },
+        { id: '3', name: 'Software Engineering', faculty_id: '1' }
+      ],
+      '2': [
+        { id: '4', name: 'Architecture', faculty_id: '2' },
+        { id: '5', name: 'Estate Management', faculty_id: '2' }
+      ],
+      '3': [
+        { id: '6', name: 'Business Administration', faculty_id: '3' },
+        { id: '7', name: 'Accounting', faculty_id: '3' },
+        { id: '8', name: 'Economics', faculty_id: '3' }
+      ],
+      '4': [
+        { id: '9', name: 'Public and Property Law', faculty_id: '4' },
+        { id: '10', name: 'Private and International Law', faculty_id: '4' }
+      ],
+      '5': [
+        { id: '11', name: 'Nursing Science', faculty_id: '5' },
+        { id: '12', name: 'Human Physiology', faculty_id: '5' }
+      ]
+    };
+    setDepartments(mockDepartments[facultyId] || []);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -158,19 +176,15 @@ const SignUp: React.FC = () => {
     setLoading(true);
     setError('');
 
-    const { error } = await signUp(formData);
-
-    if (error) {
-      setError(error.message);
-    } else {
+    // Demo signup - simulate success
+    setTimeout(() => {
       navigate('/signin', { 
         state: { 
-          message: 'Account created successfully! Please check your email to verify your account.' 
+          message: 'Account created successfully! You can now sign in.' 
         }
       });
-    }
-
-    setLoading(false);
+      setLoading(false);
+    }, 1000);
   };
 
   const renderStep1 = () => (
@@ -188,7 +202,7 @@ const SignUp: React.FC = () => {
           placeholder="Full Name"
           value={formData.full_name}
           onChange={handleInputChange}
-          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
           required
         />
       </div>
@@ -201,7 +215,7 @@ const SignUp: React.FC = () => {
           placeholder="Email Address"
           value={formData.email}
           onChange={handleInputChange}
-          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
           required
         />
       </div>
@@ -214,7 +228,7 @@ const SignUp: React.FC = () => {
           placeholder="Username"
           value={formData.username}
           onChange={handleInputChange}
-          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
           required
         />
       </div>
@@ -226,7 +240,7 @@ const SignUp: React.FC = () => {
           placeholder="Password"
           value={formData.password}
           onChange={handleInputChange}
-          className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent pr-10 text-sm"
+          className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent pr-10 text-sm backdrop-blur-sm"
           required
         />
         <button
@@ -245,7 +259,7 @@ const SignUp: React.FC = () => {
           placeholder="Confirm Password"
           value={formData.confirmPassword}
           onChange={handleInputChange}
-          className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent pr-10 text-sm"
+          className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent pr-10 text-sm backdrop-blur-sm"
           required
         />
         <button
@@ -273,7 +287,7 @@ const SignUp: React.FC = () => {
           name="date_of_birth"
           value={formData.date_of_birth}
           onChange={handleInputChange}
-          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
           required
         />
       </div>
@@ -286,7 +300,7 @@ const SignUp: React.FC = () => {
           placeholder="Phone Number"
           value={formData.phone}
           onChange={handleInputChange}
-          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
           required
         />
       </div>
@@ -299,7 +313,7 @@ const SignUp: React.FC = () => {
           placeholder="Address (Optional)"
           value={formData.address}
           onChange={handleInputChange}
-          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
         />
       </div>
     </div>
@@ -317,7 +331,7 @@ const SignUp: React.FC = () => {
           name="role"
           value={formData.role}
           onChange={handleInputChange}
-          className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+          className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
         >
           <option value="student">Student</option>
           <option value="lecturer">Lecturer</option>
@@ -331,7 +345,7 @@ const SignUp: React.FC = () => {
           name="faculty_id"
           value={formData.faculty_id}
           onChange={handleInputChange}
-          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
           required
         >
           <option value="">Select Faculty</option>
@@ -349,7 +363,7 @@ const SignUp: React.FC = () => {
           name="department_id"
           value={formData.department_id}
           onChange={handleInputChange}
-          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+          className="w-full pl-9 pr-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
           required
           disabled={!formData.faculty_id}
         >
@@ -370,7 +384,7 @@ const SignUp: React.FC = () => {
             placeholder="Matriculation Number"
             value={formData.matric_number}
             onChange={handleInputChange}
-            className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+            className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
             required
           />
         </div>
@@ -384,7 +398,7 @@ const SignUp: React.FC = () => {
             placeholder="Staff ID"
             value={formData.staff_id}
             onChange={handleInputChange}
-            className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+            className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
             required
           />
         </div>
@@ -394,7 +408,7 @@ const SignUp: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4"
+      className="min-h-screen flex items-center justify-center p-4 relative"
       style={{
         backgroundImage: `url('/abd66116-4073-484f-b913-ac373540ad02.jpeg')`,
         backgroundSize: 'cover',
@@ -402,12 +416,12 @@ const SignUp: React.FC = () => {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40"></div>
+      {/* Blurred Overlay */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
       
       {/* Sign Up Card */}
       <div className="relative z-10 w-full max-w-sm">
-        <div className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-gray-700">
+        <div className="bg-gray-800/95 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-gray-700/50">
           {/* Header */}
           <div className="text-center mb-4">
             <div className="flex items-center justify-center mb-2">

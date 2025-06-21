@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Plus, Image, Video, Calendar, MapPin, Users, Clock } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Plus, Image, Video, Calendar, MapPin, Users, Clock, CheckCircle, Crown, Award } from 'lucide-react';
 import Card from '../components/Common/Card';
 import Avatar from '../components/Common/Avatar';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,6 +11,8 @@ interface Post {
     role: 'student' | 'lecturer' | 'admin';
     department: string;
     avatar?: string;
+    isVerified?: boolean;
+    isDepartmentGovernor?: boolean;
   };
   content: string;
   timestamp: string;
@@ -41,7 +43,8 @@ const Feed: React.FC = () => {
       author: {
         name: 'Dr. Sarah Wilson',
         role: 'lecturer',
-        department: 'Computer Science'
+        department: 'Computer Science',
+        isVerified: true
       },
       content: 'Excited to announce that our Machine Learning research paper has been accepted for publication in the International Journal of AI! This is a collaborative effort with our brilliant students. #Research #MachineLearning #ProudMoment',
       timestamp: '2 hours ago',
@@ -55,9 +58,10 @@ const Feed: React.FC = () => {
     {
       id: '2',
       author: {
-        name: 'Student Union',
+        name: 'University Administration',
         role: 'admin',
-        department: 'Administration'
+        department: 'Administration',
+        isVerified: true
       },
       content: 'Join us for the Annual Tech Innovation Fair! Showcase your projects, network with industry professionals, and compete for amazing prizes.',
       timestamp: '4 hours ago',
@@ -79,7 +83,8 @@ const Feed: React.FC = () => {
       author: {
         name: 'Adebayo Johnson',
         role: 'student',
-        department: 'Computer Science'
+        department: 'Computer Science',
+        isDepartmentGovernor: true
       },
       content: 'Just completed my final year project on blockchain-based voting systems! Special thanks to Dr. Wilson for her guidance throughout this journey. The future of secure digital democracy looks promising! 🚀',
       timestamp: '6 hours ago',
@@ -95,7 +100,8 @@ const Feed: React.FC = () => {
       author: {
         name: 'Prof. Michael Brown',
         role: 'lecturer',
-        department: 'Architecture'
+        department: 'Architecture',
+        isVerified: true
       },
       content: 'Our students\' sustainable architecture designs are truly inspiring! Here are some highlights from this semester\'s final presentations. The creativity and environmental consciousness shown is remarkable.',
       timestamp: '8 hours ago',
@@ -110,20 +116,33 @@ const Feed: React.FC = () => {
     {
       id: '5',
       author: {
-        name: 'University Administration',
-        role: 'admin',
-        department: 'Administration'
+        name: 'Chioma Okwu',
+        role: 'student',
+        department: 'Biochemistry'
       },
-      content: 'Important: Registration for Second Semester 2024/2025 begins Monday, January 8th. Please ensure all outstanding fees are cleared before the deadline. Visit the student portal for more information.',
+      content: 'Amazing lecture today on protein synthesis! The way Dr. Chen explained the molecular mechanisms was absolutely brilliant. Can\'t wait to apply this knowledge in our lab work next week.',
       timestamp: '1 day ago',
-      likes: 156,
-      comments: 45,
-      shares: 89,
+      likes: 34,
+      comments: 8,
+      shares: 5,
       isLiked: false,
-      isBookmarked: true,
-      type: 'announcement'
+      isBookmarked: false,
+      type: 'text'
     }
   ]);
+
+  const getVerificationBadge = (author: Post['author']) => {
+    if (author.role === 'admin' && author.isVerified) {
+      return <Crown className="h-4 w-4 text-yellow-500" title="Admin" />;
+    }
+    if (author.role === 'lecturer' && author.isVerified) {
+      return <CheckCircle className="h-4 w-4 text-blue-500" title="Verified Lecturer" />;
+    }
+    if (author.role === 'student' && author.isDepartmentGovernor) {
+      return <Award className="h-4 w-4 text-gray-500" title="Department Governor" />;
+    }
+    return null;
+  };
 
   const handleLike = (postId: string) => {
     setPosts(posts.map(post => 
@@ -152,7 +171,9 @@ const Feed: React.FC = () => {
         author: {
           name: user?.name || 'Demo User',
           role: user?.role || 'student',
-          department: user?.department || 'Computer Science'
+          department: user?.department || 'Computer Science',
+          isVerified: user?.role === 'lecturer' || user?.role === 'admin',
+          isDepartmentGovernor: user?.role === 'student' && Math.random() > 0.8
         },
         content: newPost,
         timestamp: 'Just now',
@@ -176,20 +197,10 @@ const Feed: React.FC = () => {
     return true;
   });
 
-  const getPostTypeIcon = (type: string) => {
-    switch (type) {
-      case 'event': return <Calendar className="h-4 w-4 text-blue-500" />;
-      case 'announcement': return <Users className="h-4 w-4 text-red-500" />;
-      case 'image': return <Image className="h-4 w-4 text-green-500" />;
-      case 'video': return <Video className="h-4 w-4 text-purple-500" />;
-      default: return null;
-    }
-  };
-
   return (
-    <div className="compact-spacing max-w-4xl mx-auto">
+    <div className="p-4 bg-gray-50 dark:bg-gray-900 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             University Feed
@@ -200,7 +211,7 @@ const Feed: React.FC = () => {
         </div>
         <button
           onClick={() => setShowCreatePost(true)}
-          className="flex items-center space-x-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+          className="flex items-center space-x-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           <span>Create Post</span>
@@ -208,12 +219,12 @@ const Feed: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-1 bg-gray-100 dark:bg-dark-card p-1 rounded-lg mb-4">
+      <div className="flex space-x-1 bg-white dark:bg-gray-800 p-1 rounded-lg mb-6 border border-gray-200 dark:border-gray-700">
         <button
           onClick={() => setActiveTab('all')}
-          className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             activeTab === 'all'
-              ? 'bg-white dark:bg-dark-surface text-gray-900 dark:text-white shadow-sm'
+              ? 'bg-emerald-600 text-white'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
@@ -221,9 +232,9 @@ const Feed: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveTab('following')}
-          className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             activeTab === 'following'
-              ? 'bg-white dark:bg-dark-surface text-gray-900 dark:text-white shadow-sm'
+              ? 'bg-emerald-600 text-white'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
@@ -231,9 +242,9 @@ const Feed: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveTab('bookmarked')}
-          className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             activeTab === 'bookmarked'
-              ? 'bg-white dark:bg-dark-surface text-gray-900 dark:text-white shadow-sm'
+              ? 'bg-emerald-600 text-white'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
@@ -243,8 +254,8 @@ const Feed: React.FC = () => {
 
       {/* Create Post Modal */}
       {showCreatePost && (
-        <div className="modal-overlay">
-          <div className="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Create Post</h3>
               <button
@@ -272,7 +283,7 @@ const Feed: React.FC = () => {
               onChange={(e) => setNewPost(e.target.value)}
               placeholder="What's on your mind?"
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white resize-none"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white resize-none"
             />
 
             <div className="flex items-center justify-between mt-4">
@@ -290,7 +301,7 @@ const Feed: React.FC = () => {
               <button
                 onClick={handleCreatePost}
                 disabled={!newPost.trim()}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Post
               </button>
@@ -300,10 +311,10 @@ const Feed: React.FC = () => {
       )}
 
       {/* Posts */}
-      <div className="space-y-4">
+      <div className="max-w-2xl mx-auto space-y-4">
         {filteredPosts.map((post) => (
           <Card key={post.id}>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Post Header */}
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3">
@@ -317,7 +328,7 @@ const Feed: React.FC = () => {
                       <h4 className="font-semibold text-gray-900 dark:text-white">
                         {post.author.name}
                       </h4>
-                      {getPostTypeIcon(post.type)}
+                      {getVerificationBadge(post.author)}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {post.author.department} • {post.timestamp}
