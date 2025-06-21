@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 type UserRole = 'student' | 'lecturer' | 'admin';
 
@@ -34,91 +32,41 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
+  // Check for existing session on mount
   useEffect(() => {
-    // Check for existing session
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        await fetchUserProfile(session.user);
+    const savedUser = localStorage.getItem('pineappl_user');
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        localStorage.removeItem('pineappl_user');
       }
-      setLoading(false);
-    };
-
-    getSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        await fetchUserProfile(session.user);
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const fetchUserProfile = async (authUser: SupabaseUser) => {
-    try {
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select(`
-          *,
-          faculties (name),
-          departments (name)
-        `)
-        .eq('id', authUser.id)
-        .single();
-
-      if (error) {
-        console.error('Error fetching profile:', error);
-        // Create a basic user object from auth data
-        setUser({
-          id: authUser.id,
-          name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
-          email: authUser.email || '',
-          role: 'student'
-        });
-        return;
-      }
-
-      setUser({
-        id: profile.id,
-        name: profile.full_name,
-        email: profile.email,
-        role: profile.role,
-        department: profile.departments?.name,
-        faculty: profile.faculties?.name
-      });
-    } catch (error) {
-      console.error('Error in fetchUserProfile:', error);
     }
-  };
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     
     try {
-      // For demo purposes, create a mock user based on email
+      // Demo authentication - accept any email/password combination
       let demoUser: User;
       
-      if (email.includes('admin')) {
+      if (email.includes('admin') || email === 'admin@pineappl.edu') {
         demoUser = {
           id: '1',
           name: 'Admin User',
-          email: 'admin@university.edu',
+          email: email,
           role: 'admin',
           department: 'Administration',
           faculty: 'Administration'
         };
-      } else if (email.includes('lecturer')) {
+      } else if (email.includes('lecturer') || email === 'lecturer@pineappl.edu') {
         demoUser = {
           id: '2',
           name: 'Dr. Sarah Wilson',
-          email: 'lecturer@university.edu',
+          email: email,
           role: 'lecturer',
           department: 'Computer Science',
           faculty: 'COPAS'
@@ -127,13 +75,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         demoUser = {
           id: '3',
           name: 'John Student',
-          email: 'student@university.edu',
+          email: email,
           role: 'student',
           department: 'Computer Science',
           faculty: 'COPAS'
         };
       }
       
+      // Save to localStorage for persistence
+      localStorage.setItem('pineappl_user', JSON.stringify(demoUser));
       setUser(demoUser);
       setLoading(false);
       return { error: null };
@@ -147,27 +97,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     
     try {
-      const { data, error } = await supabase.auth.signUp({
+      // Demo signup - create user based on form data
+      const newUser: User = {
+        id: Date.now().toString(),
+        name: userData.full_name,
         email: userData.email,
-        password: userData.password,
-        options: {
-          data: {
-            full_name: userData.full_name,
-            username: userData.username,
-            role: userData.role,
-            faculty_id: userData.faculty_id,
-            department_id: userData.department_id,
-            matric_number: userData.matric_number,
-            staff_id: userData.staff_id,
-            phone: userData.phone,
-            date_of_birth: userData.date_of_birth,
-            address: userData.address
-          }
-        }
-      });
+        role: userData.role,
+        department: userData.department_name || 'Computer Science',
+        faculty: userData.faculty_name || 'COPAS'
+      };
 
+      // Save to localStorage
+      localStorage.setItem('pineappl_user', JSON.stringify(newUser));
+      setUser(newUser);
       setLoading(false);
-      return { error };
+      return { error: null };
     } catch (error) {
       setLoading(false);
       return { error };
@@ -175,13 +119,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    localStorage.removeItem('pineappl_user');
     setUser(null);
   };
 
   const switchRole = (role: UserRole) => {
     if (user) {
-      setUser({ ...user, role });
+      const updatedUser = { ...user, role };
+      setUser(updatedUser);
+      localStorage.setItem('pineappl_user', JSON.stringify(updatedUser));
     }
   };
 

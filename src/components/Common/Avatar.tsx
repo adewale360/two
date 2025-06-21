@@ -55,13 +55,13 @@ const Avatar: React.FC<AvatarProps> = ({
     }
   };
 
-  // Random avatar images from the provided files
+  // Updated avatar images from your uploads
   const avatarImages = [
-    '/#90s #Style #inspiration #blackboy #anime….jpeg',
-    '/#marvel _ #gwenstacy _ #spiderman _ #icon….jpeg',
-    '/7dfe80c2-4964-4470-ba6b-d034abc03a49.jpeg',
-    '/5537f926-28d7-4350-ba60-c74f89f3fc63.jpeg',
-    '/a6765ca6-319f-4212-b29e-996cc6ecee03.jpeg'
+    '/7fe474d5-92f9-448b-9809-1725212e371f.jpeg',
+    '/bbff9b39-8ac5-4d72-89d8-da1ce9f7b3f4.jpeg',
+    '/ca8cd9ff-c9fc-42e7-a793-ee3b0649d744.jpeg',
+    '/Cute pic 😍😍💍❤️ in 2022.jpeg',
+    '/d452f50e-800e-4c2b-81cb-ba4de7c85792.jpeg'
   ];
 
   // Generate a consistent random image based on name hash

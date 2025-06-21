@@ -21,12 +21,12 @@ const SignIn: React.FC = () => {
     setLoading(true);
     setError('');
 
-    // Demo login logic - bypass actual authentication for demo
-    if (formData.email && formData.password) {
-      // Simulate successful login
-      navigate('/');
+    const { error } = await signIn(formData.email, formData.password);
+    
+    if (error) {
+      setError('Invalid credentials. Please try again.');
     } else {
-      setError('Please enter both email and password');
+      navigate('/');
     }
 
     setLoading(false);
@@ -49,21 +49,10 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center p-4 relative"
-      style={{
-        backgroundImage: `url('/abd66116-4073-484f-b913-ac373540ad02.jpeg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      {/* Blurred Overlay */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-      
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900">
       {/* Sign In Card */}
-      <div className="relative z-10 w-full max-w-sm">
-        <div className="bg-gray-800/95 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-gray-700/50">
+      <div className="w-full max-w-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
           {/* Header */}
           <div className="text-center mb-6">
             <div className="flex items-center justify-center mb-3">
@@ -71,8 +60,8 @@ const SignIn: React.FC = () => {
                 <School className="h-6 w-6 text-white" />
               </div>
             </div>
-            <h1 className="text-xl font-bold text-white mb-1">Pineappl</h1>
-            <p className="text-gray-300 text-xs">University Performance Dashboard</p>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Pineappl</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-xs">University Performance Dashboard</p>
           </div>
 
           {/* Tab Navigation */}
@@ -82,7 +71,7 @@ const SignIn: React.FC = () => {
             </button>
             <button 
               onClick={() => navigate('/signup')}
-              className="flex-1 py-2 px-3 text-center text-gray-400 bg-gray-700 rounded-r-lg font-medium hover:text-white transition-colors text-sm"
+              className="flex-1 py-2 px-3 text-center text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded-r-lg font-medium hover:text-gray-900 dark:hover:text-white transition-colors text-sm"
             >
               SIGN UP
             </button>
@@ -90,7 +79,7 @@ const SignIn: React.FC = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-3 p-2 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-xs">
+            <div className="mb-3 p-2 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-xs">
               {error}
             </div>
           )}
@@ -104,7 +93,7 @@ const SignIn: React.FC = () => {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm backdrop-blur-sm"
+                className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
                 required
               />
             </div>
@@ -116,13 +105,13 @@ const SignIn: React.FC = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2.5 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent pr-10 text-sm backdrop-blur-sm"
+                className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent pr-10 text-sm"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -135,9 +124,9 @@ const SignIn: React.FC = () => {
                 id="rememberMe"
                 checked={formData.rememberMe}
                 onChange={handleInputChange}
-                className="w-3 h-3 text-emerald-600 bg-gray-700 border-gray-600 rounded focus:ring-emerald-500"
+                className="w-3 h-3 text-emerald-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-emerald-500"
               />
-              <label htmlFor="rememberMe" className="ml-2 text-xs text-gray-300">
+              <label htmlFor="rememberMe" className="ml-2 text-xs text-gray-600 dark:text-gray-400">
                 Stay signed in
               </label>
             </div>
@@ -160,30 +149,30 @@ const SignIn: React.FC = () => {
 
           {/* Forgot Password */}
           <div className="text-center mt-4">
-            <button className="text-gray-400 hover:text-white text-xs transition-colors">
+            <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white text-xs transition-colors">
               Forgot Password?
             </button>
           </div>
 
           {/* Demo Accounts */}
-          <div className="mt-4 pt-4 border-t border-gray-700">
-            <p className="text-gray-400 text-xs text-center mb-2">Quick Demo Login:</p>
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-gray-500 dark:text-gray-400 text-xs text-center mb-2">Quick Demo Login:</p>
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => handleDemoLogin('admin')}
-                className="px-2 py-1 bg-yellow-600/20 text-yellow-300 rounded text-xs hover:bg-yellow-600/30 transition-colors"
+                className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 rounded text-xs hover:bg-yellow-200 dark:hover:bg-yellow-900/30 transition-colors"
               >
                 Admin
               </button>
               <button
                 onClick={() => handleDemoLogin('lecturer')}
-                className="px-2 py-1 bg-blue-600/20 text-blue-300 rounded text-xs hover:bg-blue-600/30 transition-colors"
+                className="px-2 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded text-xs hover:bg-blue-200 dark:hover:bg-blue-900/30 transition-colors"
               >
                 Lecturer
               </button>
               <button
                 onClick={() => handleDemoLogin('student')}
-                className="px-2 py-1 bg-green-600/20 text-green-300 rounded text-xs hover:bg-green-600/30 transition-colors"
+                className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded text-xs hover:bg-green-200 dark:hover:bg-green-900/30 transition-colors"
               >
                 Student
               </button>
