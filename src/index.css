@@ -64,10 +64,6 @@
   @apply border-gray-600;
 }
 
-.dark .border-gray-700 {
-  @apply border-gray-700;
-}
-
 /* Avatar component styles with image support */
 .avatar {
   @apply relative inline-flex items-center justify-center overflow-hidden rounded-full;
