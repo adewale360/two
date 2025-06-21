@@ -2,79 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Clean Dark Mode Theme */
+/* Clean Gray Theme */
 .dark {
   color-scheme: dark;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1b3a 100%);
+  background: #1f2937;
 }
 
 /* Dark mode overrides for clean, sharp design */
 .dark body {
-  @apply bg-dark-bg text-dark-text;
+  @apply bg-gray-900 text-gray-100;
 }
 
 .dark .bg-white {
-  @apply bg-dark-surface border-dark-border;
+  @apply bg-gray-800 border-gray-700;
 }
 
 .dark .bg-gray-50 {
-  @apply bg-dark-card;
+  @apply bg-gray-700;
 }
 
 .dark .bg-gray-100 {
-  @apply bg-dark-surface;
+  @apply bg-gray-800;
 }
 
 .dark .bg-gray-800 {
-  @apply bg-dark-surface;
+  @apply bg-gray-800;
 }
 
 .dark .bg-gray-900 {
-  @apply bg-dark-bg;
+  @apply bg-gray-900;
 }
 
 .dark .text-gray-900 {
-  @apply text-dark-text;
+  @apply text-gray-100;
 }
 
 .dark .text-gray-800 {
-  @apply text-dark-text;
+  @apply text-gray-100;
 }
 
 .dark .text-gray-700 {
-  @apply text-dark-text;
+  @apply text-gray-200;
 }
 
 .dark .text-gray-600 {
-  @apply text-dark-muted;
+  @apply text-gray-300;
 }
 
 .dark .text-gray-500 {
-  @apply text-dark-muted;
+  @apply text-gray-400;
 }
 
 .dark .text-gray-400 {
-  @apply text-dark-muted;
+  @apply text-gray-400;
 }
 
 .dark .text-black {
-  @apply text-dark-text;
+  @apply text-gray-100;
 }
 
 .dark .border-gray-200 {
-  @apply border-dark-border;
+  @apply border-gray-700;
 }
 
 .dark .border-gray-300 {
-  @apply border-dark-border;
+  @apply border-gray-600;
 }
 
 .dark .border-gray-600 {
-  @apply border-dark-border;
+  @apply border-gray-600;
 }
 
 .dark .border-gray-700 {
-  @apply border-dark-border;
+  @apply border-gray-700;
 }
 
 /* Avatar component styles with image support */
@@ -124,15 +124,15 @@
 
 /* Professional compact design system */
 .compact-spacing {
-  @apply space-y-3;
+  @apply space-y-6;
 }
 
 .compact-grid {
-  @apply gap-3;
+  @apply gap-6;
 }
 
 .compact-card {
-  @apply p-4;
+  @apply p-6;
 }
 
 .compact-text {
@@ -140,38 +140,38 @@
 }
 
 .compact-chart {
-  height: 160px !important;
+  height: 200px !important;
 }
 
 .mini-chart {
-  height: 120px !important;
+  height: 150px !important;
 }
 
 .compact-stat-card {
-  @apply p-3;
+  @apply p-4;
 }
 
 .compact-header {
-  @apply text-base font-semibold;
+  @apply text-lg font-semibold;
 }
 
 .compact-subheader {
-  @apply text-sm font-medium;
+  @apply text-base font-medium;
 }
 
 /* Reduced padding and margins */
 .tight-spacing {
-  @apply space-y-2;
+  @apply space-y-3;
 }
 
 .minimal-padding {
-  @apply p-3;
+  @apply p-4;
 }
 
 /* Professional table styles */
 .compact-table th,
 .compact-table td {
-  @apply py-2 px-3 text-sm;
+  @apply py-3 px-4 text-sm;
 }
 
 /* Reduced font sizes */
@@ -208,18 +208,18 @@
 
 /* Compact metrics cards */
 .metrics-card {
-  @apply bg-white dark:bg-dark-surface p-3 rounded-lg border border-gray-200 dark:border-dark-border;
+  @apply bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700;
 }
 
 /* Professional chart containers */
 .chart-container {
-  @apply bg-white dark:bg-dark-surface p-4 rounded-lg border border-gray-200 dark:border-dark-border;
+  @apply bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700;
   max-width: 400px;
 }
 
 /* Academic calendar tab styling */
 .calendar-tab {
-  @apply flex space-x-1 bg-gray-100 dark:bg-dark-card p-1 rounded-lg mb-4;
+  @apply flex space-x-1 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg mb-4;
 }
 
 .calendar-tab-button {
@@ -227,11 +227,11 @@
 }
 
 .calendar-tab-button.active {
-  @apply bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text;
+  @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100;
 }
 
 .calendar-tab-button.inactive {
-  @apply text-gray-600 dark:text-dark-muted hover:text-gray-900 dark:hover:text-dark-text;
+  @apply text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100;
 }
 
 /* Modal positioning fix */
@@ -259,14 +259,14 @@
 }
 
 .dark .modal-content {
-  background: #1a1b3a;
-  border: 1px solid #2d2f5f;
+  background: #1f2937;
+  border: 1px solid #374151;
 }
 
 /* Role-based dashboard enhancements */
 .motivation-card {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  @apply text-white p-4 rounded-lg;
+  @apply text-white p-6 rounded-lg;
 }
 
 .achievement-badge {
@@ -320,23 +320,22 @@
 /* Responsive grid improvements */
 @media (max-width: 768px) {
   .compact-grid {
-    @apply gap-2;
+    @apply gap-4;
   }
   
   .compact-card {
-    @apply p-3;
+    @apply p-4;
   }
   
   .minimal-padding {
-    @apply p-2;
+    @apply p-3;
   }
 }
 
 /* Clean card styles for dark mode */
 .dark .card-clean {
-  background: rgba(37, 38, 89, 0.6);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #374151;
+  border: 1px solid #4b5563;
   border-radius: 12px;
 }
 
