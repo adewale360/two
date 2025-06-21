@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout/Layout';
 import ReturnToTop from './components/Common/ReturnToTop';
 import Home from './pages/Home';
@@ -11,9 +12,32 @@ import FacultyPage from './pages/FacultyPage';
 import Profile from './pages/Profile';
 import Feed from './pages/Feed';
 import Alumni from './pages/Alumni';
+import SignIn from './pages/Auth/SignIn';
+import SignUp from './pages/Auth/SignUp';
 
-function App() {
-  const [currentPage, setCurrentPage] = useState('home');
+// Protected Route Component
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+// Main App Component
+const AppContent: React.FC = () => {
+  const { user } = useAuth();
+  const [currentPage, setCurrentPage] = React.useState('home');
 
   const renderPage = () => {
     switch (currentPage) {
@@ -38,13 +62,33 @@ function App() {
     }
   };
 
+  // If user is not authenticated, show auth routes
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="*" element={<Navigate to="/signin" replace />} />
+      </Routes>
+    );
+  }
+
+  // If user is authenticated, show dashboard
+  return (
+    <Layout currentPage={currentPage} onPageChange={setCurrentPage}>
+      {renderPage()}
+      <ReturnToTop />
+    </Layout>
+  );
+};
+
+function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Layout currentPage={currentPage} onPageChange={setCurrentPage}>
-          {renderPage()}
-          <ReturnToTop />
-        </Layout>
+        <Router>
+          <AppContent />
+        </Router>
       </AuthProvider>
     </ThemeProvider>
   );
