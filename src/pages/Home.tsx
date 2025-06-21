@@ -45,6 +45,9 @@ const Home: React.FC = () => {
   const isStudent = user?.role === 'student';
   const isLecturer = user?.role === 'lecturer';
 
+  const missionStatement = "To provide world-class education that empowers students with knowledge, skills, and values necessary for leadership and service in a global society.";
+  const visionStatement = "To be a leading university recognized for academic excellence, innovative research, and transformative impact on society.";
+
   // Get role-specific metrics
   const metrics = getDashboardMetrics(user?.role || 'admin', user?.id);
 
@@ -110,54 +113,63 @@ const Home: React.FC = () => {
   const motivationalContent = getMotivationalContent();
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="compact-spacing">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Dashboard
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            {isStudent ? 'Track your academic progress and achievements' : 
-             isLecturer ? 'Monitor your teaching impact and student performance' :
-             'Plan, prioritize, and accomplish your tasks with ease.'}
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <button className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center space-x-2">
-            <Plus className="h-4 w-4" />
-            <span>Add Project</span>
-          </button>
-          <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            Import Data
-          </button>
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          {isStudent ? 'My Academic Dashboard' : isLecturer ? 'Teaching Dashboard' : 'University Dashboard'}
+        </h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          {isStudent ? 'Track your academic progress and achievements' : 
+           isLecturer ? 'Monitor your teaching impact and student performance' :
+           'Welcome to your academic performance tracking system'}
+        </p>
+      </div>
+
+      {/* Motivational Card */}
+      <div className="motivation-card mb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <h3 className="text-lg font-bold mb-2">{motivationalContent.title}</h3>
+            <p className="text-sm opacity-90 mb-3">{motivationalContent.message}</p>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-16 h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-white rounded-full transition-all duration-500"
+                    style={{ width: `${motivationalContent.progress}%` }}
+                  ></div>
+                </div>
+                <span className="text-sm font-medium">{motivationalContent.progress}%</span>
+              </div>
+              <div className="text-sm">
+                <Target className="h-4 w-4 inline mr-1" />
+                {motivationalContent.nextGoal}
+              </div>
+            </div>
+          </div>
+          <div className="text-right">
+            <Trophy className="h-12 w-12 opacity-80" />
+          </div>
         </div>
       </div>
 
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Role-Specific Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 compact-grid mb-4">
         {isStudent ? (
           <>
-            <div className="bg-emerald-600 text-white p-6 rounded-xl">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-emerald-100 text-sm">My GPA</p>
-                  <p className="text-3xl font-bold">{metrics.myGPA?.toFixed(2) || '0.00'}</p>
-                  <div className="flex items-center text-emerald-200 text-sm mt-2">
-                    <TrendingUp className="h-4 w-4 mr-1" />
-                    <span>Increased from last month</span>
-                  </div>
-                </div>
-                <div className="bg-emerald-500 p-3 rounded-lg">
-                  <TrendingUp className="h-6 w-6" />
-                </div>
-              </div>
-            </div>
+            <StatCard
+              title="My GPA"
+              value={metrics.myGPA?.toFixed(2) || '0.00'}
+              icon={TrendingUp}
+              change={{ value: "0.2", type: "increase" }}
+              color="blue"
+            />
             <StatCard
               title="My Courses"
               value={metrics.myCourses?.toString() || '0'}
               icon={BookOpen}
-              color="blue"
+              color="green"
             />
             <StatCard
               title="Department Rank"
@@ -176,21 +188,13 @@ const Home: React.FC = () => {
           </>
         ) : isLecturer ? (
           <>
-            <div className="bg-emerald-600 text-white p-6 rounded-xl">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-emerald-100 text-sm">My Students</p>
-                  <p className="text-3xl font-bold">{metrics.myStudents?.toString() || '0'}</p>
-                  <div className="flex items-center text-emerald-200 text-sm mt-2">
-                    <TrendingUp className="h-4 w-4 mr-1" />
-                    <span>Increased from last month</span>
-                  </div>
-                </div>
-                <div className="bg-emerald-500 p-3 rounded-lg">
-                  <Users className="h-6 w-6" />
-                </div>
-              </div>
-            </div>
+            <StatCard
+              title="My Students"
+              value={metrics.myStudents?.toString() || '0'}
+              icon={Users}
+              change={{ value: "5", type: "increase" }}
+              color="blue"
+            />
             <StatCard
               title="My Rating"
               value={`${metrics.myRating?.toFixed(1) || '0.0'}/5.0`}
@@ -214,27 +218,19 @@ const Home: React.FC = () => {
           </>
         ) : (
           <>
-            <div className="bg-emerald-600 text-white p-6 rounded-xl">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-emerald-100 text-sm">Total Students</p>
-                  <p className="text-3xl font-bold">{mockStudents.length.toLocaleString()}</p>
-                  <div className="flex items-center text-emerald-200 text-sm mt-2">
-                    <TrendingUp className="h-4 w-4 mr-1" />
-                    <span>Increased from last month</span>
-                  </div>
-                </div>
-                <div className="bg-emerald-500 p-3 rounded-lg">
-                  <GraduationCap className="h-6 w-6" />
-                </div>
-              </div>
-            </div>
+            <StatCard
+              title="Total Students"
+              value={mockStudents.length.toLocaleString()}
+              icon={GraduationCap}
+              change={{ value: "12%", type: "increase" }}
+              color="blue"
+            />
             <StatCard
               title="Active Lecturers"
               value={mockLecturers.length.toString()}
               icon={Users}
               change={{ value: "5%", type: "increase" }}
-              color="blue"
+              color="green"
             />
             <StatCard
               title="Average GPA"
@@ -254,243 +250,442 @@ const Home: React.FC = () => {
         )}
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Performance Chart */}
+      {/* Performance Chart and Additional Metrics/Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid mb-4">
         <div className="lg:col-span-2">
-          <Card title="Performance Analytics">
-            <CustomBarChart
-              data={getPerformanceData()}
-              dataKey="value"
-              xAxisKey="month"
-              title=""
-              color="#10b981"
-            />
+          <CustomLineChart
+            data={getPerformanceData()}
+            dataKey="value"
+            xAxisKey="month"
+            title={isStudent ? "My GPA Trend" : isLecturer ? "My Rating Trend" : "University Performance Trend"}
+            color="#10b981"
+          />
+        </div>
+
+        <div>
+          {isStudent ? (
+            <>
+              {/* Additional Student Metric */}
+              <Card title="Academic Standing">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Current CGPA</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{metrics.myGPA?.toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Class Position</span>
+                    <span className="font-semibold text-primary-600">#{metrics.myRank}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Credits Earned</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">45/120</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Graduation Progress</span>
+                    <span className="font-semibold text-green-600">37.5%</span>
+                  </div>
+                </div>
+              </Card>
+              <Card title="My Progress">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Credit Hours</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">45/120</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '37.5%' }}></div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Assignments Due</span>
+                    <span className="font-semibold text-red-600">3</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Next Exam</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">5 days</span>
+                  </div>
+                </div>
+              </Card>
+            </>
+          ) : isLecturer ? (
+            <>
+              {/* Additional Lecturer Metric */}
+              <Card title="Teaching Performance">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Student Satisfaction</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{metrics.myRating?.toFixed(1)}/5.0</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Course Load</span>
+                    <span className="font-semibold text-blue-600">{metrics.myCourses} courses</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Research Papers</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">12 published</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Mentees</span>
+                    <span className="font-semibold text-green-600">15 active</span>
+                  </div>
+                </div>
+              </Card>
+              <Card title="Teaching Insights">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Class Average</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">78%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Attendance Rate</span>
+                    <span className="font-semibold text-green-600">92%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Pending Grades</span>
+                    <span className="font-semibold text-yellow-600">12</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">At-Risk Students</span>
+                    <span className="font-semibold text-red-600">3</span>
+                  </div>
+                </div>
+              </Card>
+            </>
+          ) : (
+            <>
+              {/* Additional Admin Metric */}
+              <Card title="System Analytics">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">System Uptime</span>
+                    <span className="font-semibold text-green-600">99.9%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Active Users</span>
+                    <span className="font-semibold text-blue-600">1,247</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Data Processed</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">2.3TB</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Reports Generated</span>
+                    <span className="font-semibold text-purple-600">156</span>
+                  </div>
+                </div>
+              </Card>
+              <Card title="Quick Actions">
+                <div className="space-y-3">
+                  <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
+                    Generate Reports
+                  </button>
+                  <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
+                    Review Performance
+                  </button>
+                  <button className="w-full p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-left transition-all">
+                    Manage Users
+                  </button>
+                </div>
+              </Card>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Faculties Overview */}
+      {!isStudent && (
+        <div className="mb-4">
+          <Card title="Faculties Overview">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 compact-grid">
+              {mockFaculties.map((faculty) => (
+                <div key={faculty.id} className="bg-gray-50 dark:bg-gray-700 minimal-padding rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <School className="h-4 w-4 text-primary-600 mr-2" />
+                    <h4 className="compact-subheader text-gray-900 dark:text-white">
+                      {faculty.name}
+                    </h4>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                    {faculty.fullName}
+                  </p>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <p><strong>Dean:</strong> {faculty.dean.name}</p>
+                    <p><strong>Departments:</strong> {faculty.departments.length}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Top Performers */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 compact-grid mb-4">
+        <Card title="Top Student This Semester">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <GraduationCap className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="compact-subheader text-gray-900 dark:text-white">
+                {topStudent.name}
+              </h4>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                {topStudent.department} • Level {topStudent.level}
+              </p>
+              <div className="flex items-center mt-1">
+                <Award className="h-3 w-3 text-yellow-500 mr-1" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white">
+                  GPA: {topStudent.gpa}/5.0
+                </span>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card title="Top Lecturer This Semester">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-full flex items-center justify-center">
+              <Users className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="compact-subheader text-gray-900 dark:text-white">
+                {topLecturer.name}
+              </h4>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                {topLecturer.department}
+              </p>
+              <div className="flex items-center mt-1">
+                <Award className="h-3 w-3 text-yellow-500 mr-1" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white">
+                  Rating: {topLecturer.rating}/5.0
+                </span>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* News and Quick Info */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid">
+        <div className="lg:col-span-2">
+          <Card 
+            title="Latest News & Announcements"
+            action={isAdmin && (
+              <button
+                onClick={() => setShowNewsForm(true)}
+                className="flex items-center space-x-1 bg-primary-600 text-white px-3 py-1 rounded text-xs hover:bg-primary-700 transition-colors"
+              >
+                <Plus className="h-3 w-3" />
+                <span>Add News</span>
+              </button>
+            )}
+          >
+            <div className="tight-spacing max-h-96 overflow-y-auto">
+              {news.slice(0, 10).map((newsItem) => (
+                <div 
+                  key={newsItem.id} 
+                  className="border-l-2 border-primary-500 pl-3 py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-r transition-colors"
+                  onClick={() => setSelectedNews(newsItem)}
+                >
+                  <div className="flex items-center justify-between">
+                    <h4 className="compact-subheader text-gray-900 dark:text-white">
+                      {newsItem.title}
+                    </h4>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(newsItem.date).toLocaleDateString()}
+                      </span>
+                      <ChevronRight className="h-3 w-3 text-gray-400" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                    {newsItem.content.substring(0, 100)}...
+                  </p>
+                  <span className={`inline-block px-2 py-0.5 text-xs rounded-full mt-1 ${
+                    newsItem.category === 'academic' 
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+                      : newsItem.category === 'event'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                      : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                  }`}>
+                    {newsItem.category}
+                  </span>
+                </div>
+              ))}
+            </div>
           </Card>
         </div>
 
-        {/* Reminders/Quick Actions */}
-        <Card title="Reminders">
-          <div className="space-y-4">
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                Meeting with Arc Company
-              </h4>
-              <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">
-                Time: 02:00 pm - 04:00 pm
-              </p>
-              <button className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition-colors">
-                Start Meeting
-              </button>
-            </div>
-            
-            <div className="space-y-3">
-              <h4 className="font-semibold text-gray-900 dark:text-white">Project</h4>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Develop API Endpoints</p>
-                    <p className="text-xs text-gray-500">Due date: Nov 26, 2024</p>
+        <div>
+          <Card title="Quick Info">
+            <div className="tight-spacing">
+              <div>
+                <h4 className="compact-subheader text-gray-900 dark:text-white mb-2">
+                  Mission Statement
+                </h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                  {missionStatement}
+                </p>
+              </div>
+
+              <div>
+                <h4 className="compact-subheader text-gray-900 dark:text-white mb-2">
+                  Vision Statement
+                </h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                  {visionStatement}
+                </p>
+              </div>
+
+              <div>
+                <h4 className="compact-subheader text-gray-900 dark:text-white mb-2 flex items-center">
+                  <Calendar className="h-3 w-3 mr-1" />
+                  Upcoming Events
+                </h4>
+                <div className="tight-spacing">
+                  <div className="text-xs">
+                    <p className="font-medium text-gray-900 dark:text-white">Registration Deadline</p>
+                    <p className="text-gray-600 dark:text-gray-400">September 15, 2024</p>
+                  </div>
+                  <div className="text-xs">
+                    <p className="font-medium text-gray-900 dark:text-white">First Semester Begins</p>
+                    <p className="text-gray-600 dark:text-gray-400">September 22, 2024</p>
+                  </div>
+                  <div className="text-xs">
+                    <p className="font-medium text-gray-900 dark:text-white">Mid-Semester Break</p>
+                    <p className="text-gray-600 dark:text-gray-400">November 15-22, 2024</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Onboarding Flow</p>
-                    <p className="text-xs text-gray-500">Due date: Nov 28, 2024</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Build Dashboard</p>
-                    <p className="text-xs text-gray-500">Due date: Nov 30, 2024</p>
-                  </div>
-                </div>
               </div>
             </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Bottom Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Team Collaboration */}
-        <Card title="Team Collaboration">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h4 className="font-semibold text-gray-900 dark:text-white">Team Members</h4>
-              <button className="text-sm text-emerald-600 hover:text-emerald-700">+ Add Member</button>
-            </div>
-            
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                  AD
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">Alexandra Deff</p>
-                  <p className="text-xs text-gray-500">Working on: Github Project Repository</p>
-                </div>
-                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Completed</span>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                  EA
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">Edwin Adenike</p>
-                  <p className="text-xs text-gray-500">Working on: Integrate User Authentication System</p>
-                </div>
-                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">In Progress</span>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Project Progress */}
-        <Card title="Project Progress">
-          <div className="text-center mb-6">
-            <div className="relative w-32 h-32 mx-auto">
-              <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-                <circle
-                  cx="60"
-                  cy="60"
-                  r="50"
-                  stroke="currentColor"
-                  strokeWidth="8"
-                  fill="none"
-                  className="text-gray-200 dark:text-gray-700"
-                />
-                <circle
-                  cx="60"
-                  cy="60"
-                  r="50"
-                  stroke="currentColor"
-                  strokeWidth="8"
-                  fill="none"
-                  strokeDasharray={`${41 * 3.14159} ${100 * 3.14159}`}
-                  className="text-emerald-600"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">41%</div>
-                  <div className="text-xs text-gray-500">Project Ended</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-emerald-600 rounded-full"></div>
-                <span className="text-gray-600 dark:text-gray-400">Completed</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-                <span className="text-gray-600 dark:text-gray-400">In Progress</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-gray-200 rounded-full"></div>
-                <span className="text-gray-600 dark:text-gray-400">Pending</span>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Time Tracker */}
-        <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white p-6 rounded-xl">
-          <h3 className="text-lg font-semibold mb-4">Time Tracker</h3>
-          <div className="text-center mb-6">
-            <div className="text-4xl font-bold mb-2">01:24:08</div>
-          </div>
-          <div className="flex items-center justify-center space-x-4">
-            <button className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-              <div className="w-6 h-6 bg-white rounded-sm"></div>
-            </button>
-            <button className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors">
-              <div className="w-4 h-4 bg-white rounded-sm"></div>
-            </button>
-          </div>
+          </Card>
         </div>
       </div>
 
-      {/* News Modal */}
+      {/* News Upload Modal */}
       {showNewsForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Add News</h3>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="compact-header text-gray-900 dark:text-white">Add News</h3>
               <button
                 onClick={() => setShowNewsForm(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
               >
-                <X className="h-5 w-5 text-gray-500" />
+                <X className="h-4 w-4 text-gray-500" />
               </button>
             </div>
-            <form onSubmit={handleNewsSubmit} className="space-y-4">
+            <form onSubmit={handleNewsSubmit} className="compact-spacing">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Title
                 </label>
                 <input
                   type="text"
                   value={newsForm.title}
                   onChange={(e) => setNewsForm({ ...newsForm, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white"
+                  className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Content
                 </label>
                 <textarea
                   value={newsForm.content}
                   onChange={(e) => setNewsForm({ ...newsForm, content: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white"
+                  rows={2}
+                  className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Category
                 </label>
                 <select
                   value={newsForm.category}
                   onChange={(e) => setNewsForm({ ...newsForm, category: e.target.value as any })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white"
+                  className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="academic">Academic</option>
                   <option value="event">Event</option>
                   <option value="announcement">Announcement</option>
                 </select>
               </div>
-              <div className="flex space-x-3">
+              <div className="flex space-x-2">
                 <button
                   type="button"
                   onClick={() => setShowNewsForm(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="flex-1 px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+                  className="flex-1 px-3 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-700"
                 >
                   Publish
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* News Detail Modal */}
+      {selectedNews && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => setSelectedNews(null)}
+                className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="text-sm">Back to News</span>
+              </button>
+              <span className={`px-3 py-1 text-xs rounded-full ${
+                selectedNews.category === 'academic' 
+                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+                  : selectedNews.category === 'event'
+                  ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                  : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+              }`}>
+                {selectedNews.category}
+              </span>
+            </div>
+            
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              {selectedNews.title}
+            </h2>
+            
+            <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-4">
+              <Calendar className="h-4 w-4 mr-1" />
+              <span>{new Date(selectedNews.date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}</span>
+            </div>
+            
+            <div className="prose prose-sm dark:prose-invert max-w-none">
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                {selectedNews.content}
+              </p>
+            </div>
+            
+            {selectedNews.featured && (
+              <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <div className="flex items-center">
+                  <Award className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mr-2" />
+                  <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                    Featured Announcement
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
