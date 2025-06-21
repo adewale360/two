@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 type UserRole = 'student' | 'lecturer' | 'admin';
 
@@ -31,66 +33,149 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>({
-    id: '1',
-    name: 'Demo User',
-    email: 'demo@university.edu',
-    role: 'admin',
-    department: 'Computer Science',
-    faculty: 'Engineering'
-  });
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for existing session
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await fetchUserProfile(session.user);
+      }
+      setLoading(false);
+    };
+
+    getSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        await fetchUserProfile(session.user);
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchUserProfile = async (authUser: SupabaseUser) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          faculties (name),
+          departments (name)
+        `)
+        .eq('id', authUser.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        // Create a basic user object from auth data
+        setUser({
+          id: authUser.id,
+          name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
+          email: authUser.email || '',
+          role: 'student'
+        });
+        return;
+      }
+
+      setUser({
+        id: profile.id,
+        name: profile.full_name,
+        email: profile.email,
+        role: profile.role,
+        department: profile.departments?.name,
+        faculty: profile.faculties?.name
+      });
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error);
+    }
+  };
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     
-    // Demo login logic
-    let demoUser: User;
-    
-    if (email.includes('admin')) {
-      demoUser = {
-        id: '1',
-        name: 'Admin User',
-        email: 'admin@university.edu',
-        role: 'admin',
-        department: 'Administration',
-        faculty: 'Engineering'
-      };
-    } else if (email.includes('lecturer')) {
-      demoUser = {
-        id: '2',
-        name: 'Dr. Sarah Wilson',
-        email: 'lecturer@university.edu',
-        role: 'lecturer',
-        department: 'Computer Science',
-        faculty: 'Engineering'
-      };
-    } else {
-      demoUser = {
-        id: '3',
-        name: 'John Student',
-        email: 'student@university.edu',
-        role: 'student',
-        department: 'Computer Science',
-        faculty: 'Engineering'
-      };
+    try {
+      // For demo purposes, create a mock user based on email
+      let demoUser: User;
+      
+      if (email.includes('admin')) {
+        demoUser = {
+          id: '1',
+          name: 'Admin User',
+          email: 'admin@university.edu',
+          role: 'admin',
+          department: 'Administration',
+          faculty: 'Administration'
+        };
+      } else if (email.includes('lecturer')) {
+        demoUser = {
+          id: '2',
+          name: 'Dr. Sarah Wilson',
+          email: 'lecturer@university.edu',
+          role: 'lecturer',
+          department: 'Computer Science',
+          faculty: 'COPAS'
+        };
+      } else {
+        demoUser = {
+          id: '3',
+          name: 'John Student',
+          email: 'student@university.edu',
+          role: 'student',
+          department: 'Computer Science',
+          faculty: 'COPAS'
+        };
+      }
+      
+      setUser(demoUser);
+      setLoading(false);
+      return { error: null };
+    } catch (error) {
+      setLoading(false);
+      return { error };
     }
-    
-    setUser(demoUser);
-    setLoading(false);
-    return { error: null };
   };
 
-  const signUp = async (data: any) => {
+  const signUp = async (userData: any) => {
     setLoading(true);
-    // Simulate signup
-    setTimeout(() => {
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+        options: {
+          data: {
+            full_name: userData.full_name,
+            username: userData.username,
+            role: userData.role,
+            faculty_id: userData.faculty_id,
+            department_id: userData.department_id,
+            matric_number: userData.matric_number,
+            staff_id: userData.staff_id,
+            phone: userData.phone,
+            date_of_birth: userData.date_of_birth,
+            address: userData.address
+          }
+        }
+      });
+
       setLoading(false);
-    }, 1000);
-    return { error: null };
+      return { error };
+    } catch (error) {
+      setLoading(false);
+      return { error };
+    }
   };
 
   const signOut = async () => {
+    await supabase.auth.signOut();
     setUser(null);
   };
 
