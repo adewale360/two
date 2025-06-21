@@ -25,12 +25,12 @@ function App() {
         return <Lecturers />;
       case 'students':
         return <Students />;
+      case 'reports':
+        return <Reports />;
       case 'feed':
         return <Feed />;
       case 'alumni':
         return <Alumni />;
-      case 'reports':
-        return <Reports />;
       case 'profile':
         return <Profile />;
       default:
