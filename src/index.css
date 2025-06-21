@@ -44,8 +44,6 @@
   @apply border-gray-600;
 }
 
-/* Removed .dark .border-gray-600 to prevent circular dependency */
-
 /* Avatar component styles */
 .avatar {
   @apply relative inline-flex items-center justify-center overflow-hidden rounded-full;
