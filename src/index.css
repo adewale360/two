@@ -1,0 +1,341 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Clean Gray Theme */
+.dark {
+  color-scheme: dark;
+  background: #1f2937;
+}
+
+/* Dark mode overrides for clean, sharp design */
+.dark body {
+  @apply bg-gray-900 text-gray-100;
+}
+
+.dark .bg-white {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.dark .bg-gray-50 {
+  @apply bg-gray-700;
+}
+
+.dark .bg-gray-100 {
+  @apply bg-gray-800;
+}
+
+.dark .bg-gray-800 {
+  @apply bg-gray-800;
+}
+
+.dark .text-gray-900 {
+  @apply text-gray-100;
+}
+
+.dark .text-gray-800 {
+  @apply text-gray-100;
+}
+
+.dark .text-gray-700 {
+  @apply text-gray-200;
+}
+
+.dark .text-gray-600 {
+  @apply text-gray-300;
+}
+
+.dark .text-gray-500 {
+  @apply text-gray-400;
+}
+
+.dark .text-gray-400 {
+  @apply text-gray-400;
+}
+
+.dark .text-black {
+  @apply text-gray-100;
+}
+
+.dark .border-gray-200 {
+  @apply border-gray-700;
+}
+
+.dark .border-gray-300 {
+  @apply border-gray-600;
+}
+
+.dark .border-gray-600 {
+  @apply border-gray-600;
+}
+
+.dark .border-gray-700 {
+  @apply border-gray-700;
+}
+
+/* Avatar component styles with image support */
+.avatar {
+  @apply relative inline-flex items-center justify-center overflow-hidden rounded-full;
+}
+
+.avatar-sm {
+  @apply w-8 h-8 text-xs;
+}
+
+.avatar-md {
+  @apply w-10 h-10 text-sm;
+}
+
+.avatar-lg {
+  @apply w-12 h-12 text-base;
+}
+
+.avatar-xl {
+  @apply w-16 h-16 text-lg;
+}
+
+.avatar-2xl {
+  @apply w-20 h-20 text-xl;
+}
+
+.avatar-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.avatar-student {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.avatar-lecturer {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+}
+
+.avatar-admin {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.avatar-department {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* Professional compact design system */
+.compact-spacing {
+  @apply space-y-6;
+}
+
+.compact-grid {
+  @apply gap-6;
+}
+
+.compact-card {
+  @apply p-6;
+}
+
+.compact-text {
+  @apply text-sm;
+}
+
+.compact-chart {
+  height: 200px !important;
+}
+
+.mini-chart {
+  height: 150px !important;
+}
+
+.compact-stat-card {
+  @apply p-4;
+}
+
+.compact-header {
+  @apply text-lg font-semibold;
+}
+
+.compact-subheader {
+  @apply text-base font-medium;
+}
+
+/* Reduced padding and margins */
+.tight-spacing {
+  @apply space-y-3;
+}
+
+.minimal-padding {
+  @apply p-4;
+}
+
+/* Professional table styles */
+.compact-table th,
+.compact-table td {
+  @apply py-3 px-4 text-sm;
+}
+
+/* Reduced font sizes */
+.text-compact {
+  @apply text-xs;
+}
+
+.text-compact-sm {
+  @apply text-sm;
+}
+
+.text-compact-base {
+  @apply text-base;
+}
+
+/* Professional animations */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Professional hover effects */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-1px);
+}
+
+/* Compact metrics cards */
+.metrics-card {
+  @apply bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700;
+}
+
+/* Professional chart containers */
+.chart-container {
+  @apply bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700;
+  max-width: 400px;
+}
+
+/* Academic calendar tab styling */
+.calendar-tab {
+  @apply flex space-x-1 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg mb-4;
+}
+
+.calendar-tab-button {
+  @apply px-3 py-2 rounded text-sm font-medium transition-all duration-200;
+}
+
+.calendar-tab-button.active {
+  @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100;
+}
+
+.calendar-tab-button.inactive {
+  @apply text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100;
+}
+
+/* Modal positioning fix */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 0.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: 1rem;
+  position: relative;
+  z-index: 10000;
+}
+
+.dark .modal-content {
+  background: #1f2937;
+  border: 1px solid #374151;
+}
+
+/* Role-based dashboard enhancements */
+.motivation-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  @apply text-white p-6 rounded-lg;
+}
+
+.achievement-badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dasharray 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Performance indicators */
+.performance-excellent {
+  @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
+}
+
+.performance-good {
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400;
+}
+
+.performance-average {
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400;
+}
+
+.performance-poor {
+  @apply bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400;
+}
+
+/* Attendance indicators */
+.attendance-excellent {
+  @apply text-green-600 dark:text-green-400;
+}
+
+.attendance-good {
+  @apply text-blue-600 dark:text-blue-400;
+}
+
+.attendance-warning {
+  @apply text-yellow-600 dark:text-yellow-400;
+}
+
+.attendance-critical {
+  @apply text-red-600 dark:text-red-400;
+}
+
+/* Responsive grid improvements */
+@media (max-width: 768px) {
+  .compact-grid {
+    @apply gap-4;
+  }
+  
+  .compact-card {
+    @apply p-4;
+  }
+  
+  .minimal-padding {
+    @apply p-3;
+  }
+}
+
+/* Clean card styles for dark mode */
+.dark .card-clean {
+  background: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 12px;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
