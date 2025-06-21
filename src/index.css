@@ -2,52 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Clean Modern Theme */
+/* Enable dark mode theming */
 .dark {
   color-scheme: dark;
 }
 
-/* Dark mode overrides for clean, sharp design */
+/* Dark mode body styles */
 .dark body {
   @apply bg-gray-900 text-white;
 }
 
+/* Dark mode overrides for background colors */
 .dark .bg-white {
   @apply bg-gray-800 border-gray-700;
 }
 
-.dark .bg-gray-50 {
-  @apply bg-gray-800;
-}
-
+.dark .bg-gray-50,
 .dark .bg-gray-100 {
   @apply bg-gray-800;
 }
 
-.dark .text-gray-900 {
-  @apply text-white;
-}
-
-.dark .text-gray-800 {
-  @apply text-white;
-}
-
-.dark .text-gray-700 {
-  @apply text-white;
-}
-
-.dark .text-gray-600 {
-  @apply text-gray-400;
-}
-
-.dark .text-gray-500 {
-  @apply text-gray-400;
-}
-
+/* Dark mode overrides for text colors */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
 .dark .text-black {
   @apply text-white;
 }
 
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  @apply text-gray-400;
+}
+
+/* Dark mode overrides for borders */
 .dark .border-gray-200 {
   @apply border-gray-700;
 }
@@ -56,11 +44,9 @@
   @apply border-gray-600;
 }
 
-.dark .border-gray-600 {
-  @apply border-gray-600;
-}
+/* Removed .dark .border-gray-600 to prevent circular dependency */
 
-/* Avatar component styles with image support */
+/* Avatar component styles */
 .avatar {
   @apply relative inline-flex items-center justify-center overflow-hidden rounded-full;
 }
@@ -85,6 +71,7 @@
   @apply w-20 h-20 text-xl;
 }
 
+/* Avatar gradient roles */
 .avatar-gradient {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
@@ -105,17 +92,23 @@
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-/* Professional animations */
+/* Fade-in animation */
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Professional hover effects */
+/* Subtle hover lift effect */
 .hover-lift {
   transition: transform 0.2s ease;
 }
@@ -124,7 +117,7 @@
   transform: translateY(-1px);
 }
 
-/* Modal positioning fix */
+/* Modal styling */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -149,16 +142,16 @@
 }
 
 .dark .modal-content {
-  background: #1f2937;
-  border: 1px solid #374151;
+  background: #1f2937; /* gray-800 */
+  border: 1px solid #374151; /* gray-700 */
 }
 
-/* Smooth transitions */
+/* Smooth UI transitions */
 * {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-/* Line clamp utility */
+/* Text truncation (line clamp) */
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
