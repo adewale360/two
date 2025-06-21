@@ -77,15 +77,7 @@
   @apply border-dark-border;
 }
 
-/* Glass morphism effects for dark mode */
-.dark .glass-card {
-  background: rgba(37, 38, 89, 0.3);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-}
-
-/* Avatar component styles */
+/* Avatar component styles with image support */
 .avatar {
   @apply relative inline-flex items-center justify-center overflow-hidden rounded-full;
 }
@@ -207,28 +199,27 @@
 
 /* Professional hover effects */
 .hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 /* Compact metrics cards */
 .metrics-card {
-  @apply bg-white dark:bg-dark-surface p-3 rounded-lg shadow-sm border border-gray-200 dark:border-dark-border;
+  @apply bg-white dark:bg-dark-surface p-3 rounded-lg border border-gray-200 dark:border-dark-border;
 }
 
 /* Professional chart containers */
 .chart-container {
-  @apply bg-white dark:bg-dark-surface p-4 rounded-lg shadow-sm border border-gray-200 dark:border-dark-border;
+  @apply bg-white dark:bg-dark-surface p-4 rounded-lg border border-gray-200 dark:border-dark-border;
   max-width: 400px;
 }
 
-/* Academic calendar tab styling - matching reports page with subtle shadows */
+/* Academic calendar tab styling */
 .calendar-tab {
-  @apply flex space-x-1 bg-gray-100 dark:bg-dark-card p-1 rounded-lg mb-4 shadow-sm;
+  @apply flex space-x-1 bg-gray-100 dark:bg-dark-card p-1 rounded-lg mb-4;
 }
 
 .calendar-tab-button {
@@ -236,14 +227,14 @@
 }
 
 .calendar-tab-button.active {
-  @apply bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text shadow-md;
+  @apply bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text;
 }
 
 .calendar-tab-button.inactive {
-  @apply text-gray-600 dark:text-dark-muted hover:text-gray-900 dark:hover:text-dark-text hover:shadow-sm;
+  @apply text-gray-600 dark:text-dark-muted hover:text-gray-900 dark:hover:text-dark-text;
 }
 
-/* Modal positioning fix - ensure it appears above navigation */
+/* Modal positioning fix */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -260,7 +251,6 @@
 .modal-content {
   background: white;
   border-radius: 0.5rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 90vh;
   overflow-y: auto;
   margin: 1rem;
@@ -276,7 +266,7 @@
 /* Role-based dashboard enhancements */
 .motivation-card {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  @apply text-white p-4 rounded-lg shadow-lg;
+  @apply text-white p-4 rounded-lg;
 }
 
 .achievement-badge {
@@ -353,125 +343,4 @@
 /* Smooth transitions */
 * {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-/* Enhanced subtle shadows for cards and components */
-.shadow-subtle {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-}
-
-.shadow-soft {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.shadow-medium {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-/* Apply subtle shadows to key components */
-.bg-white {
-  @apply shadow-sm;
-}
-
-.bg-white:hover {
-  @apply shadow-md;
-}
-
-/* Button shadows */
-button {
-  @apply shadow-sm;
-}
-
-button:hover {
-  @apply shadow-md;
-}
-
-/* Input shadows */
-input,
-select,
-textarea {
-  @apply shadow-sm;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  @apply shadow-md;
-}
-
-/* Card component shadows */
-.card {
-  @apply shadow-sm border border-gray-200 dark:border-dark-border;
-}
-
-.card:hover {
-  @apply shadow-md;
-}
-
-/* Stat card shadows */
-.stat-card {
-  @apply shadow-sm;
-}
-
-.stat-card:hover {
-  @apply shadow-md;
-}
-
-/* Navigation shadows */
-.nav-item {
-  @apply shadow-sm;
-}
-
-.nav-item.active {
-  @apply shadow-md;
-}
-
-/* Modal shadows */
-.modal-content {
-  @apply shadow-2xl;
-}
-
-/* Dropdown shadows */
-.dropdown {
-  @apply shadow-lg;
-}
-
-/* Table shadows */
-.table-container {
-  @apply shadow-sm;
-}
-
-/* Chart container shadows */
-.chart-container {
-  @apply shadow-sm;
-}
-
-/* Avatar shadows */
-.avatar {
-  @apply shadow-sm;
-}
-
-/* Badge shadows */
-.badge {
-  @apply shadow-sm;
-}
-
-/* Alert shadows */
-.alert {
-  @apply shadow-sm;
-}
-
-/* Sidebar shadows */
-.sidebar {
-  @apply shadow-lg;
-}
-
-/* Header shadows */
-.header {
-  @apply shadow-sm;
-}
-
-/* Footer shadows */
-.footer {
-  @apply shadow-sm;
 }

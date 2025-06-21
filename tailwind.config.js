@@ -8,7 +8,7 @@ export default {
         'inter': ['Inter', 'sans-serif'],
       },
       colors: {
-        // Clean dark mode color scheme inspired by the image
+        // Clean dark mode color scheme
         dark: {
           50: '#f8fafc',
           100: '#f1f5f9',
@@ -69,7 +69,7 @@ export default {
           800: '#065f46',
           900: '#064e3b',
         },
-        // Modern gradient colors
+        // Diverse color palette
         gradient: {
           purple: '#8B5CF6',
           pink: '#EC4899',
@@ -77,6 +77,10 @@ export default {
           cyan: '#06B6D4',
           green: '#10B981',
           orange: '#F59E0B',
+          indigo: '#6366F1',
+          teal: '#14B8A6',
+          red: '#EF4444',
+          yellow: '#EAB308',
         }
       },
       backgroundImage: {
@@ -114,18 +118,6 @@ export default {
           '50%': { transform: 'translateY(-10px)' },
         },
       },
-      boxShadow: {
-        'dark': '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)',
-        'dark-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2)',
-        'dark-xl': '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
-        'glow': '0 0 20px rgba(59, 130, 246, 0.3)',
-        'glow-purple': '0 0 20px rgba(139, 92, 246, 0.3)',
-        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-        // Enhanced subtle shadows
-        'subtle': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        'medium': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-      }
     },
   },
   plugins: [],

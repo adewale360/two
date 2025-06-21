@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
       
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full bg-white dark:bg-dark-surface border-r border-gray-200 dark:border-dark-border shadow-lg
+        fixed top-0 left-0 h-full bg-white dark:bg-dark-surface border-r border-gray-200 dark:border-dark-border
         transform transition-transform duration-300 ease-in-out z-50
         w-64 lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -62,8 +62,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-border">
           <div className="flex items-center space-x-2">
-            <School className="h-6 w-6 text-primary-600" />
-            <span className="text-lg font-bold text-gray-900 dark:text-dark-text">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <School className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               Pineappl
             </span>
           </div>
@@ -101,10 +103,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
               key={item.id}
               onClick={() => handleNavClick(item.id)}
               className={`
-                w-full flex items-center space-x-2 px-3 py-2 rounded text-sm transition-all duration-200 shadow-sm
+                w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-all duration-200
                 ${currentPage === item.id
-                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border-r-2 border-primary-600 shadow-md' 
-                  : 'text-gray-700 dark:text-dark-muted hover:bg-gray-50 dark:hover:bg-dark-card hover:shadow-md'
+                  ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-r-2 border-blue-600' 
+                  : 'text-gray-700 dark:text-dark-muted hover:bg-gray-50 dark:hover:bg-dark-card hover:text-gray-900 dark:hover:text-white'
                 }
               `}
             >
@@ -113,6 +115,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
             </button>
           ))}
         </nav>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-200 dark:border-dark-border">
+          <div className="text-xs text-gray-500 text-center">
+            © 2024 Pineappl Platform
+          </div>
+        </div>
       </div>
     </>
   );
