@@ -1,6 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  safelist: [
+    'bg-gray-900',
+    'text-gray-100',
+    'border-gray-700',
+    'border-gray-600',
+    'text-gray-200',
+    'text-gray-300',
+    'text-gray-400'
+  ],
   darkMode: 'class',
   theme: {
     extend: {
