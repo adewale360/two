@@ -34,10 +34,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>({
     id: '1',
     name: 'Demo User',
-    email: 'demo@pineappl.edu',
+    email: 'demo@university.edu',
     role: 'admin',
     department: 'Computer Science',
-    faculty: 'COPAS'
+    faculty: 'Engineering'
   });
   const [loading, setLoading] = useState(false);
 
@@ -51,28 +51,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       demoUser = {
         id: '1',
         name: 'Admin User',
-        email: 'admin@pineappl.edu',
+        email: 'admin@university.edu',
         role: 'admin',
         department: 'Administration',
-        faculty: 'COPAS'
+        faculty: 'Engineering'
       };
     } else if (email.includes('lecturer')) {
       demoUser = {
         id: '2',
         name: 'Dr. Sarah Wilson',
-        email: 'lecturer@pineappl.edu',
+        email: 'lecturer@university.edu',
         role: 'lecturer',
         department: 'Computer Science',
-        faculty: 'COPAS'
+        faculty: 'Engineering'
       };
     } else {
       demoUser = {
         id: '3',
         name: 'John Student',
-        email: 'student@pineappl.edu',
+        email: 'student@university.edu',
         role: 'student',
         department: 'Computer Science',
-        faculty: 'COPAS'
+        faculty: 'Engineering'
       };
     }
     

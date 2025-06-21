@@ -2,49 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Enable dark mode theming */
+/* Clean Dark Mode Theme */
 .dark {
   color-scheme: dark;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1b3a 100%);
 }
 
-/* Dark mode body styles */
+/* Dark mode overrides for clean, sharp design */
 .dark body {
-  @apply bg-gray-900 text-white;
+  @apply bg-dark-bg text-dark-text;
 }
 
-/* Dark mode overrides for background colors */
 .dark .bg-white {
-  @apply bg-gray-800 border-gray-700;
+  @apply bg-dark-surface border-dark-border;
 }
 
-.dark .bg-gray-50,
+.dark .bg-gray-50 {
+  @apply bg-dark-card;
+}
+
 .dark .bg-gray-100 {
-  @apply bg-gray-800;
+  @apply bg-dark-surface;
 }
 
-/* Dark mode overrides for text colors */
-.dark .text-gray-900,
-.dark .text-gray-800,
-.dark .text-gray-700,
-.dark .text-black {
-  @apply text-white;
+.dark .bg-gray-800 {
+  @apply bg-dark-surface;
 }
 
-.dark .text-gray-600,
+.dark .bg-gray-900 {
+  @apply bg-dark-bg;
+}
+
+.dark .text-gray-900 {
+  @apply text-dark-text;
+}
+
+.dark .text-gray-800 {
+  @apply text-dark-text;
+}
+
+.dark .text-gray-700 {
+  @apply text-dark-text;
+}
+
+.dark .text-gray-600 {
+  @apply text-dark-muted;
+}
+
 .dark .text-gray-500 {
-  @apply text-gray-400;
+  @apply text-dark-muted;
 }
 
-/* Dark mode overrides for borders */
+.dark .text-gray-400 {
+  @apply text-dark-muted;
+}
+
+.dark .text-black {
+  @apply text-dark-text;
+}
+
 .dark .border-gray-200 {
-  @apply border-gray-700;
+  @apply border-dark-border;
 }
 
 .dark .border-gray-300 {
-  @apply border-gray-600;
+  @apply border-dark-border;
 }
 
-/* Avatar component styles */
+.dark .border-gray-600 {
+  @apply border-dark-border;
+}
+
+.dark .border-gray-700 {
+  @apply border-dark-border;
+}
+
+/* Avatar component styles with image support */
 .avatar {
   @apply relative inline-flex items-center justify-center overflow-hidden rounded-full;
 }
@@ -69,7 +102,6 @@
   @apply w-20 h-20 text-xl;
 }
 
-/* Avatar gradient roles */
 .avatar-gradient {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
@@ -90,23 +122,82 @@
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-/* Fade-in animation */
+/* Professional compact design system */
+.compact-spacing {
+  @apply space-y-3;
+}
+
+.compact-grid {
+  @apply gap-3;
+}
+
+.compact-card {
+  @apply p-4;
+}
+
+.compact-text {
+  @apply text-sm;
+}
+
+.compact-chart {
+  height: 160px !important;
+}
+
+.mini-chart {
+  height: 120px !important;
+}
+
+.compact-stat-card {
+  @apply p-3;
+}
+
+.compact-header {
+  @apply text-base font-semibold;
+}
+
+.compact-subheader {
+  @apply text-sm font-medium;
+}
+
+/* Reduced padding and margins */
+.tight-spacing {
+  @apply space-y-2;
+}
+
+.minimal-padding {
+  @apply p-3;
+}
+
+/* Professional table styles */
+.compact-table th,
+.compact-table td {
+  @apply py-2 px-3 text-sm;
+}
+
+/* Reduced font sizes */
+.text-compact {
+  @apply text-xs;
+}
+
+.text-compact-sm {
+  @apply text-sm;
+}
+
+.text-compact-base {
+  @apply text-base;
+}
+
+/* Professional animations */
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Subtle hover lift effect */
+/* Professional hover effects */
 .hover-lift {
   transition: transform 0.2s ease;
 }
@@ -115,7 +206,35 @@
   transform: translateY(-1px);
 }
 
-/* Modal styling */
+/* Compact metrics cards */
+.metrics-card {
+  @apply bg-white dark:bg-dark-surface p-3 rounded-lg border border-gray-200 dark:border-dark-border;
+}
+
+/* Professional chart containers */
+.chart-container {
+  @apply bg-white dark:bg-dark-surface p-4 rounded-lg border border-gray-200 dark:border-dark-border;
+  max-width: 400px;
+}
+
+/* Academic calendar tab styling */
+.calendar-tab {
+  @apply flex space-x-1 bg-gray-100 dark:bg-dark-card p-1 rounded-lg mb-4;
+}
+
+.calendar-tab-button {
+  @apply px-3 py-2 rounded text-sm font-medium transition-all duration-200;
+}
+
+.calendar-tab-button.active {
+  @apply bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text;
+}
+
+.calendar-tab-button.inactive {
+  @apply text-gray-600 dark:text-dark-muted hover:text-gray-900 dark:hover:text-dark-text;
+}
+
+/* Modal positioning fix */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -131,7 +250,7 @@
 
 .modal-content {
   background: white;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   max-height: 90vh;
   overflow-y: auto;
   margin: 1rem;
@@ -140,177 +259,88 @@
 }
 
 .dark .modal-content {
-  background: #1f2937; /* gray-800 */
-  border: 1px solid #374151; /* gray-700 */
+  background: #1a1b3a;
+  border: 1px solid #2d2f5f;
 }
 
-/* Smooth UI transitions */
+/* Role-based dashboard enhancements */
+.motivation-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  @apply text-white p-4 rounded-lg;
+}
+
+.achievement-badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dasharray 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Performance indicators */
+.performance-excellent {
+  @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
+}
+
+.performance-good {
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400;
+}
+
+.performance-average {
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400;
+}
+
+.performance-poor {
+  @apply bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400;
+}
+
+/* Attendance indicators */
+.attendance-excellent {
+  @apply text-green-600 dark:text-green-400;
+}
+
+.attendance-good {
+  @apply text-blue-600 dark:text-blue-400;
+}
+
+.attendance-warning {
+  @apply text-yellow-600 dark:text-yellow-400;
+}
+
+.attendance-critical {
+  @apply text-red-600 dark:text-red-400;
+}
+
+/* Responsive grid improvements */
+@media (max-width: 768px) {
+  .compact-grid {
+    @apply gap-2;
+  }
+  
+  .compact-card {
+    @apply p-3;
+  }
+  
+  .minimal-padding {
+    @apply p-2;
+  }
+}
+
+/* Clean card styles for dark mode */
+.dark .card-clean {
+  background: rgba(37, 38, 89, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+/* Smooth transitions */
 * {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-/* Text truncation (line clamp) */
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Backdrop blur utilities */
-.backdrop-blur-xs {
-  backdrop-filter: blur(2px);
-}
-
-.backdrop-blur-sm {
-  backdrop-filter: blur(4px);
-}
-
-.backdrop-blur-md {
-  backdrop-filter: blur(12px);
-}
-
-.backdrop-blur-lg {
-  backdrop-filter: blur(16px);
-}
-
-.backdrop-blur-xl {
-  backdrop-filter: blur(24px);
-}
-
-/* Optimized padding classes for clean design */
-.p-compact {
-  padding: 0.75rem; /* 12px */
-}
-
-.px-compact {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-}
-
-.py-compact {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-}
-
-.p-tight {
-  padding: 0.5rem; /* 8px */
-}
-
-.px-tight {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-}
-
-.py-tight {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-/* Spacing utilities for better content organization */
-.space-y-compact > * + * {
-  margin-top: 0.75rem;
-}
-
-.space-y-tight > * + * {
-  margin-top: 0.5rem;
-}
-
-.gap-compact {
-  gap: 0.75rem;
-}
-
-.gap-tight {
-  gap: 0.5rem;
-}
-
-/* Professional card styling */
-.card-clean {
-  @apply bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm;
-}
-
-.card-compact {
-  @apply card-clean p-compact;
-}
-
-.card-tight {
-  @apply card-clean p-tight;
-}
-
-/* Button size optimizations */
-.btn-compact {
-  @apply px-compact py-2 text-sm;
-}
-
-.btn-tight {
-  @apply px-tight py-1 text-xs;
-}
-
-/* Text size optimizations */
-.text-compact {
-  font-size: 0.8125rem; /* 13px */
-  line-height: 1.25rem;
-}
-
-.text-micro {
-  font-size: 0.6875rem; /* 11px */
-  line-height: 1rem;
-}
-
-/* Clean form styling */
-.form-input-clean {
-  @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent dark:bg-gray-700 dark:text-white;
-}
-
-.form-input-compact {
-  @apply form-input-clean text-sm py-1.5;
-}
-
-/* Responsive padding adjustments */
-@media (max-width: 640px) {
-  .p-responsive {
-    padding: 0.75rem;
-  }
-  
-  .px-responsive {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
-  
-  .py-responsive {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-  }
-}
-
-@media (min-width: 641px) {
-  .p-responsive {
-    padding: 1rem;
-  }
-  
-  .px-responsive {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  .py-responsive {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .p-responsive {
-    padding: 1.5rem;
-  }
-  
-  .px-responsive {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-  
-  .py-responsive {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-  }
 }

@@ -58,7 +58,7 @@ const Feed: React.FC = () => {
     {
       id: '2',
       author: {
-        name: 'University Administration',
+        name: 'Student Union',
         role: 'admin',
         department: 'Administration',
         isVerified: true
@@ -116,18 +116,19 @@ const Feed: React.FC = () => {
     {
       id: '5',
       author: {
-        name: 'Chioma Okwu',
-        role: 'student',
-        department: 'Biochemistry'
+        name: 'University Administration',
+        role: 'admin',
+        department: 'Administration',
+        isVerified: true
       },
-      content: 'Amazing lecture today on protein synthesis! The way Dr. Chen explained the molecular mechanisms was absolutely brilliant. Can\'t wait to apply this knowledge in our lab work next week.',
+      content: 'Important: Registration for Second Semester 2024/2025 begins Monday, January 8th. Please ensure all outstanding fees are cleared before the deadline. Visit the student portal for more information.',
       timestamp: '1 day ago',
-      likes: 34,
-      comments: 8,
-      shares: 5,
+      likes: 156,
+      comments: 45,
+      shares: 89,
       isLiked: false,
-      isBookmarked: false,
-      type: 'text'
+      isBookmarked: true,
+      type: 'announcement'
     }
   ]);
 
@@ -197,10 +198,20 @@ const Feed: React.FC = () => {
     return true;
   });
 
+  const getPostTypeIcon = (type: string) => {
+    switch (type) {
+      case 'event': return <Calendar className="h-4 w-4 text-blue-500" />;
+      case 'announcement': return <Users className="h-4 w-4 text-red-500" />;
+      case 'image': return <Image className="h-4 w-4 text-green-500" />;
+      case 'video': return <Video className="h-4 w-4 text-purple-500" />;
+      default: return null;
+    }
+  };
+
   return (
-    <div className="p-4 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="compact-spacing max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             University Feed
@@ -211,7 +222,7 @@ const Feed: React.FC = () => {
         </div>
         <button
           onClick={() => setShowCreatePost(true)}
-          className="flex items-center space-x-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+          className="flex items-center space-x-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           <span>Create Post</span>
@@ -219,12 +230,12 @@ const Feed: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-1 bg-white dark:bg-gray-800 p-1 rounded-lg mb-6 border border-gray-200 dark:border-gray-700">
+      <div className="flex space-x-1 bg-gray-100 dark:bg-dark-card p-1 rounded-lg mb-4">
         <button
           onClick={() => setActiveTab('all')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
             activeTab === 'all'
-              ? 'bg-emerald-600 text-white'
+              ? 'bg-white dark:bg-dark-surface text-gray-900 dark:text-white shadow-sm'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
@@ -232,9 +243,9 @@ const Feed: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveTab('following')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
             activeTab === 'following'
-              ? 'bg-emerald-600 text-white'
+              ? 'bg-white dark:bg-dark-surface text-gray-900 dark:text-white shadow-sm'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
@@ -242,9 +253,9 @@ const Feed: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveTab('bookmarked')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
             activeTab === 'bookmarked'
-              ? 'bg-emerald-600 text-white'
+              ? 'bg-white dark:bg-dark-surface text-gray-900 dark:text-white shadow-sm'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
@@ -254,8 +265,8 @@ const Feed: React.FC = () => {
 
       {/* Create Post Modal */}
       {showCreatePost && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div className="modal-overlay">
+          <div className="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Create Post</h3>
               <button
@@ -283,7 +294,7 @@ const Feed: React.FC = () => {
               onChange={(e) => setNewPost(e.target.value)}
               placeholder="What's on your mind?"
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white resize-none"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white resize-none"
             />
 
             <div className="flex items-center justify-between mt-4">
@@ -301,7 +312,7 @@ const Feed: React.FC = () => {
               <button
                 onClick={handleCreatePost}
                 disabled={!newPost.trim()}
-                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Post
               </button>
@@ -311,10 +322,10 @@ const Feed: React.FC = () => {
       )}
 
       {/* Posts */}
-      <div className="max-w-2xl mx-auto space-y-4">
+      <div className="space-y-4">
         {filteredPosts.map((post) => (
           <Card key={post.id}>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Post Header */}
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3">
@@ -329,6 +340,7 @@ const Feed: React.FC = () => {
                         {post.author.name}
                       </h4>
                       {getVerificationBadge(post.author)}
+                      {getPostTypeIcon(post.type)}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {post.author.department} • {post.timestamp}
