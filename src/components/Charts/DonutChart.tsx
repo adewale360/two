@@ -13,11 +13,11 @@ const DonutChart: React.FC<DonutChartProps> = ({ data, title }) => {
   return (
     <div className="chart-container">
       {title && (
-        <h3 className="compact-header text-gray-900 dark:text-white mb-3">
+        <h3 className="compact-header text-gray-900 dark:text-white mb-2">
           {title}
         </h3>
       )}
-      <ResponsiveContainer width="100%" height={160}>
+      <ResponsiveContainer width="100%" height={180}>
         <PieChart>
           <Pie
             data={data}
@@ -25,7 +25,7 @@ const DonutChart: React.FC<DonutChartProps> = ({ data, title }) => {
             cy="50%"
             innerRadius={35}
             outerRadius={60}
-            paddingAngle={3}
+            paddingAngle={2}
             dataKey="value"
           >
             {data.map((entry, index) => (
@@ -44,8 +44,11 @@ const DonutChart: React.FC<DonutChartProps> = ({ data, title }) => {
           <Legend 
             wrapperStyle={{
               color: theme === 'dark' ? '#f9fafb' : '#111827',
-              fontSize: '11px'
+              fontSize: '10px'
             }}
+            layout="vertical"
+            verticalAlign="middle"
+            align="right"
           />
         </PieChart>
       </ResponsiveContainer>

@@ -55,13 +55,18 @@ const Avatar: React.FC<AvatarProps> = ({
     }
   };
 
-  // Updated avatar images from your uploads
+  // Updated avatar images with clean names
   const avatarImages = [
-    '/7fe474d5-92f9-448b-9809-1725212e371f.jpeg',
-    '/bbff9b39-8ac5-4d72-89d8-da1ce9f7b3f4.jpeg',
-    '/ca8cd9ff-c9fc-42e7-a793-ee3b0649d744.jpeg',
-    '/Cute pic 😍😍💍❤️ in 2022.jpeg',
-    '/d452f50e-800e-4c2b-81cb-ba4de7c85792.jpeg'
+    '/dab6f4fb5c084017950e2ad31de26ad8.jpeg',
+    '/ebcfe35d6f36460d877a539608ff494a.jpeg',
+    '/HueyandRileyfromtheboondocksanimationseries.jpeg',
+    '/HueyFreemanfromboondocksbestshowtowatch.jpeg',
+    '/PersonnagedAvataren3DPhotoPremium.jpeg',
+    '/7fe474d592f9448b98091725212e371f.jpeg',
+    '/bbff9b398ac54d7289d8da1ce9f7b3f4.jpeg',
+    '/ca8cd9ffc9fc42e7a793ee3b0649d744.jpeg',
+    '/Cutepic2022.jpeg',
+    '/d452f50e800e4c2b81cbba4de7c85792.jpeg'
   ];
 
   // Generate a consistent random image based on name hash

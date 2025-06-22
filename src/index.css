@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Clean Gray Theme */
+/* Professional QuickBooks-inspired design system */
 .dark {
   color-scheme: dark;
 }
@@ -52,17 +52,17 @@
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-/* Professional compact design system */
+/* Professional compact design system - QuickBooks style */
 .compact-spacing {
-  @apply space-y-6;
+  @apply space-y-4;
 }
 
 .compact-grid {
-  @apply gap-6;
+  @apply gap-4;
 }
 
 .compact-card {
-  @apply p-6;
+  @apply p-4;
 }
 
 .compact-text {
@@ -70,51 +70,38 @@
 }
 
 .compact-chart {
-  height: 200px !important;
+  height: 180px !important;
 }
 
 .mini-chart {
-  height: 150px !important;
+  height: 140px !important;
 }
 
 .compact-stat-card {
-  @apply p-4;
+  @apply p-3;
 }
 
 .compact-header {
-  @apply text-lg font-semibold;
+  @apply text-base font-semibold;
 }
 
 .compact-subheader {
-  @apply text-base font-medium;
+  @apply text-sm font-medium;
 }
 
-/* Reduced padding and margins */
+/* Tighter spacing for professional look */
 .tight-spacing {
-  @apply space-y-3;
+  @apply space-y-2;
 }
 
 .minimal-padding {
-  @apply p-4;
+  @apply p-3;
 }
 
 /* Professional table styles */
 .compact-table th,
 .compact-table td {
-  @apply py-3 px-4 text-sm;
-}
-
-/* Reduced font sizes */
-.text-compact {
-  @apply text-xs;
-}
-
-.text-compact-sm {
-  @apply text-sm;
-}
-
-.text-compact-base {
-  @apply text-base;
+  @apply py-2 px-3 text-sm;
 }
 
 /* Professional animations */
@@ -138,18 +125,18 @@
 
 /* Compact metrics cards */
 .metrics-card {
-  @apply bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700;
+  @apply bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700;
 }
 
 /* Professional chart containers */
 .chart-container {
-  @apply bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700;
+  @apply bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700;
   max-width: 400px;
 }
 
 /* Academic calendar tab styling */
 .calendar-tab {
-  @apply flex space-x-1 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg mb-4;
+  @apply flex space-x-1 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg mb-3;
 }
 
 .calendar-tab-button {
@@ -196,7 +183,7 @@
 /* Role-based dashboard enhancements */
 .motivation-card {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  @apply text-white p-6 rounded-lg;
+  @apply text-white p-4 rounded-lg;
 }
 
 .achievement-badge {
@@ -247,18 +234,39 @@
   @apply text-red-600 dark:text-red-400;
 }
 
+/* Social media feed styles */
+.feed-post {
+  @apply bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-3;
+}
+
+.feed-post-header {
+  @apply flex items-center space-x-3 mb-3;
+}
+
+.feed-post-content {
+  @apply text-gray-900 dark:text-white leading-relaxed mb-3;
+}
+
+.feed-post-actions {
+  @apply flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700;
+}
+
+.feed-post-action {
+  @apply flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer;
+}
+
 /* Responsive grid improvements */
 @media (max-width: 768px) {
   .compact-grid {
-    @apply gap-4;
+    @apply gap-3;
   }
   
   .compact-card {
-    @apply p-4;
+    @apply p-3;
   }
   
   .minimal-padding {
-    @apply p-3;
+    @apply p-2;
   }
 }
 

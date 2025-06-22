@@ -54,31 +54,31 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
       
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full bg-white dark:bg-dark-surface border-r border-gray-200 dark:border-dark-border
+        fixed top-0 left-0 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
         transform transition-transform duration-300 ease-in-out z-50
         w-64 lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-border">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
               <School className="h-5 w-5 text-white" />
             </div>
-            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               Pineappl
             </span>
           </div>
           <button
             onClick={onToggle}
-            className="lg:hidden p-1 rounded hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
+            className="lg:hidden p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <X className="h-4 w-4 text-gray-500" />
           </button>
         </div>
 
         {/* User info */}
-        <div className="p-4 border-b border-gray-200 dark:border-dark-border">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3">
             <Avatar 
               name={user?.name || 'Demo User'} 
@@ -86,10 +86,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
               size="md" 
             />
             <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-dark-text">
+              <p className="font-medium text-gray-900 dark:text-white">
                 {user?.name}
               </p>
-              <p className="text-xs text-gray-500 dark:text-dark-muted capitalize">
+              <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
                 {user?.role}
               </p>
             </div>
@@ -105,8 +105,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
               className={`
                 w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-all duration-200
                 ${currentPage === item.id
-                  ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-r-2 border-blue-600' 
-                  : 'text-gray-700 dark:text-dark-muted hover:bg-gray-50 dark:hover:bg-dark-card hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-r-2 border-emerald-600' 
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
                 }
               `}
             >
@@ -117,7 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200 dark:border-dark-border">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           <div className="text-xs text-gray-500 text-center">
             © 2024 Pineappl Platform
           </div>

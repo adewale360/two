@@ -33,7 +33,7 @@ const StatCard: React.FC<StatCardProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 compact-stat-card rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-200">
+    <div className="bg-white dark:bg-gray-800 compact-stat-card rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-200">
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
@@ -57,7 +57,7 @@ const StatCard: React.FC<StatCardProps> = ({
             </div>
           )}
         </div>
-        <div className={`p-3 rounded-xl ${colorClasses[color]}`}>
+        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
           <Icon className="h-5 w-5" />
         </div>
       </div>

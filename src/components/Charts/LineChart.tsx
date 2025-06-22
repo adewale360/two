@@ -22,12 +22,12 @@ const CustomLineChart: React.FC<LineChartProps> = ({
   return (
     <div className="chart-container">
       {title && (
-        <h3 className="compact-header text-gray-900 dark:text-white mb-3">
+        <h3 className="compact-header text-gray-900 dark:text-white mb-2">
           {title}
         </h3>
       )}
-      <ResponsiveContainer width="100%" height={160}>
-        <AreaChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+      <ResponsiveContainer width="100%" height={180}>
+        <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
           <defs>
             <linearGradient id={`gradient-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor={color} stopOpacity={0.2}/>
@@ -43,7 +43,7 @@ const CustomLineChart: React.FC<LineChartProps> = ({
           <YAxis 
             stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'}
             fontSize={10}
-            width={30}
+            width={25}
           />
           <Tooltip 
             contentStyle={{
@@ -60,7 +60,8 @@ const CustomLineChart: React.FC<LineChartProps> = ({
             stroke={color} 
             strokeWidth={2}
             fill={`url(#gradient-${dataKey})`}
-            dot={false}
+            dot={{ r: 3, fill: color, stroke: color, strokeWidth: 1 }}
+            activeDot={{ r: 5, stroke: color, strokeWidth: 1 }}
           />
         </AreaChart>
       </ResponsiveContainer>

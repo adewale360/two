@@ -20,14 +20,14 @@ const CustomAreaChart: React.FC<AreaChartProps> = ({
   const { theme } = useTheme();
   
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+    <div className="chart-container">
       {title && (
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <h3 className="compact-header text-gray-900 dark:text-white mb-2">
           {title}
         </h3>
       )}
-      <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+      <ResponsiveContainer width="100%" height={180}>
+        <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
           <defs>
             <linearGradient id={`gradient-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor={color} stopOpacity={0.3}/>
@@ -38,18 +38,20 @@ const CustomAreaChart: React.FC<AreaChartProps> = ({
           <XAxis 
             dataKey={xAxisKey} 
             stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'}
-            fontSize={12}
+            fontSize={10}
           />
           <YAxis 
             stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'}
-            fontSize={12}
+            fontSize={10}
+            width={25}
           />
           <Tooltip 
             contentStyle={{
               backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
               border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
-              borderRadius: '8px',
-              color: theme === 'dark' ? '#f9fafb' : '#111827'
+              borderRadius: '6px',
+              color: theme === 'dark' ? '#f9fafb' : '#111827',
+              fontSize: '12px'
             }}
           />
           <Area 
