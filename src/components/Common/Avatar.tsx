@@ -57,16 +57,16 @@ const Avatar: React.FC<AvatarProps> = ({
 
   // Updated avatar images with clean names
   const avatarImages = [
-    '/dab6f4fb5c084017950e2ad31de26ad8.jpeg',
-    '/ebcfe35d6f36460d877a539608ff494a.jpeg',
-    '/HueyandRileyfromtheboondocksanimationseries.jpeg',
-    '/HueyFreemanfromboondocksbestshowtowatch.jpeg',
-    '/PersonnagedAvataren3DPhotoPremium.jpeg',
-    '/7fe474d592f9448b98091725212e371f.jpeg',
-    '/bbff9b398ac54d7289d8da1ce9f7b3f4.jpeg',
-    '/ca8cd9ffc9fc42e7a793ee3b0649d744.jpeg',
-    '/Cutepic2022.jpeg',
-    '/d452f50e800e4c2b81cbba4de7c85792.jpeg'
+    '/avatar1.jpeg',
+    '/avatar2.jpeg',
+    '/avatar3.jpeg',
+    '/avatar4.jpeg',
+    '/avatar5.jpeg',
+    '/avatar6.jpeg',
+    '/avatar7.jpeg',
+    '/avatar8.jpeg',
+    '/avatar9.jpeg',
+    '/avatar10.jpeg'
   ];
 
   // Generate a consistent random image based on name hash

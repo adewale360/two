@@ -530,7 +530,8 @@ export const mockNews: NewsItem[] = [
     content: 'Students can now register for First Semester 2024/2025 courses through the online portal. Registration deadline is September 15th, 2024.',
     date: '2024-08-15',
     category: 'academic',
-    featured: true
+    featured: true,
+    author: 'Academic Office'
   },
   {
     id: '2',
@@ -538,7 +539,8 @@ export const mockNews: NewsItem[] = [
     content: 'Join us for the Annual Research Symposium featuring presentations from our top students and faculty members.',
     date: '2024-08-10',
     category: 'event',
-    featured: true
+    featured: true,
+    author: 'Research Office'
   },
   {
     id: '3',
@@ -546,7 +548,8 @@ export const mockNews: NewsItem[] = [
     content: 'The College of Pure and Applied Sciences has received new state-of-the-art laboratory equipment.',
     date: '2024-08-08',
     category: 'announcement',
-    featured: false
+    featured: false,
+    author: 'COPAS Administration'
   },
   {
     id: '4',
@@ -554,7 +557,8 @@ export const mockNews: NewsItem[] = [
     content: 'The results of the 2024/2025 Student Union elections have been announced. Congratulations to all elected officials.',
     date: '2024-08-05',
     category: 'announcement',
-    featured: true
+    featured: true,
+    author: 'Student Affairs'
   },
   {
     id: '5',
@@ -562,17 +566,144 @@ export const mockNews: NewsItem[] = [
     content: 'Our annual career fair will feature over 50 companies from various industries.',
     date: '2024-08-03',
     category: 'event',
-    featured: false
+    featured: false,
+    author: 'Career Services'
   },
-  // Add more news items...
-  ...Array.from({ length: 15 }, (_, i) => ({
-    id: `${6 + i}`,
-    title: `University News Item ${6 + i}`,
-    content: `This is news content for item ${6 + i}. Important information for students and faculty.`,
-    date: new Date(Date.now() - (i + 1) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    category: ['academic', 'event', 'announcement'][i % 3] as 'academic' | 'event' | 'announcement',
-    featured: i < 3
-  }))
+  {
+    id: '6',
+    title: 'Mid-Semester Break Schedule',
+    content: 'Mid-semester break will commence on November 15th and classes will resume on November 22nd.',
+    date: '2024-08-01',
+    category: 'academic',
+    featured: false,
+    author: 'Academic Office'
+  },
+  {
+    id: '7',
+    title: 'New Scholarship Opportunities Available',
+    content: 'Several scholarship opportunities are now available for outstanding students. Applications are open until December 1st, 2024.',
+    date: '2024-07-28',
+    category: 'announcement',
+    featured: true,
+    author: 'Financial Aid Office'
+  },
+  {
+    id: '8',
+    title: 'Library Extended Hours During Exams',
+    content: 'The university library will extend its operating hours during the examination period.',
+    date: '2024-07-25',
+    category: 'academic',
+    featured: false,
+    author: 'Library Services'
+  },
+  {
+    id: '9',
+    title: 'Faculty Research Grant Recipients Announced',
+    content: 'Congratulations to the faculty members who have been awarded research grants for the 2024/2025 academic year.',
+    date: '2024-07-22',
+    category: 'announcement',
+    featured: false,
+    author: 'Research Office'
+  },
+  {
+    id: '10',
+    title: 'International Exchange Program Applications Open',
+    content: 'Students interested in studying abroad can now apply for the international exchange program.',
+    date: '2024-07-20',
+    category: 'academic',
+    featured: true,
+    author: 'International Office'
+  },
+  {
+    id: '11',
+    title: 'Campus Security Update',
+    content: 'New security measures have been implemented across campus to ensure the safety of all students and staff.',
+    date: '2024-07-18',
+    category: 'announcement',
+    featured: false,
+    author: 'Security Department'
+  },
+  {
+    id: '12',
+    title: 'Sports Day 2024',
+    content: 'The annual sports day will be held on October 10th. All students are encouraged to participate.',
+    date: '2024-07-15',
+    category: 'event',
+    featured: false,
+    author: 'Sports Department'
+  },
+  {
+    id: '13',
+    title: 'New Online Learning Resources Available',
+    content: 'The university has subscribed to additional online learning platforms to support student learning.',
+    date: '2024-07-12',
+    category: 'academic',
+    featured: false,
+    author: 'E-Learning Center'
+  },
+  {
+    id: '14',
+    title: 'Campus Maintenance Schedule',
+    content: 'Maintenance work will be carried out in various buildings during the weekend. Please plan accordingly.',
+    date: '2024-07-10',
+    category: 'announcement',
+    featured: false,
+    author: 'Facilities Management'
+  },
+  {
+    id: '15',
+    title: 'Guest Lecture Series: Industry Experts',
+    content: 'A series of guest lectures by industry experts will be held throughout the semester.',
+    date: '2024-07-08',
+    category: 'event',
+    featured: true,
+    author: 'Academic Affairs'
+  },
+  {
+    id: '16',
+    title: 'Student Counseling Services',
+    content: 'Reminder about the availability of free counseling services for all students.',
+    date: '2024-07-05',
+    category: 'announcement',
+    featured: false,
+    author: 'Student Welfare'
+  },
+  {
+    id: '17',
+    title: 'Faculty Development Workshop',
+    content: 'A workshop on innovative teaching methods will be held for all faculty members.',
+    date: '2024-07-03',
+    category: 'event',
+    featured: false,
+    author: 'Faculty Development Center'
+  },
+  {
+    id: '18',
+    title: 'Campus Wi-Fi Upgrade',
+    content: 'The campus Wi-Fi infrastructure is being upgraded to provide better connectivity.',
+    date: '2024-07-01',
+    category: 'announcement',
+    featured: false,
+    author: 'IT Services'
+  },
+  {
+    id: '19',
+    title: 'Student Achievement Awards',
+    content: 'Nominations are now open for the annual student achievement awards.',
+    date: '2024-06-28',
+    category: 'event',
+    featured: true,
+    author: 'Student Affairs'
+  },
+  {
+    id: '20',
+    title: 'New Course Offerings for Next Semester',
+    content: 'Several new courses will be offered in the upcoming semester. Check the course catalog for details.',
+    date: '2024-06-25',
+    category: 'academic',
+    featured: false,
+    author: 'Academic Office'
+  }
 ];
 
 export const mockDashboardStats = {

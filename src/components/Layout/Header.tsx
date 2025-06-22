@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Menu, Sun, Moon, Bell, Settings, Search } from 'lucide-react';
+import { Menu, Sun, Moon, Bell, Settings, Search, Download, LogOut } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
+import Avatar from '../Common/Avatar';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -26,6 +27,46 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
     console.log('Searching for:', searchQuery);
     // Implement search functionality
     setShowSearch(false);
+  };
+
+  const handleDownloadReport = () => {
+    // Create a canvas element
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Set canvas dimensions
+    canvas.width = 800;
+    canvas.height = 600;
+    
+    // Draw background
+    ctx.fillStyle = theme === 'dark' ? '#1f2937' : '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw header
+    ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#111827';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText('Pineappl University Dashboard Report', 40, 50);
+    
+    // Draw date
+    ctx.font = '14px Arial';
+    ctx.fillText(`Generated on: ${new Date().toLocaleDateString()}`, 40, 80);
+    
+    // Draw some sample data
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText('Summary Statistics', 40, 120);
+    
+    ctx.font = '16px Arial';
+    ctx.fillText(`Total Students: ${820}`, 60, 150);
+    ctx.fillText(`Total Lecturers: ${40}`, 60, 180);
+    ctx.fillText(`Average GPA: ${3.45}`, 60, 210);
+    ctx.fillText(`Courses: ${156}`, 60, 240);
+    
+    // Create a download link
+    const link = document.createElement('a');
+    link.download = `dashboard_report_${new Date().toISOString().split('T')[0]}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
   };
 
   return (
@@ -60,10 +101,21 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
             <Search className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           </button>
 
+          {/* Download Report */}
+          <button 
+            onClick={handleDownloadReport}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            <Download className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+          </button>
+
           {/* Notifications */}
           <div className="relative">
             <button 
-              onClick={() => setShowNotifications(!showNotifications)}
+              onClick={() => {
+                setShowNotifications(!showNotifications);
+                setShowSettings(false);
+              }}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative"
             >
               <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
@@ -127,7 +179,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
           {/* Settings */}
           <div className="relative">
             <button 
-              onClick={() => setShowSettings(!showSettings)}
+              onClick={() => {
+                setShowSettings(!showSettings);
+                setShowNotifications(false);
+              }}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               <Settings className="h-5 w-5 text-gray-600 dark:text-gray-400" />
@@ -149,13 +204,23 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
                   <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                   <button 
                     onClick={() => signOut()}
-                    className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md"
+                    className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md flex items-center"
                   >
+                    <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </button>
                 </div>
               </div>
             )}
+          </div>
+
+          {/* User avatar */}
+          <div className="hidden sm:block">
+            <Avatar 
+              name={user?.name || 'User'} 
+              type={user?.role || 'student'} 
+              size="sm" 
+            />
           </div>
 
           {/* Role switcher for demo */}

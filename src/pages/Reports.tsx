@@ -5,7 +5,7 @@ import StatCard from '../components/Common/StatCard';
 import CustomBarChart from '../components/Charts/BarChart';
 import CustomAreaChart from '../components/Charts/AreaChart';
 import DonutChart from '../components/Charts/DonutChart';
-import { mockPerformanceData, semesterProgressData, scoreDistributionData, mockDepartments, mockStudents, mockLecturers } from '../data/mockData';
+import { mockPerformanceData, semesterProgressData, scoreDistributionData, mockStudents, mockLecturers } from '../data/mockData';
 
 const Reports: React.FC = () => {
   const [timeFilter, setTimeFilter] = useState('All-time');
@@ -185,8 +185,70 @@ const Reports: React.FC = () => {
   const highPerformanceCourses = getHighPerformanceCourses();
   const lowPerformanceCourses = getLowPerformanceCourses();
 
+  const handleDownloadReport = () => {
+    // Create a canvas element
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Set canvas dimensions
+    canvas.width = 800;
+    canvas.height = 600;
+    
+    // Draw background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw header
+    ctx.fillStyle = '#111827';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText('Pineappl University Performance Report', 40, 50);
+    
+    // Draw date
+    ctx.font = '14px Arial';
+    ctx.fillText(`Generated on: ${new Date().toLocaleDateString()}`, 40, 80);
+    
+    // Draw some sample data
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText('Summary Statistics', 40, 120);
+    
+    ctx.font = '16px Arial';
+    ctx.fillText(`Total Students: ${mockStudents.length}`, 60, 150);
+    ctx.fillText(`Total Lecturers: ${mockLecturers.length}`, 60, 180);
+    ctx.fillText(`Average GPA: ${mockDashboardStats.averageGPA}`, 60, 210);
+    ctx.fillText(`Pass Rate: 94.2%`, 60, 240);
+    
+    // Draw top performers
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText('Top Performing Students', 40, 280);
+    
+    ctx.font = '16px Arial';
+    studentLeaderboard.forEach((student, index) => {
+      ctx.fillText(`${index + 1}. ${student.name} - ${student.points}`, 60, 310 + (index * 30));
+    });
+    
+    // Draw top departments
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText('Top Performing Departments', 400, 280);
+    
+    ctx.font = '16px Arial';
+    departmentLeaderboard.forEach((dept, index) => {
+      ctx.fillText(`${index + 1}. ${dept.name} - ${dept.points}`, 420, 310 + (index * 30));
+    });
+    
+    // Draw footer
+    ctx.font = '12px Arial';
+    ctx.fillText('© 2024 Pineappl University Performance Dashboard', 40, 580);
+    
+    // Create a download link
+    const link = document.createElement('a');
+    link.download = `performance_report_${new Date().toISOString().split('T')[0]}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
   return (
-    <div className="compact-spacing bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="p-4 bg-gray-50 dark:bg-gray-900 min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -194,20 +256,23 @@ const Reports: React.FC = () => {
             Reports
           </h1>
         </div>
-        <button className="flex items-center space-x-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-3 py-2 rounded text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-          <Download className="h-3 w-3" />
-          <span>Download</span>
+        <button 
+          onClick={handleDownloadReport}
+          className="flex items-center space-x-2 bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+        >
+          <Download className="h-4 w-4" />
+          <span>Download Report</span>
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 minimal-padding rounded-lg shadow-sm mb-4">
+      <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm mb-4">
         <div className="flex items-center space-x-2">
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Timeframe:</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Timeframe:</span>
           <select
             value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value)}
-            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded text-xs focus:ring-2 focus:ring-blue-500 dark:text-white"
+            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white"
           >
             <option value="All-time">All-time</option>
             <option value="This Year">This Year</option>
@@ -215,11 +280,11 @@ const Reports: React.FC = () => {
           </select>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">People:</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">People:</span>
           <select
             value={peopleFilter}
             onChange={(e) => setPeopleFilter(e.target.value)}
-            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded text-xs focus:ring-2 focus:ring-blue-500 dark:text-white"
+            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white"
           >
             <option value="All">All</option>
             <option value="Students">Students</option>
@@ -230,11 +295,11 @@ const Reports: React.FC = () => {
           </select>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Topic:</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Topic:</span>
           <select
             value={topicFilter}
             onChange={(e) => setTopicFilter(e.target.value)}
-            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded text-xs focus:ring-2 focus:ring-blue-500 dark:text-white"
+            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 border-0 rounded text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white"
           >
             <option value="All">All</option>
             <option value="Computer Science">Computer Science</option>
@@ -247,11 +312,11 @@ const Reports: React.FC = () => {
       </div>
 
       {/* Enhanced Metrics Cards with increased height (30px more) */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4">
         {metricsData.map((metric, index) => (
           <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700" style={{ minHeight: '130px' }}>
             <div className="flex items-center justify-between mb-1">
-              <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">{metric.title}</h3>
+              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">{metric.title}</h3>
               <span className="text-xs text-gray-500 dark:text-gray-500">Month</span>
             </div>
             <div className="flex items-end space-x-1 mb-2">
@@ -281,7 +346,7 @@ const Reports: React.FC = () => {
       </div>
 
       {/* Activity Chart with High/Low Performance Courses beside it */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
         <CustomBarChart
           data={getActivityData()}
           dataKey="value"
@@ -290,9 +355,9 @@ const Reports: React.FC = () => {
           color="#3b82f6"
         />
 
-        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Low Performance Courses</h3>
-          <div className="tight-spacing">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Low Performance Courses</h3>
+          <div className="space-y-3">
             {lowPerformanceCourses.map((course, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs">
@@ -300,8 +365,8 @@ const Reports: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-900 dark:text-white">{course.name}</span>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{course.percentage}%</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{course.name}</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{course.percentage}%</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1 mr-2">
@@ -318,9 +383,9 @@ const Reports: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-          <h3 className="compact-header text-gray-900 dark:text-white mb-3">High Performance Courses</h3>
-          <div className="tight-spacing">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-3">High Performance Courses</h3>
+          <div className="space-y-3">
             {highPerformanceCourses.map((course, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs">
@@ -328,8 +393,8 @@ const Reports: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-900 dark:text-white">{course.name}</span>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{course.percentage}%</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{course.name}</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{course.percentage}%</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1 mr-2">
@@ -348,7 +413,7 @@ const Reports: React.FC = () => {
       </div>
 
       {/* Additional Metrics and Results */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 compact-grid mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-4">
         <StatCard
           title="Pass Rate"
           value="94.2%"
@@ -380,10 +445,10 @@ const Reports: React.FC = () => {
       </div>
 
       {/* Leaderboards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 compact-grid">
-        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Student Leaderboard</h3>
-          <div className="tight-spacing">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Student Leaderboard</h3>
+          <div className="space-y-3">
             {studentLeaderboard.map((student, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
@@ -418,9 +483,9 @@ const Reports: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Department Leaderboard</h3>
-          <div className="tight-spacing">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Department Leaderboard</h3>
+          <div className="space-y-3">
             {departmentLeaderboard.map((dept, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
@@ -455,9 +520,9 @@ const Reports: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 compact-card rounded-lg shadow-sm">
-          <h3 className="compact-header text-gray-900 dark:text-white mb-3">Lecturer Leaderboard</h3>
-          <div className="tight-spacing">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Lecturer Leaderboard</h3>
+          <div className="space-y-3">
             {lecturerLeaderboard.map((lecturer, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
