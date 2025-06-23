@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, GraduationCap, Users, School, BookOpen } from 'lucide-react';
+import { User, GraduationCap, Users, School } from 'lucide-react';
 
 interface AvatarProps {
   name: string;
@@ -7,6 +7,8 @@ interface AvatarProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   showIcon?: boolean;
   className?: string;
+  imageUrl?: string;
+  imageUrl?: string;
 }
 
 const Avatar: React.FC<AvatarProps> = ({ 
@@ -14,7 +16,9 @@ const Avatar: React.FC<AvatarProps> = ({
   type, 
   size = 'md', 
   showIcon = false,
-  className = '' 
+  className = '',
+  imageUrl
+  imageUrl
 }) => {
   const getInitials = (name: string) => {
     return name
@@ -55,18 +59,18 @@ const Avatar: React.FC<AvatarProps> = ({
     }
   };
 
-  // Updated avatar images with clean names
+  // Renamed avatar images with clean names
   const avatarImages = [
-    '/avatar1.jpeg',
-    '/avatar2.jpeg',
-    '/avatar3.jpeg',
-    '/avatar4.jpeg',
-    '/avatar5.jpeg',
-    '/avatar6.jpeg',
-    '/avatar7.jpeg',
-    '/avatar8.jpeg',
-    '/avatar9.jpeg',
-    '/avatar10.jpeg'
+    'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+    'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg',
+    'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg',
+    'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg',
+    'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg',
+    'https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg',
+    'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg',
+    'https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg',
+    'https://images.pexels.com/photos/874158/pexels-photo-874158.jpeg',
+    'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg'
   ];
 
   // Generate a consistent random image based on name hash
@@ -81,7 +85,7 @@ const Avatar: React.FC<AvatarProps> = ({
   };
 
   const sizeClass = `avatar-${size}`;
-  const randomImage = getRandomAvatar(name);
+  const displayImage = imageUrl || getRandomAvatar(name);
 
   return (
     <div className={`avatar ${sizeClass} ${getTypeStyles()} ${className}`}>
@@ -91,7 +95,7 @@ const Avatar: React.FC<AvatarProps> = ({
         </div>
       ) : (
         <img 
-          src={randomImage} 
+          src={displayImage} 
           alt={name}
           className="w-full h-full object-cover"
           onError={(e) => {

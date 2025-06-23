@@ -3,6 +3,7 @@ import { Menu, Sun, Moon, Bell, Settings, Search, Download, LogOut } from 'lucid
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import Avatar from '../Common/Avatar';
+import Logo from './Logo';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -218,8 +219,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
           <div className="hidden sm:block">
             <Avatar 
               name={user?.name || 'User'} 
-              type={user?.role || 'student'} 
+              type={user?.role === 'student' ? 'student' : user?.role === 'lecturer' ? 'lecturer' : 'admin'} 
               size="sm" 
+              imageUrl={user?.avatarUrl}
             />
           </div>
 

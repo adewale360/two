@@ -9,6 +9,7 @@ interface User {
   role: UserRole;
   department?: string;
   faculty?: string;
+  avatarUrl?: string;
 }
 
 interface AuthContextType {
@@ -60,7 +61,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: email,
           role: 'admin',
           department: 'Administration',
-          faculty: 'Administration'
+          faculty: 'Administration',
+          avatarUrl: '/avatar1.jpeg'
         };
       } else if (email.includes('lecturer') || email === 'lecturer@pineappl.edu') {
         demoUser = {
@@ -69,7 +71,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: email,
           role: 'lecturer',
           department: 'Computer Science',
-          faculty: 'COPAS'
+          faculty: 'COPAS',
+          avatarUrl: '/avatar2.jpeg'
         };
       } else {
         demoUser = {
@@ -78,7 +81,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: email,
           role: 'student',
           department: 'Computer Science',
-          faculty: 'COPAS'
+          faculty: 'COPAS',
+          avatarUrl: '/avatar3.jpeg'
         };
       }
       

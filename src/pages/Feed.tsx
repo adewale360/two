@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Plus, Image, Video, Calendar, MapPin, Users, Clock, CheckCircle, Crown, Award, Send } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Plus, Image, Video, Calendar, MapPin, Users, Clock, CheckCircle, Crown, Award, Send, BookOpen, X } from 'lucide-react';
 import Card from '../components/Common/Card';
 import Avatar from '../components/Common/Avatar';
 import { useAuth } from '../contexts/AuthContext';
+import { mockNews } from '../data/mockData';
+import { mockNews } from '../data/mockData';
 
 interface Post {
   id: string;
@@ -21,7 +23,7 @@ interface Post {
   shares: number;
   isLiked: boolean;
   isBookmarked: boolean;
-  type: 'text' | 'image' | 'video' | 'event' | 'announcement';
+  type: 'text' | 'image' | 'video' | 'event' | 'announcement' | 'news';
   media?: string;
   event?: {
     title: string;
@@ -36,6 +38,8 @@ const Feed: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [newPost, setNewPost] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const [posts, setPosts] = useState<Post[]>([
     {
@@ -113,34 +117,58 @@ const Feed: React.FC = () => {
       type: 'image',
       media: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg'
     },
-    {
-      id: '5',
+    // Convert news items to posts
+    ...mockNews.slice(0, 5).map((newsItem, index) => ({
+      id: `news-${newsItem.id}`,
+      id: `news-${newsItem.id}`,
       author: {
-        name: 'University Administration',
-        role: 'admin',
+        name: newsItem.author,
+        role: 'admin' as const,
         department: 'Administration',
         isVerified: true
       },
-      content: 'Important: Registration for Second Semester 2024/2025 begins Monday, January 8th. Please ensure all outstanding fees are cleared before the deadline. Visit the student portal for more information.',
-      timestamp: '1 day ago',
-      likes: 156,
-      comments: 45,
-      shares: 89,
+      content: newsItem.content,
+      timestamp: new Date(newsItem.date).toLocaleDateString(),
+      likes: Math.floor(Math.random() * 100) + 20,
+      comments: Math.floor(Math.random() * 30) + 5,
+      shares: Math.floor(Math.random() * 50) + 10,
       isLiked: false,
-      isBookmarked: true,
-      type: 'announcement'
-    }
+      isBookmarked: false,
+      type: 'news' as const
+    }))
   ]);
 
   const getVerificationBadge = (author: Post['author']) => {
     if (author.role === 'admin' && author.isVerified) {
-      return <Crown className="h-4 w-4 text-yellow-500" title="Admin" />;
+      return <div className="w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
+        <CheckCircle className="h-3 w-3 text-white" />
+      </div>;
+        <CheckCircle className="h-3 w-3 text-white" />
+      </div>;
     }
     if (author.role === 'lecturer' && author.isVerified) {
-      return <CheckCircle className="h-4 w-4 text-blue-500" title="Verified Lecturer" />;
+      return <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+        <CheckCircle className="h-3 w-3 text-white" />
+      </div>;
+        <CheckCircle className="h-3 w-3 text-white" />
+      </div>;
     }
     if (author.role === 'student' && author.isDepartmentGovernor) {
-      return <Award className="h-4 w-4 text-gray-500" title="Department Governor" />;
+      return <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+        <CheckCircle className="h-3 w-3 text-white" />
+      </div>;
+        <CheckCircle className="h-3 w-3 text-white" />
+      </div>;
+    }
+    if (author.role === 'student' && !author.isDepartmentGovernor) {
+      return <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+        <CheckCircle className="h-3 w-3 text-white" />
+      </div>;
+    }
+    if (author.role === 'student' && !author.isDepartmentGovernor) {
+      return <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+        <CheckCircle className="h-3 w-3 text-white" />
+      </div>;
     }
     return null;
   };
@@ -191,6 +219,14 @@ const Feed: React.FC = () => {
     }
   };
 
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+  };
+
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+  };
+
   const filteredPosts = posts.filter(post => {
     if (activeTab === 'all') return true;
     if (activeTab === 'following') return post.author.role === 'lecturer' || post.author.role === 'admin';
@@ -204,6 +240,8 @@ const Feed: React.FC = () => {
       case 'announcement': return <Users className="h-4 w-4 text-red-500" />;
       case 'image': return <Image className="h-4 w-4 text-green-500" />;
       case 'video': return <Video className="h-4 w-4 text-purple-500" />;
+      case 'news': return <BookOpen className="h-4 w-4 text-orange-500" />;
+      case 'news': return <BookOpen className="h-4 w-4 text-orange-500" />;
       default: return null;
     }
   };
@@ -273,7 +311,7 @@ const Feed: React.FC = () => {
                 onClick={() => setShowCreatePost(false)}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
               >
-                <Plus className="h-5 w-5 text-gray-500 transform rotate-45" />
+                <X className="h-5 w-5 text-gray-500" />
               </button>
             </div>
             
@@ -318,6 +356,46 @@ const Feed: React.FC = () => {
                 <span>Post</span>
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50" onClick={() => setSelectedImage(null)}>
+          <div className="relative max-w-4xl max-h-full p-4">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 p-2 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <img 
+              src={selectedImage} 
+              alt="Full size view" 
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50" onClick={() => setSelectedImage(null)}>
+          <div className="relative max-w-4xl max-h-full p-4">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 p-2 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <img 
+              src={selectedImage} 
+              alt="Full size view" 
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
           </div>
         </div>
       )}
@@ -386,12 +464,36 @@ const Feed: React.FC = () => {
 
               {/* Image */}
               {post.type === 'image' && post.media && (
-                <div className="rounded-lg overflow-hidden">
+                <div className="rounded-lg overflow-hidden cursor-pointer" onClick={() => handleImageClick(post.media!)}>
                   <img 
                     src={post.media} 
                     alt="Post content" 
-                    className="w-full h-48 object-cover"
+                    className="w-full h-48 object-cover hover:scale-105 transition-transform duration-200"
                   />
+                </div>
+              )}
+
+              {/* News Banner */}
+              {post.type === 'news' && (
+                <div className="bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 p-3 rounded">
+                  <div className="flex items-center space-x-2">
+                    <BookOpen className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                      University News
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* News Banner */}
+              {post.type === 'news' && (
+                <div className="bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 p-3 rounded">
+                  <div className="flex items-center space-x-2">
+                    <BookOpen className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                      University News
+                    </span>
+                  </div>
                 </div>
               )}
 

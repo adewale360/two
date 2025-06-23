@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, School, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Logo from '../../components/Layout/Logo';
+import Logo from '../../components/Layout/Logo';
 
 const SignIn: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -56,11 +58,7 @@ const SignIn: React.FC = () => {
           {/* Header */}
           <div className="text-center mb-6">
             <div className="flex items-center justify-center mb-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
-                <School className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Pineappl</h1>
+              <Logo size="lg" />
             <p className="text-gray-600 dark:text-gray-400 text-xs">University Performance Dashboard</p>
           </div>
 

@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Avatar from '../Common/Avatar';
+import Logo from './Logo';
+import Logo from './Logo';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -29,9 +31,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
     { id: 'faculty', icon: School, label: 'Faculty' },
     { id: 'staff', icon: Users, label: 'Staff' },
     { id: 'students', icon: GraduationCap, label: 'Students' },
-    { id: 'feed', icon: Rss, label: 'Feed' },
-    { id: 'alumni', icon: UserCheck, label: 'Alumni' },
     { id: 'reports', icon: BarChart3, label: 'Reports' },
+    { id: 'reports', icon: BarChart3, label: 'Reports' },
+    { id: 'feed', icon: Rss, label: 'Feed' },
     { id: 'profile', icon: User, label: 'Profile' },
   ];
 
@@ -62,9 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
-              <School className="h-5 w-5 text-white" />
-            </div>
+            <Logo size="md" />
             <span className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               Pineappl
             </span>
@@ -82,17 +82,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
           <div className="flex items-center space-x-3">
             <Avatar 
               name={user?.name || 'Demo User'} 
-              type={user?.role === 'student' ? 'student' : user?.role === 'lecturer' ? 'lecturer' : 'admin'} 
+              type={user?.role === 'student' ? 'student' : user?.role === 'lecturer' ? 'lecturer' : 'admin'}
               size="md" 
+              imageUrl={user?.avatarUrl}
             />
             <div>
               <p className="font-medium text-gray-900 dark:text-white">
                 {user?.name}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                {user?.role}
-              </p>
-            </div>
+            <Logo size="md" />
           </div>
         </div>
 
