@@ -3,7 +3,7 @@ import { Users, BookOpen, Trophy, TrendingUp, ArrowRight, Star, Award } from 'lu
 import { StatsCard } from '../components/dashboard/StatsCard';
 import { NewsCard } from '../components/dashboard/NewsCard';
 import { TopPerformers } from '../components/dashboard/TopPerformers';
-import { CustomBarChart } from '../components/charts/BarChart';
+import CustomBarChart from '../components/Charts/BarChart';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Button } from '../components/ui/Button';
 import { mockNews, mockDashboardStats, mockStudents, mockLecturers } from '../data/mockData';
@@ -111,6 +111,8 @@ export function HomePage() {
             </div>
             <CustomBarChart 
               data={performanceData}
+              dataKey="value"
+              xAxisKey="name"
               title=""
               color="#8B5CF6"
             />

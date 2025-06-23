@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { GlassCard } from '../components/ui/GlassCard';
-import { CustomBarChart } from '../components/charts/BarChart';
-import { CustomLineChart } from '../components/charts/LineChart';
-import { DonutChart } from '../components/charts/DonutChart';
+import CustomBarChart from '../components/Charts/BarChart';
+import CustomLineChart from '../components/Charts/LineChart';
+import DonutChart from '../components/Charts/DonutChart';
 import { mockStudents } from '../data/mockData';
 
 export function AnalyticsPage() {
@@ -34,11 +34,11 @@ export function AnalyticsPage() {
   ];
 
   const gradeDistribution = [
-    { name: 'A (90-100)', value: 25, color: '#10B981' },
-    { name: 'B (80-89)', value: 35, color: '#3B82F6' },
-    { name: 'C (70-79)', value: 30, color: '#F59E0B' },
-    { name: 'D (60-69)', value: 8, color: '#EF4444' },
-    { name: 'F (0-59)', value: 2, color: '#6B7280' }
+    { name: 'A (90-100)', value: 25, fill: '#10B981' },
+    { name: 'B (80-89)', value: 35, fill: '#3B82F6' },
+    { name: 'C (70-79)', value: 30, fill: '#F59E0B' },
+    { name: 'D (60-69)', value: 8, fill: '#EF4444' },
+    { name: 'F (0-59)', value: 2, fill: '#6B7280' }
   ];
 
   return (
@@ -72,6 +72,8 @@ export function AnalyticsPage() {
         <GlassCard className="p-6">
           <CustomBarChart 
             data={coursePerformanceData}
+            dataKey="value"
+            xAxisKey="name"
             title="Average Performance by Course"
             color="#3B82F6"
           />
@@ -81,6 +83,8 @@ export function AnalyticsPage() {
         <GlassCard className="p-6">
           <CustomLineChart 
             data={trendData}
+            dataKey="value"
+            xAxisKey="name"
             title="Performance Trend Over Time"
             color="#8B5CF6"
           />
@@ -104,6 +108,8 @@ export function AnalyticsPage() {
               { name: 'Chemistry', value: 3.5 },
               { name: 'Biology', value: 3.3 }
             ]}
+            dataKey="value"
+            xAxisKey="name"
             title="Average GPA by Department"
             color="#10B981"
           />

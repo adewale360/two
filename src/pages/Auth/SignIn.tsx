@@ -3,7 +3,6 @@ import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../../components/Layout/Logo';
-import Logo from '../../components/Layout/Logo';
 
 const SignIn: React.FC = () => {
   const [formData, setFormData] = useState({
