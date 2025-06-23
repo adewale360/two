@@ -277,9 +277,9 @@ const Profile: React.FC = () => {
             <div>
               <h5 className="compact-subheader text-gray-900 dark:text-white mb-2">Office Hours & Availability</h5>
               <div className="tight-spacing">
-                <div className="flex items-center text-sm">
-                  <Clock className="h-4 w-4 mr-2 text-gray-500" />
-                  <span>{profileData.officeHours}</span>
+                <div className="text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Office Hours:</span>
+                  <p className="font-medium">{profileData.officeHours}</p>
                 </div>
                 <div className="text-sm">
                   <span className="text-gray-600 dark:text-gray-400">Office Location:</span>
@@ -295,9 +295,9 @@ const Profile: React.FC = () => {
               <h5 className="compact-subheader text-gray-900 dark:text-white mb-2">Mentorship & Advising</h5>
               <div className="tight-spacing">
                 {profileData.mentorshipRoles?.map((role, index) => (
-                  <div key={index} className="flex items-center text-sm">
-                    <Users className="h-4 w-4 mr-2 text-gray-500" />
-                    <span>{role}</span>
+                  <div key={index} className="text-sm">
+                    <span className="text-gray-600 dark:text-gray-400">Role:</span>
+                    <p className="font-medium">{role}</p>
                   </div>
                 ))}
                 <div className="text-sm">

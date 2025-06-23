@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { User, GraduationCap, Users, School, Camera } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -24,6 +24,7 @@ const Avatar: React.FC<AvatarProps> = ({
   const { updateUserProfile } = useAuth();
   const [isHovering, setIsHovering] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const getInitials = (name: string) => {
     return name
@@ -117,14 +118,21 @@ const Avatar: React.FC<AvatarProps> = ({
     }
   };
 
+  const handleAvatarClick = () => {
+    if (editable && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   const sizeClass = `avatar-${size}`;
   const displayImage = imageUrl || getRandomAvatar(name);
 
   return (
     <div 
-      className={`avatar ${sizeClass} ${getTypeStyles()} ${className} relative`}
+      className={`avatar ${sizeClass} ${getTypeStyles()} ${className} relative ${editable ? 'cursor-pointer' : ''}`}
       onMouseEnter={() => editable && setIsHovering(true)}
       onMouseLeave={() => editable && setIsHovering(false)}
+      onClick={handleAvatarClick}
     >
       {showIcon ? (
         <div className="text-white">
@@ -147,20 +155,26 @@ const Avatar: React.FC<AvatarProps> = ({
             }}
           />
           
-          {editable && isHovering && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full">
-              <label className="cursor-pointer text-white text-xs font-medium flex items-center">
-                <Camera className="h-3 w-3 mr-1" />
-                {uploading ? 'Uploading...' : 'Change'}
-                <input 
-                  type="file" 
-                  className="hidden" 
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  disabled={uploading}
-                />
-              </label>
-            </div>
+          {editable && (
+            <>
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                className="hidden" 
+                accept="image/*"
+                onChange={handleFileChange}
+                disabled={uploading}
+              />
+              
+              {isHovering && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full">
+                  <div className="text-white text-xs font-medium flex items-center">
+                    <Camera className="h-3 w-3 mr-1" />
+                    {uploading ? 'Uploading...' : 'Change'}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </>
       )}

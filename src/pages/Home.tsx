@@ -156,7 +156,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Role-Specific Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
         {isStudent ? (
           <>
             <StatCard
@@ -178,6 +178,13 @@ const Home: React.FC = () => {
               icon={Award}
               change={{ value: "2", type: "increase" }}
               color="yellow"
+            />
+            <StatCard
+              title="Attendance"
+              value="94%"
+              icon={CheckCircle}
+              change={{ value: "2%", type: "increase" }}
+              color="purple"
             />
           </>
         ) : isLecturer ? (
@@ -201,6 +208,13 @@ const Home: React.FC = () => {
               value={metrics.myCourses?.toString() || '0'}
               icon={BookOpen}
               color="green"
+            />
+            <StatCard
+              title="Class Average"
+              value="78%"
+              icon={BarChart3}
+              change={{ value: "3%", type: "increase" }}
+              color="purple"
             />
           </>
         ) : (
@@ -226,97 +240,225 @@ const Home: React.FC = () => {
               change={{ value: "0.15", type: "increase" }}
               color="yellow"
             />
+            <StatCard
+              title="At Risk Students"
+              value="68"
+              icon={AlertTriangle}
+              change={{ value: "3", type: "decrease" }}
+              color="red"
+            />
           </>
         )}
       </div>
 
-      {/* Performance Chart and Additional Metrics/Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-        <div className="lg:col-span-2">
-          <CustomLineChart
-            data={getPerformanceData()}
-            dataKey="value"
-            xAxisKey="month"
-            title={isStudent ? "My GPA Trend" : isLecturer ? "My Rating Trend" : "University Performance Trend"}
-            color="#10b981"
-          />
-        </div>
-
-        <div>
-          {isStudent ? (
-            <>
-              {/* Additional Student Metric */}
-              <Card title="Academic Standing">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Current CGPA</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">{metrics.myGPA?.toFixed(2)}</span>
+      {/* Role-specific dashboard sections with equal heights */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
+        {isStudent ? (
+          <>
+            <div className="h-80">
+              <CustomLineChart
+                data={getPerformanceData()}
+                dataKey="value"
+                xAxisKey="month"
+                title="My GPA Trend"
+                color="#10b981"
+              />
+            </div>
+            <Card title="Academic Standing" className="h-80">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Current CGPA</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{metrics.myGPA?.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Class Position</span>
+                  <span className="font-semibold text-emerald-600">#{metrics.myRank}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Credits Earned</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">45/120</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Graduation Progress</span>
+                  <span className="font-semibold text-green-600">37.5%</span>
+                </div>
+              </div>
+            </Card>
+            <Card title="My Progress" className="h-80">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Credit Hours</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">45/120</span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mb-4">
+                  <div className="bg-blue-500 h-2 rounded-full" style={{ width: '37.5%' }}></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Assignments Due</span>
+                  <span className="font-semibold text-red-600">3</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Next Exam</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">5 days</span>
+                </div>
+              </div>
+            </Card>
+            <Card title="Academic Calendar" className="h-80">
+              <div className="space-y-3">
+                <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <p className="text-sm font-bold text-blue-600">First Semester 2024/2025</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Current Semester</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-xs">
+                    <p className="font-medium text-gray-900 dark:text-white">Registration Deadline</p>
+                    <p className="text-gray-600 dark:text-gray-400">September 15, 2024</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Class Position</span>
-                    <span className="font-semibold text-emerald-600">#{metrics.myRank}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Credits Earned</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">45/120</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Graduation Progress</span>
-                    <span className="font-semibold text-green-600">37.5%</span>
+                  <div className="text-xs">
+                    <p className="font-medium text-gray-900 dark:text-white">Mid-Semester Break</p>
+                    <p className="text-gray-600 dark:text-gray-400">November 15-22, 2024</p>
                   </div>
                 </div>
-              </Card>
-            </>
-          ) : isLecturer ? (
-            <>
-              {/* Additional Lecturer Metric */}
-              <Card title="Teaching Performance">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Student Satisfaction</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">{metrics.myRating?.toFixed(1)}/5.0</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Course Load</span>
-                    <span className="font-semibold text-blue-600">{metrics.myCourses} courses</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Research Papers</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">12 published</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Mentees</span>
-                    <span className="font-semibold text-green-600">15 active</span>
-                  </div>
+              </div>
+            </Card>
+          </>
+        ) : isLecturer ? (
+          <>
+            <div className="h-80">
+              <CustomLineChart
+                data={getPerformanceData()}
+                dataKey="value"
+                xAxisKey="month"
+                title="My Rating Trend"
+                color="#10b981"
+              />
+            </div>
+            <Card title="Teaching Performance" className="h-80">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Student Satisfaction</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{metrics.myRating?.toFixed(1)}/5.0</span>
                 </div>
-              </Card>
-            </>
-          ) : (
-            <>
-              {/* Additional Admin Metric */}
-              <Card title="System Analytics">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">System Uptime</span>
-                    <span className="font-semibold text-green-600">99.9%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Active Users</span>
-                    <span className="font-semibold text-blue-600">1,247</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Data Processed</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">2.3TB</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Reports Generated</span>
-                    <span className="font-semibold text-purple-600">156</span>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Course Load</span>
+                  <span className="font-semibold text-blue-600">{metrics.myCourses} courses</span>
                 </div>
-              </Card>
-            </>
-          )}
-        </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Research Papers</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">12 published</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Mentees</span>
+                  <span className="font-semibold text-green-600">15 active</span>
+                </div>
+              </div>
+            </Card>
+            <Card title="Teaching Insights" className="h-80">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Class Average</span>
+                  <span className="font-semibold text-green-600">78%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Attendance Rate</span>
+                  <span className="font-semibold text-blue-600">92%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Pending Grades</span>
+                  <span className="font-semibold text-orange-600">12</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">At-Risk Students</span>
+                  <span className="font-semibold text-red-600">3</span>
+                </div>
+              </div>
+            </Card>
+            <Card title="Quick Actions" className="h-80">
+              <div className="space-y-3">
+                <button className="w-full p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded-lg text-left hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors">
+                  Submit Results
+                </button>
+                <button className="w-full p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-lg text-left hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                  Manage Syllabus
+                </button>
+                <button className="w-full p-3 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 rounded-lg text-left hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
+                  View Students
+                </button>
+                <button className="w-full p-3 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 rounded-lg text-left hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors">
+                  Generate Report
+                </button>
+              </div>
+            </Card>
+          </>
+        ) : (
+          <>
+            <div className="h-80">
+              <CustomLineChart
+                data={getPerformanceData()}
+                dataKey="value"
+                xAxisKey="month"
+                title="University Performance Trend"
+                color="#10b981"
+              />
+            </div>
+            <Card title="System Analytics" className="h-80">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">System Uptime</span>
+                  <span className="font-semibold text-green-600">99.9%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Active Users</span>
+                  <span className="font-semibold text-blue-600">1,247</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Data Processed</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">2.3TB</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Reports Generated</span>
+                  <span className="font-semibold text-purple-600">156</span>
+                </div>
+              </div>
+            </Card>
+            <Card title="Quick Actions" className="h-80">
+              <div className="space-y-3">
+                <button className="w-full p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded-lg text-left hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors">
+                  Generate Reports
+                </button>
+                <button className="w-full p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-lg text-left hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                  Review Performance
+                </button>
+                <button className="w-full p-3 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 rounded-lg text-left hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
+                  Manage Users
+                </button>
+                <button className="w-full p-3 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 rounded-lg text-left hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors">
+                  System Settings
+                </button>
+              </div>
+            </Card>
+            <Card title="System Status" className="h-80">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Database Status</span>
+                  <span className="font-semibold text-green-600">Online</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">API Status</span>
+                  <span className="font-semibold text-green-600">Healthy</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Storage Used</span>
+                  <span className="font-semibold text-yellow-600">67%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Last Backup</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">2 hours ago</span>
+                </div>
+              </div>
+            </Card>
+          </>
+        )}
       </div>
 
       {/* Faculties Overview */}
