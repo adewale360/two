@@ -91,6 +91,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
                 {user?.name}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                {user?.role}
+              </p>
+            </div>
             <Logo size="md" />
           </div>
         </div>
