@@ -59,6 +59,7 @@ const SignIn: React.FC = () => {
           <div className="text-center mb-6">
             <div className="flex items-center justify-center mb-3">
               <Logo size="lg" />
+            </div>
             <p className="text-gray-600 dark:text-gray-400 text-xs">University Performance Dashboard</p>
           </div>
 
