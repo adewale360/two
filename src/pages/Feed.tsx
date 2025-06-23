@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Plus, Image, Video, Calendar, MapPin, Users, Clock, CheckCircle, Crown, Award, Send, BookOpen, X } from 'lucide-react';
 import Card from '../components/Common/Card';
 import Avatar from '../components/Common/Avatar';
 import { useAuth } from '../contexts/AuthContext';
-import { mockNews } from '../data/mockData';
+import { supabase } from '../lib/supabase';
 
 interface Post {
   id: string;
   author: {
+    id: string;
     name: string;
     role: 'student' | 'lecturer' | 'admin';
     department: string;
@@ -36,6 +37,7 @@ interface Comment {
   id: string;
   postId: string;
   author: {
+    id: string;
     name: string;
     role: 'student' | 'lecturer' | 'admin';
     avatar?: string;
@@ -52,23 +54,101 @@ const Feed: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
   const [commentingOnPost, setCommentingOnPost] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
 
-  // Initialize posts from localStorage or default
-  const initialPosts = () => {
-    const savedPosts = localStorage.getItem('pineappl_posts');
-    if (savedPosts) {
+  // Fetch posts from Supabase
+  useEffect(() => {
+    const fetchPosts = async () => {
       try {
-        return JSON.parse(savedPosts);
+        setLoading(true);
+        
+        if (!user) {
+          setLoading(false);
+          return;
+        }
+        
+        // Try to fetch posts from Supabase
+        const { data, error } = await supabase.rpc('get_posts_with_user_interactions', {
+          user_id: user.id
+        });
+        
+        if (error) {
+          console.error('Error fetching posts:', error);
+          // Fallback to localStorage
+          const savedPosts = localStorage.getItem('pineappl_posts');
+          if (savedPosts) {
+            setPosts(JSON.parse(savedPosts));
+          } else {
+            // Use demo data
+            setPosts(getDemoPosts());
+          }
+        } else if (data && data.length > 0) {
+          // Format Supabase data to match our Post interface
+          const formattedPosts: Post[] = data.map(post => ({
+            id: post.id,
+            author: {
+              id: post.author_id,
+              name: post.author_name,
+              role: post.author_role,
+              department: post.author_department || 'General',
+              avatar: post.author_avatar,
+              isVerified: post.author_role === 'admin' || post.author_role === 'lecturer'
+            },
+            content: post.content,
+            timestamp: formatTimestamp(post.created_at),
+            likes: post.likes_count,
+            comments: post.comments_count,
+            shares: post.shares_count,
+            isLiked: post.is_liked,
+            isBookmarked: post.is_bookmarked,
+            type: post.post_type,
+            media: post.media_url,
+            event: post.event_data
+          }));
+          
+          setPosts(formattedPosts);
+        } else {
+          // No posts found, use demo data
+          setPosts(getDemoPosts());
+        }
       } catch (error) {
-        console.error('Error parsing saved posts:', error);
+        console.error('Error in fetchPosts:', error);
+        setPosts(getDemoPosts());
+      } finally {
+        setLoading(false);
       }
-    }
+    };
     
-    // Default posts if none in localStorage
+    fetchPosts();
+  }, [user]);
+
+  // Format timestamp to relative time
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffSec = Math.round(diffMs / 1000);
+    const diffMin = Math.round(diffSec / 60);
+    const diffHour = Math.round(diffMin / 60);
+    const diffDay = Math.round(diffHour / 24);
+    
+    if (diffSec < 60) return 'just now';
+    if (diffMin < 60) return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+    if (diffHour < 24) return `${diffHour} hour${diffHour > 1 ? 's' : ''} ago`;
+    if (diffDay < 7) return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
+    
+    return date.toLocaleDateString();
+  };
+
+  // Get demo posts for fallback
+  const getDemoPosts = (): Post[] => {
     return [
       {
         id: '1',
         author: {
+          id: 'lecturer-1',
           name: 'Dr. Sarah Wilson',
           role: 'lecturer',
           department: 'Computer Science',
@@ -86,6 +166,7 @@ const Feed: React.FC = () => {
       {
         id: '2',
         author: {
+          id: 'admin-1',
           name: 'Student Union',
           role: 'admin',
           department: 'Administration',
@@ -109,6 +190,7 @@ const Feed: React.FC = () => {
       {
         id: '3',
         author: {
+          id: 'student-1',
           name: 'Adebayo Johnson',
           role: 'student',
           department: 'Computer Science',
@@ -126,6 +208,7 @@ const Feed: React.FC = () => {
       {
         id: '4',
         author: {
+          id: 'lecturer-2',
           name: 'Prof. Michael Brown',
           role: 'lecturer',
           department: 'Architecture',
@@ -140,56 +223,47 @@ const Feed: React.FC = () => {
         isBookmarked: true,
         type: 'image',
         media: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg'
-      },
-      // Convert news items to posts
-      ...mockNews.slice(0, 5).map((newsItem, index) => ({
-        id: `news-${newsItem.id}`,
-        author: {
-          name: newsItem.author,
-          role: 'admin' as const,
-          department: 'Administration',
-          isVerified: true
-        },
-        content: newsItem.content,
-        timestamp: new Date(newsItem.date).toLocaleDateString(),
-        likes: Math.floor(Math.random() * 100) + 20,
-        comments: Math.floor(Math.random() * 30) + 5,
-        shares: Math.floor(Math.random() * 50) + 10,
-        isLiked: false,
-        isBookmarked: false,
-        type: 'news' as const
-      }))
+      }
     ];
   };
 
-  const [posts, setPosts] = useState<Post[]>(initialPosts());
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: 'c1',
-      postId: '1',
-      author: {
-        name: 'John Student',
-        role: 'student',
-        avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg'
-      },
-      content: 'Congratulations on the publication! Looking forward to reading it.',
-      timestamp: '1 hour ago'
-    },
-    {
-      id: 'c2',
-      postId: '1',
-      author: {
-        name: 'Dr. Emily Chen',
-        role: 'lecturer',
-        avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg'
-      },
-      content: 'This is a significant achievement! Well done to you and your students.',
-      timestamp: '30 minutes ago'
+  // Fetch comments for a post
+  const fetchComments = async (postId: string) => {
+    try {
+      // Try to fetch comments from Supabase
+      const { data, error } = await supabase.rpc('get_post_comments', {
+        post_id: postId
+      });
+      
+      if (error) {
+        console.error('Error fetching comments:', error);
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        // Format Supabase data to match our Comment interface
+        const formattedComments: Comment[] = data.map(comment => ({
+          id: comment.id,
+          postId: postId,
+          author: {
+            id: comment.user_id,
+            name: comment.author_name,
+            role: comment.author_role,
+            avatar: comment.author_avatar
+          },
+          content: comment.content,
+          timestamp: formatTimestamp(comment.created_at)
+        }));
+        
+        setComments(prev => [...prev.filter(c => c.postId !== postId), ...formattedComments]);
+      }
+    } catch (error) {
+      console.error('Error in fetchComments:', error);
     }
-  ]);
+  };
 
   // Save posts to localStorage whenever they change
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('pineappl_posts', JSON.stringify(posts));
   }, [posts]);
 
@@ -209,44 +283,130 @@ const Feed: React.FC = () => {
         <CheckCircle className="h-3 w-3 text-white" />
       </div>;
     }
-    if (author.role === 'student' && !author.isDepartmentGovernor) {
-      return <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-        <CheckCircle className="h-3 w-3 text-white" />
-      </div>;
-    }
     return null;
   };
 
-  const handleLike = (postId: string) => {
-    setPosts(posts.map(post => 
-      post.id === postId 
-        ? { 
-            ...post, 
-            isLiked: !post.isLiked, 
-            likes: post.isLiked ? post.likes - 1 : post.likes + 1 
-          }
-        : post
-    ));
+  const handleLike = async (postId: string) => {
+    try {
+      const post = posts.find(p => p.id === postId);
+      if (!post || !user) return;
+      
+      const isLiked = post.isLiked;
+      
+      // Optimistically update UI
+      setPosts(posts.map(post => 
+        post.id === postId 
+          ? { 
+              ...post, 
+              isLiked: !post.isLiked, 
+              likes: post.isLiked ? post.likes - 1 : post.likes + 1 
+            }
+          : post
+      ));
+      
+      // Update in Supabase
+      if (isLiked) {
+        // Remove like
+        await supabase
+          .from('post_likes')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', user.id);
+      } else {
+        // Add like
+        await supabase
+          .from('post_likes')
+          .insert({
+            post_id: postId,
+            user_id: user.id
+          });
+        
+        // Update likes count
+        await supabase.rpc('increment_post_likes', {
+          post_id: postId,
+          increment_by: 1
+        });
+      }
+    } catch (error) {
+      console.error('Error handling like:', error);
+      // Revert UI change on error
+      const originalPosts = JSON.parse(localStorage.getItem('pineappl_posts') || '[]');
+      setPosts(originalPosts);
+    }
   };
 
-  const handleBookmark = (postId: string) => {
-    setPosts(posts.map(post => 
-      post.id === postId 
-        ? { ...post, isBookmarked: !post.isBookmarked }
-        : post
-    ));
+  const handleBookmark = async (postId: string) => {
+    try {
+      const post = posts.find(p => p.id === postId);
+      if (!post || !user) return;
+      
+      const isBookmarked = post.isBookmarked;
+      
+      // Optimistically update UI
+      setPosts(posts.map(post => 
+        post.id === postId 
+          ? { ...post, isBookmarked: !post.isBookmarked }
+          : post
+      ));
+      
+      // Update in Supabase
+      if (isBookmarked) {
+        // Remove bookmark
+        await supabase
+          .from('post_bookmarks')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', user.id);
+      } else {
+        // Add bookmark
+        await supabase
+          .from('post_bookmarks')
+          .insert({
+            post_id: postId,
+            user_id: user.id
+          });
+      }
+    } catch (error) {
+      console.error('Error handling bookmark:', error);
+      // Revert UI change on error
+      const originalPosts = JSON.parse(localStorage.getItem('pineappl_posts') || '[]');
+      setPosts(originalPosts);
+    }
   };
 
-  const handleCreatePost = () => {
-    if (newPost.trim()) {
-      const post: Post = {
-        id: Date.now().toString(),
+  const handleCreatePost = async () => {
+    if (!newPost.trim() || !user) return;
+    
+    try {
+      // Create post object
+      const postData = {
+        author_id: user.id,
+        content: newPost,
+        post_type: 'text'
+      };
+      
+      // Insert into Supabase
+      const { data, error } = await supabase
+        .from('user_posts')
+        .insert(postData)
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error creating post:', error);
+        throw error;
+      }
+      
+      // Add to local state
+      const newPostObj: Post = {
+        id: data.id,
         author: {
-          name: user?.name || 'Demo User',
-          role: user?.role || 'student',
-          department: user?.department || 'Computer Science',
-          isVerified: user?.role === 'lecturer' || user?.role === 'admin',
-          isDepartmentGovernor: user?.role === 'student' && Math.random() > 0.8
+          id: user.id,
+          name: user.name,
+          role: user.role,
+          department: user.department || 'General',
+          isVerified: user.role === 'lecturer' || user.role === 'admin',
+          avatar: user.avatarUrl
         },
         content: newPost,
         timestamp: 'Just now',
@@ -257,6 +417,34 @@ const Feed: React.FC = () => {
         isBookmarked: false,
         type: 'text'
       };
+      
+      setPosts([newPostObj, ...posts]);
+      setNewPost('');
+      setShowCreatePost(false);
+    } catch (error) {
+      console.error('Error in handleCreatePost:', error);
+      
+      // Fallback to local storage for demo
+      const post: Post = {
+        id: Date.now().toString(),
+        author: {
+          id: user.id,
+          name: user.name,
+          role: user.role,
+          department: user.department || 'Computer Science',
+          isVerified: user.role === 'lecturer' || user.role === 'admin',
+          isDepartmentGovernor: user.role === 'student' && Math.random() > 0.8
+        },
+        content: newPost,
+        timestamp: 'Just now',
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        isLiked: false,
+        isBookmarked: false,
+        type: 'text'
+      };
+      
       setPosts([post, ...posts]);
       setNewPost('');
       setShowCreatePost(false);
@@ -267,15 +455,72 @@ const Feed: React.FC = () => {
     setSelectedImage(imageUrl);
   };
 
-  const handleAddComment = (postId: string) => {
-    if (newComment.trim()) {
+  const handleAddComment = async (postId: string) => {
+    if (!newComment.trim() || !user) return;
+    
+    try {
+      // Create comment object
+      const commentData = {
+        post_id: postId,
+        user_id: user.id,
+        content: newComment
+      };
+      
+      // Insert into Supabase
+      const { data, error } = await supabase
+        .from('post_comments')
+        .insert(commentData)
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error creating comment:', error);
+        throw error;
+      }
+      
+      // Update comment count on post
+      await supabase.rpc('increment_post_comments', {
+        post_id: postId,
+        increment_by: 1
+      });
+      
+      // Add to local state
+      const newCommentObj: Comment = {
+        id: data.id,
+        postId,
+        author: {
+          id: user.id,
+          name: user.name,
+          role: user.role,
+          avatar: user.avatarUrl
+        },
+        content: newComment,
+        timestamp: 'Just now'
+      };
+      
+      setComments([...comments, newCommentObj]);
+      
+      // Update post comment count
+      setPosts(posts.map(post => 
+        post.id === postId 
+          ? { ...post, comments: post.comments + 1 }
+          : post
+      ));
+      
+      setNewComment('');
+      setCommentingOnPost(null);
+    } catch (error) {
+      console.error('Error in handleAddComment:', error);
+      
+      // Fallback to local storage for demo
       const comment: Comment = {
         id: Date.now().toString(),
         postId,
         author: {
-          name: user?.name || 'Demo User',
-          role: user?.role || 'student',
-          avatar: user?.avatarUrl
+          id: user.id,
+          name: user.name,
+          role: user.role,
+          avatar: user.avatarUrl
         },
         content: newComment,
         timestamp: 'Just now'
@@ -294,6 +539,13 @@ const Feed: React.FC = () => {
       setCommentingOnPost(null);
     }
   };
+
+  // Load comments when a post is selected for commenting
+  useEffect(() => {
+    if (commentingOnPost) {
+      fetchComments(commentingOnPost);
+    }
+  }, [commentingOnPost]);
 
   const filteredPosts = posts.filter(post => {
     if (activeTab === 'all') return true;
@@ -316,6 +568,14 @@ const Feed: React.FC = () => {
   const getPostComments = (postId: string) => {
     return comments.filter(comment => comment.postId === postId);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-900 min-h-screen max-w-2xl mx-auto">

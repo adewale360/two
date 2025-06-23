@@ -1,9 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Use environment variables if available, otherwise use demo values
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export type Database = {
   public: {
@@ -27,6 +28,8 @@ export type Database = {
           is_verified: boolean
           created_at: string
           updated_at: string
+          interests: string[] | null
+          emergency_contact: any | null
         }
         Insert: {
           id: string
@@ -44,6 +47,8 @@ export type Database = {
           bio?: string | null
           avatar_url?: string | null
           is_verified?: boolean
+          interests?: string[] | null
+          emergency_contact?: any | null
         }
         Update: {
           email?: string
@@ -60,6 +65,8 @@ export type Database = {
           bio?: string | null
           avatar_url?: string | null
           is_verified?: boolean
+          interests?: string[] | null
+          emergency_contact?: any | null
         }
       }
       faculties: {
@@ -80,6 +87,70 @@ export type Database = {
           name: string
           faculty_id: string
           head_of_department: string | null
+          created_at: string
+        }
+      }
+      courses: {
+        Row: {
+          id: string
+          course_code: string
+          course_name: string
+          department_id: string
+          lecturer_id: string | null
+          credit_units: number
+          level: number
+          semester: number
+          description: string | null
+          created_at: string
+        }
+      }
+      user_posts: {
+        Row: {
+          id: string
+          author_id: string
+          content: string
+          post_type: string
+          media_url: string | null
+          event_data: any | null
+          likes_count: number
+          comments_count: number
+          shares_count: number
+          created_at: string
+          updated_at: string
+        }
+      }
+      post_comments: {
+        Row: {
+          id: string
+          post_id: string
+          user_id: string
+          content: string
+          created_at: string
+        }
+      }
+      post_likes: {
+        Row: {
+          id: string
+          post_id: string
+          user_id: string
+          created_at: string
+        }
+      }
+      post_bookmarks: {
+        Row: {
+          id: string
+          post_id: string
+          user_id: string
+          created_at: string
+        }
+      }
+      user_media: {
+        Row: {
+          id: string
+          user_id: string
+          media_type: string
+          filename: string
+          media_url: string
           created_at: string
         }
       }
