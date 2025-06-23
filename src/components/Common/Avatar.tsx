@@ -1,5 +1,6 @@
-import React from 'react';
-import { User, GraduationCap, Users, School } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, GraduationCap, Users, School, Camera } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface AvatarProps {
   name: string;
@@ -8,7 +9,7 @@ interface AvatarProps {
   showIcon?: boolean;
   className?: string;
   imageUrl?: string;
-  imageUrl?: string;
+  editable?: boolean;
 }
 
 const Avatar: React.FC<AvatarProps> = ({ 
@@ -17,9 +18,13 @@ const Avatar: React.FC<AvatarProps> = ({
   size = 'md', 
   showIcon = false,
   className = '',
-  imageUrl
-  imageUrl
+  imageUrl,
+  editable = false
 }) => {
+  const { updateUserProfile } = useAuth();
+  const [isHovering, setIsHovering] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -59,7 +64,7 @@ const Avatar: React.FC<AvatarProps> = ({
     }
   };
 
-  // Renamed avatar images with clean names
+  // Pexels stock photos
   const avatarImages = [
     'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
     'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg',
@@ -84,30 +89,80 @@ const Avatar: React.FC<AvatarProps> = ({
     return avatarImages[Math.abs(hash) % avatarImages.length];
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setUploading(true);
+    
+    try {
+      // In a real app, you would upload to storage here
+      // For demo, we'll use a FileReader to get a data URL
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const newAvatarUrl = event.target?.result as string;
+        
+        // Update the user profile with the new avatar URL
+        if (updateUserProfile) {
+          updateUserProfile({ avatarUrl: newAvatarUrl });
+        }
+        
+        setUploading(false);
+      };
+      
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      setUploading(false);
+    }
+  };
+
   const sizeClass = `avatar-${size}`;
   const displayImage = imageUrl || getRandomAvatar(name);
 
   return (
-    <div className={`avatar ${sizeClass} ${getTypeStyles()} ${className}`}>
+    <div 
+      className={`avatar ${sizeClass} ${getTypeStyles()} ${className} relative`}
+      onMouseEnter={() => editable && setIsHovering(true)}
+      onMouseLeave={() => editable && setIsHovering(false)}
+    >
       {showIcon ? (
         <div className="text-white">
           {getIcon()}
         </div>
       ) : (
-        <img 
-          src={displayImage} 
-          alt={name}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            // Fallback to initials if image fails to load
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-            const parent = target.parentElement;
-            if (parent) {
-              parent.innerHTML = `<span class="font-semibold text-white">${getInitials(name)}</span>`;
-            }
-          }}
-        />
+        <>
+          <img 
+            src={displayImage} 
+            alt={name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback to initials if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const parent = target.parentElement;
+              if (parent) {
+                parent.innerHTML = `<span class="font-semibold text-white">${getInitials(name)}</span>`;
+              }
+            }}
+          />
+          
+          {editable && isHovering && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full">
+              <label className="cursor-pointer text-white text-xs font-medium flex items-center">
+                <Camera className="h-3 w-3 mr-1" />
+                {uploading ? 'Uploading...' : 'Change'}
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  disabled={uploading}
+                />
+              </label>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

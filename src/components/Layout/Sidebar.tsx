@@ -14,7 +14,6 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import Avatar from '../Common/Avatar';
 import Logo from './Logo';
-import Logo from './Logo';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -32,8 +31,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
     { id: 'staff', icon: Users, label: 'Staff' },
     { id: 'students', icon: GraduationCap, label: 'Students' },
     { id: 'reports', icon: BarChart3, label: 'Reports' },
-    { id: 'reports', icon: BarChart3, label: 'Reports' },
     { id: 'feed', icon: Rss, label: 'Feed' },
+    { id: 'alumni', icon: UserCheck, label: 'Alumni' },
     { id: 'profile', icon: User, label: 'Profile' },
   ];
 
@@ -94,7 +93,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
                 {user?.role}
               </p>
             </div>
-            <Logo size="md" />
           </div>
         </div>
 

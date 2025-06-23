@@ -10,6 +10,23 @@ interface User {
   department?: string;
   faculty?: string;
   avatarUrl?: string;
+  bio?: string;
+  phone?: string;
+  address?: string;
+  dateOfBirth?: string;
+  switchRole?: (role: UserRole) => void;
+}
+
+interface ProfileUpdateData {
+  name?: string;
+  email?: string;
+  department?: string;
+  faculty?: string;
+  avatarUrl?: string;
+  bio?: string;
+  phone?: string;
+  address?: string;
+  dateOfBirth?: string;
 }
 
 interface AuthContextType {
@@ -19,6 +36,7 @@ interface AuthContextType {
   signUp: (data: any) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   switchRole: (role: UserRole) => void;
+  updateUserProfile: (data: ProfileUpdateData) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -62,7 +80,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           role: 'admin',
           department: 'Administration',
           faculty: 'Administration',
-          avatarUrl: '/avatar1.jpeg'
+          avatarUrl: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+          bio: 'University administrator responsible for system management and oversight.',
+          phone: '+234 801 234 5678',
+          address: 'Admin Block, University Campus',
+          dateOfBirth: '1985-05-15'
         };
       } else if (email.includes('lecturer') || email === 'lecturer@pineappl.edu') {
         demoUser = {
@@ -72,7 +94,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           role: 'lecturer',
           department: 'Computer Science',
           faculty: 'COPAS',
-          avatarUrl: '/avatar2.jpeg'
+          avatarUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg',
+          bio: 'Computer Science professor specializing in artificial intelligence and machine learning.',
+          phone: '+234 802 345 6789',
+          address: 'Faculty Housing, University Campus',
+          dateOfBirth: '1980-08-22'
         };
       } else {
         demoUser = {
@@ -82,7 +108,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           role: 'student',
           department: 'Computer Science',
           faculty: 'COPAS',
-          avatarUrl: '/avatar3.jpeg'
+          avatarUrl: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg',
+          bio: 'Computer Science student passionate about software development and AI.',
+          phone: '+234 803 456 7890',
+          address: 'Student Hostel, University Campus',
+          dateOfBirth: '2000-03-10'
         };
       }
       
@@ -108,7 +138,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: userData.email,
         role: userData.role,
         department: userData.department_name || 'Computer Science',
-        faculty: userData.faculty_name || 'COPAS'
+        faculty: userData.faculty_name || 'COPAS',
+        avatarUrl: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg',
+        bio: 'New user on the platform',
+        phone: userData.phone || '',
+        address: userData.address || '',
+        dateOfBirth: userData.date_of_birth || ''
       };
 
       // Save to localStorage
@@ -135,8 +170,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserProfile = (data: ProfileUpdateData) => {
+    if (user) {
+      const updatedUser = { ...user, ...data };
+      setUser(updatedUser);
+      localStorage.setItem('pineappl_user', JSON.stringify(updatedUser));
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, switchRole }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      signIn, 
+      signUp, 
+      signOut, 
+      switchRole,
+      updateUserProfile
+    }}>
       {children}
     </AuthContext.Provider>
   );

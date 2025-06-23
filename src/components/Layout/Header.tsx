@@ -4,7 +4,6 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import Avatar from '../Common/Avatar';
 import Logo from './Logo';
-import Logo from './Logo';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -83,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
             <Menu className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           </button>
             
-            <Logo size="sm" />
+          <Logo size="sm" />
             
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">

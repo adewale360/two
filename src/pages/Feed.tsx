@@ -4,7 +4,6 @@ import Card from '../components/Common/Card';
 import Avatar from '../components/Common/Avatar';
 import { useAuth } from '../contexts/AuthContext';
 import { mockNews } from '../data/mockData';
-import { mockNews } from '../data/mockData';
 
 interface Post {
   id: string;
@@ -33,116 +32,170 @@ interface Post {
   };
 }
 
+interface Comment {
+  id: string;
+  postId: string;
+  author: {
+    name: string;
+    role: 'student' | 'lecturer' | 'admin';
+    avatar?: string;
+  };
+  content: string;
+  timestamp: string;
+}
+
 const Feed: React.FC = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [newPost, setNewPost] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [newComment, setNewComment] = useState('');
+  const [commentingOnPost, setCommentingOnPost] = useState<string | null>(null);
 
-  const [posts, setPosts] = useState<Post[]>([
-    {
-      id: '1',
-      author: {
-        name: 'Dr. Sarah Wilson',
-        role: 'lecturer',
-        department: 'Computer Science',
-        isVerified: true
-      },
-      content: 'Excited to announce that our Machine Learning research paper has been accepted for publication in the International Journal of AI! This is a collaborative effort with our brilliant students. #Research #MachineLearning #ProudMoment',
-      timestamp: '2 hours ago',
-      likes: 45,
-      comments: 12,
-      shares: 8,
-      isLiked: false,
-      isBookmarked: true,
-      type: 'text'
-    },
-    {
-      id: '2',
-      author: {
-        name: 'Student Union',
-        role: 'admin',
-        department: 'Administration',
-        isVerified: true
-      },
-      content: 'Join us for the Annual Tech Innovation Fair! Showcase your projects, network with industry professionals, and compete for amazing prizes.',
-      timestamp: '4 hours ago',
-      likes: 128,
-      comments: 34,
-      shares: 67,
-      isLiked: true,
-      isBookmarked: false,
-      type: 'event',
-      event: {
-        title: 'Annual Tech Innovation Fair',
-        date: 'December 15, 2024',
-        location: 'Main Auditorium',
-        attendees: 245
+  // Initialize posts from localStorage or default
+  const initialPosts = () => {
+    const savedPosts = localStorage.getItem('pineappl_posts');
+    if (savedPosts) {
+      try {
+        return JSON.parse(savedPosts);
+      } catch (error) {
+        console.error('Error parsing saved posts:', error);
       }
-    },
+    }
+    
+    // Default posts if none in localStorage
+    return [
+      {
+        id: '1',
+        author: {
+          name: 'Dr. Sarah Wilson',
+          role: 'lecturer',
+          department: 'Computer Science',
+          isVerified: true
+        },
+        content: 'Excited to announce that our Machine Learning research paper has been accepted for publication in the International Journal of AI! This is a collaborative effort with our brilliant students. #Research #MachineLearning #ProudMoment',
+        timestamp: '2 hours ago',
+        likes: 45,
+        comments: 12,
+        shares: 8,
+        isLiked: false,
+        isBookmarked: true,
+        type: 'text'
+      },
+      {
+        id: '2',
+        author: {
+          name: 'Student Union',
+          role: 'admin',
+          department: 'Administration',
+          isVerified: true
+        },
+        content: 'Join us for the Annual Tech Innovation Fair! Showcase your projects, network with industry professionals, and compete for amazing prizes.',
+        timestamp: '4 hours ago',
+        likes: 128,
+        comments: 34,
+        shares: 67,
+        isLiked: true,
+        isBookmarked: false,
+        type: 'event',
+        event: {
+          title: 'Annual Tech Innovation Fair',
+          date: 'December 15, 2024',
+          location: 'Main Auditorium',
+          attendees: 245
+        }
+      },
+      {
+        id: '3',
+        author: {
+          name: 'Adebayo Johnson',
+          role: 'student',
+          department: 'Computer Science',
+          isDepartmentGovernor: true
+        },
+        content: 'Just completed my final year project on blockchain-based voting systems! Special thanks to Dr. Wilson for her guidance throughout this journey. The future of secure digital democracy looks promising! 🚀',
+        timestamp: '6 hours ago',
+        likes: 89,
+        comments: 23,
+        shares: 15,
+        isLiked: true,
+        isBookmarked: false,
+        type: 'text'
+      },
+      {
+        id: '4',
+        author: {
+          name: 'Prof. Michael Brown',
+          role: 'lecturer',
+          department: 'Architecture',
+          isVerified: true
+        },
+        content: 'Our students\' sustainable architecture designs are truly inspiring! Here are some highlights from this semester\'s final presentations. The creativity and environmental consciousness shown is remarkable.',
+        timestamp: '8 hours ago',
+        likes: 67,
+        comments: 18,
+        shares: 22,
+        isLiked: false,
+        isBookmarked: true,
+        type: 'image',
+        media: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg'
+      },
+      // Convert news items to posts
+      ...mockNews.slice(0, 5).map((newsItem, index) => ({
+        id: `news-${newsItem.id}`,
+        author: {
+          name: newsItem.author,
+          role: 'admin' as const,
+          department: 'Administration',
+          isVerified: true
+        },
+        content: newsItem.content,
+        timestamp: new Date(newsItem.date).toLocaleDateString(),
+        likes: Math.floor(Math.random() * 100) + 20,
+        comments: Math.floor(Math.random() * 30) + 5,
+        shares: Math.floor(Math.random() * 50) + 10,
+        isLiked: false,
+        isBookmarked: false,
+        type: 'news' as const
+      }))
+    ];
+  };
+
+  const [posts, setPosts] = useState<Post[]>(initialPosts());
+  const [comments, setComments] = useState<Comment[]>([
     {
-      id: '3',
+      id: 'c1',
+      postId: '1',
       author: {
-        name: 'Adebayo Johnson',
+        name: 'John Student',
         role: 'student',
-        department: 'Computer Science',
-        isDepartmentGovernor: true
+        avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg'
       },
-      content: 'Just completed my final year project on blockchain-based voting systems! Special thanks to Dr. Wilson for her guidance throughout this journey. The future of secure digital democracy looks promising! 🚀',
-      timestamp: '6 hours ago',
-      likes: 89,
-      comments: 23,
-      shares: 15,
-      isLiked: true,
-      isBookmarked: false,
-      type: 'text'
+      content: 'Congratulations on the publication! Looking forward to reading it.',
+      timestamp: '1 hour ago'
     },
     {
-      id: '4',
+      id: 'c2',
+      postId: '1',
       author: {
-        name: 'Prof. Michael Brown',
+        name: 'Dr. Emily Chen',
         role: 'lecturer',
-        department: 'Architecture',
-        isVerified: true
+        avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg'
       },
-      content: 'Our students\' sustainable architecture designs are truly inspiring! Here are some highlights from this semester\'s final presentations. The creativity and environmental consciousness shown is remarkable.',
-      timestamp: '8 hours ago',
-      likes: 67,
-      comments: 18,
-      shares: 22,
-      isLiked: false,
-      isBookmarked: true,
-      type: 'image',
-      media: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg'
-    },
-    // Convert news items to posts
-    ...mockNews.slice(0, 5).map((newsItem, index) => ({
-      id: `news-${newsItem.id}`,
-      id: `news-${newsItem.id}`,
-      author: {
-        name: newsItem.author,
-        role: 'admin' as const,
-        department: 'Administration',
-        isVerified: true
-      },
-      content: newsItem.content,
-      timestamp: new Date(newsItem.date).toLocaleDateString(),
-      likes: Math.floor(Math.random() * 100) + 20,
-      comments: Math.floor(Math.random() * 30) + 5,
-      shares: Math.floor(Math.random() * 50) + 10,
-      isLiked: false,
-      isBookmarked: false,
-      type: 'news' as const
-    }))
+      content: 'This is a significant achievement! Well done to you and your students.',
+      timestamp: '30 minutes ago'
+    }
   ]);
+
+  // Save posts to localStorage whenever they change
+  React.useEffect(() => {
+    localStorage.setItem('pineappl_posts', JSON.stringify(posts));
+  }, [posts]);
 
   const getVerificationBadge = (author: Post['author']) => {
     if (author.role === 'admin' && author.isVerified) {
       return <div className="w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
-        <CheckCircle className="h-3 w-3 text-white" />
-      </div>;
         <CheckCircle className="h-3 w-3 text-white" />
       </div>;
     }
@@ -150,18 +203,9 @@ const Feed: React.FC = () => {
       return <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
         <CheckCircle className="h-3 w-3 text-white" />
       </div>;
-        <CheckCircle className="h-3 w-3 text-white" />
-      </div>;
     }
     if (author.role === 'student' && author.isDepartmentGovernor) {
       return <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-        <CheckCircle className="h-3 w-3 text-white" />
-      </div>;
-        <CheckCircle className="h-3 w-3 text-white" />
-      </div>;
-    }
-    if (author.role === 'student' && !author.isDepartmentGovernor) {
-      return <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
         <CheckCircle className="h-3 w-3 text-white" />
       </div>;
     }
@@ -223,8 +267,32 @@ const Feed: React.FC = () => {
     setSelectedImage(imageUrl);
   };
 
-  const handleImageClick = (imageUrl: string) => {
-    setSelectedImage(imageUrl);
+  const handleAddComment = (postId: string) => {
+    if (newComment.trim()) {
+      const comment: Comment = {
+        id: Date.now().toString(),
+        postId,
+        author: {
+          name: user?.name || 'Demo User',
+          role: user?.role || 'student',
+          avatar: user?.avatarUrl
+        },
+        content: newComment,
+        timestamp: 'Just now'
+      };
+      
+      setComments([...comments, comment]);
+      
+      // Update comment count on post
+      setPosts(posts.map(post => 
+        post.id === postId 
+          ? { ...post, comments: post.comments + 1 }
+          : post
+      ));
+      
+      setNewComment('');
+      setCommentingOnPost(null);
+    }
   };
 
   const filteredPosts = posts.filter(post => {
@@ -241,9 +309,12 @@ const Feed: React.FC = () => {
       case 'image': return <Image className="h-4 w-4 text-green-500" />;
       case 'video': return <Video className="h-4 w-4 text-purple-500" />;
       case 'news': return <BookOpen className="h-4 w-4 text-orange-500" />;
-      case 'news': return <BookOpen className="h-4 w-4 text-orange-500" />;
       default: return null;
     }
+  };
+
+  const getPostComments = (postId: string) => {
+    return comments.filter(comment => comment.postId === postId);
   };
 
   return (
@@ -320,6 +391,7 @@ const Feed: React.FC = () => {
                 name={user?.name || 'Demo User'} 
                 type={user?.role === 'student' ? 'student' : user?.role === 'lecturer' ? 'lecturer' : 'admin'} 
                 size="md" 
+                imageUrl={user?.avatarUrl}
               />
               <div>
                 <p className="font-medium text-gray-900 dark:text-white">{user?.name}</p>
@@ -380,26 +452,6 @@ const Feed: React.FC = () => {
         </div>
       )}
 
-      {/* Image Modal */}
-      {selectedImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50" onClick={() => setSelectedImage(null)}>
-          <div className="relative max-w-4xl max-h-full p-4">
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 p-2 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            <img 
-              src={selectedImage} 
-              alt="Full size view" 
-              className="max-w-full max-h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-        </div>
-      )}
-
       {/* Posts */}
       <div className="space-y-3">
         {filteredPosts.map((post) => (
@@ -410,6 +462,7 @@ const Feed: React.FC = () => {
                 name={post.author.name} 
                 type={post.author.role} 
                 size="md" 
+                imageUrl={post.author.avatar}
               />
               <div className="flex-1">
                 <div className="flex items-center space-x-2">
@@ -485,18 +538,6 @@ const Feed: React.FC = () => {
                 </div>
               )}
 
-              {/* News Banner */}
-              {post.type === 'news' && (
-                <div className="bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 p-3 rounded">
-                  <div className="flex items-center space-x-2">
-                    <BookOpen className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-                    <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
-                      University News
-                    </span>
-                  </div>
-                </div>
-              )}
-
               {/* Announcement Banner */}
               {post.type === 'announcement' && (
                 <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-3 rounded">
@@ -525,7 +566,10 @@ const Feed: React.FC = () => {
                   <span className="text-sm">{post.likes}</span>
                 </button>
                 
-                <button className="feed-post-action">
+                <button 
+                  className="feed-post-action"
+                  onClick={() => setCommentingOnPost(commentingOnPost === post.id ? null : post.id)}
+                >
                   <MessageCircle className="h-4 w-4" />
                   <span className="text-sm">{post.comments}</span>
                 </button>
@@ -547,6 +591,68 @@ const Feed: React.FC = () => {
                 <Bookmark className={`h-4 w-4 ${post.isBookmarked ? 'fill-current' : ''}`} />
               </button>
             </div>
+
+            {/* Comments Section */}
+            {commentingOnPost === post.id && (
+              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <div className="mb-3">
+                  <h5 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Comments</h5>
+                  
+                  {/* Comment List */}
+                  <div className="space-y-3 mb-3">
+                    {getPostComments(post.id).map(comment => (
+                      <div key={comment.id} className="flex space-x-2">
+                        <Avatar 
+                          name={comment.author.name} 
+                          type={comment.author.role} 
+                          size="sm" 
+                          imageUrl={comment.author.avatar}
+                        />
+                        <div className="flex-1 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
+                          <div className="flex justify-between items-start">
+                            <span className="font-medium text-gray-900 dark:text-white text-sm">
+                              {comment.author.name}
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {comment.timestamp}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                            {comment.content}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Add Comment */}
+                  <div className="flex space-x-2">
+                    <Avatar 
+                      name={user?.name || 'Demo User'} 
+                      type={user?.role === 'student' ? 'student' : user?.role === 'lecturer' ? 'lecturer' : 'admin'} 
+                      size="sm" 
+                      imageUrl={user?.avatarUrl}
+                    />
+                    <div className="flex-1 relative">
+                      <input
+                        type="text"
+                        placeholder="Write a comment..."
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white text-sm"
+                      />
+                      <button
+                        onClick={() => handleAddComment(post.id)}
+                        disabled={!newComment.trim()}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-emerald-600 hover:text-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Send className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, Calendar, Edit, Save, X, Camera, Award, BookOpen, TrendingUp, Clock, Users, MessageSquare } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Edit, Save, X, Award, BookOpen, TrendingUp, Users, MessageSquare } from 'lucide-react';
 import Card from '../components/Common/Card';
 import StatCard from '../components/Common/StatCard';
 import { useAuth } from '../contexts/AuthContext';
 import { mockStudents, mockLecturers } from '../data/mockData';
+import Avatar from '../components/Common/Avatar';
 
 const Profile: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUserProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [profileData, setProfileData] = useState({
     name: user?.name || 'Demo User',
     email: user?.email || 'demo@calebuniversity.edu.ng',
-    phone: '+234 803 123 4567',
-    address: 'Lagos, Nigeria',
-    dateOfBirth: '1995-06-15',
+    phone: user?.phone || '+234 803 123 4567',
+    address: user?.address || 'Lagos, Nigeria',
+    dateOfBirth: user?.dateOfBirth || '1995-06-15',
     department: user?.department || 'Computer Science',
     faculty: user?.faculty || 'COPAS',
-    bio: 'Passionate about technology and education. Dedicated to academic excellence and continuous learning.',
+    bio: user?.bio || 'Passionate about technology and education. Dedicated to academic excellence and continuous learning.',
     interests: ['Machine Learning', 'Web Development', 'Data Science', 'Research'],
     emergencyContact: {
       name: 'John Doe',
@@ -44,10 +45,31 @@ const Profile: React.FC = () => {
 
   const handleSave = () => {
     setIsEditing(false);
+    
+    // Update user profile in context/localStorage
+    updateUserProfile({
+      name: profileData.name,
+      email: profileData.email,
+      phone: profileData.phone,
+      address: profileData.address,
+      dateOfBirth: profileData.dateOfBirth,
+      bio: profileData.bio
+    });
+    
     console.log('Profile updated:', profileData);
   };
 
   const handleCancel = () => {
+    // Reset form data to current user data
+    setProfileData({
+      ...profileData,
+      name: user?.name || 'Demo User',
+      email: user?.email || 'demo@calebuniversity.edu.ng',
+      phone: user?.phone || '+234 803 123 4567',
+      address: user?.address || 'Lagos, Nigeria',
+      dateOfBirth: user?.dateOfBirth || '1995-06-15',
+      bio: user?.bio || 'Passionate about technology and education. Dedicated to academic excellence and continuous learning.'
+    });
     setIsEditing(false);
   };
 
@@ -64,16 +86,15 @@ const Profile: React.FC = () => {
         {/* Profile Picture and Basic Info */}
         <div className="text-center">
           <div className="relative inline-block">
-            <div className="w-24 h-24 bg-gradient-to-r from-primary-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3">
-              {profileData.name.split(' ').map(n => n.charAt(0)).join('')}
-            </div>
-            {isEditing && (
-              <button className="absolute bottom-0 right-0 p-1 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-600">
-                <Camera className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-              </button>
-            )}
+            <Avatar 
+              name={profileData.name} 
+              type={user?.role || 'student'} 
+              size="xl" 
+              imageUrl={user?.avatarUrl}
+              editable={true}
+            />
           </div>
-          <h3 className="compact-header text-gray-900 dark:text-white">{profileData.name}</h3>
+          <h3 className="compact-header text-gray-900 dark:text-white mt-3">{profileData.name}</h3>
           <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">{user?.role}</p>
           <p className="text-xs text-primary-600 dark:text-primary-400">{profileData.department}</p>
         </div>
