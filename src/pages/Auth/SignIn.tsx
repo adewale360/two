@@ -50,7 +50,23 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900 relative">
+      {/* Bolt Logo - Top Right */}
+      <div className="absolute top-4 right-4">
+        <a 
+          href="https://bolt.new/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block hover:scale-105 transition-transform"
+        >
+          <img 
+            src="/black_circle_360x360.png" 
+            alt="Powered by Bolt" 
+            className="w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+          />
+        </a>
+      </div>
+
       {/* Sign In Card */}
       <div className="w-full max-w-sm">
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
@@ -59,7 +75,8 @@ const SignIn: React.FC = () => {
             <div className="flex items-center justify-center mb-3">
               <Logo size="lg" />
             </div>
-            <p className="text-gray-600 dark:text-gray-400 text-xs">University Performance Dashboard</p>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Pineappl</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-xs">Academic Performance Platform</p>
           </div>
 
           {/* Tab Navigation */}

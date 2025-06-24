@@ -116,10 +116,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
           ))}
         </nav>
 
-        {/* Footer */}
+        {/* Footer with Bolt Logo */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="text-xs text-gray-500 text-center">
-            © 2024 Pineappl Platform
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-gray-500 text-center">
+              © 2024 Pineappl Platform
+            </div>
+            <a 
+              href="https://bolt.new/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block hover:scale-105 transition-transform"
+            >
+              <img 
+                src="/black_circle_360x360.png" 
+                alt="Powered by Bolt" 
+                className="w-8 h-8 rounded-full shadow-md hover:shadow-lg transition-shadow"
+              />
+            </a>
           </div>
         </div>
       </div>

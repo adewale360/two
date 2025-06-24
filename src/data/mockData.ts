@@ -490,7 +490,7 @@ export const courseSyllabi = {
     { topic: 'Introduction to Advanced Programming', completed: true, scheduled: true },
     { topic: 'Object-Oriented Design Patterns', completed: true, scheduled: true },
     { topic: 'Data Structures and Algorithms', completed: true, scheduled: true },
-    { topic: 'Database Design and Implementation', completed: false, scheduled: true },
+    { topic: 'Database Design and Implementation', complete: false, scheduled: true },
     { topic: 'Web Development Frameworks', completed: false, scheduled: true },
     { topic: 'Software Testing and Quality Assurance', completed: false, scheduled: false },
     { topic: 'Project Management in Software Development', completed: false, scheduled: false },
