@@ -244,6 +244,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             dateOfBirth: profile.date_of_birth
           };
           
+          // Save to localStorage for persistence
+          localStorage.setItem('pineappl_user', JSON.stringify(userProfile));
           setUser(userProfile);
           setLoading(false);
           return { error: null };
@@ -364,6 +366,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             dateOfBirth: profile.date_of_birth
           };
           
+          // Save to localStorage for persistence
+          localStorage.setItem('pineappl_user', JSON.stringify(userProfile));
           setUser(userProfile);
         }
       }
