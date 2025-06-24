@@ -367,7 +367,7 @@ export const mockLecturers: Lecturer[] = [
     staffId: 'STAFF001',
     department: 'Computer Science',
     faculty: 'COPAS',
-    courses: ['CS401', 'CS402', 'CS501'],
+    courses: ['CSC401', 'CSC402', 'CSC501'],
     rating: 4.8,
     studentsCount: 120
   },
@@ -742,6 +742,61 @@ export const getStudentsByCourse = (courseCode: string): Student[] => {
   return mockStudents.filter(student => 
     student.courses.some(course => course.courseCode === courseCode)
   );
+};
+
+// Enhanced function to get students by lecturer's courses with minimum 5 students per course
+export const getStudentsByLecturerCourses = (lecturerEmail: string): Record<string, Student[]> => {
+  const lecturer = mockLecturers.find(l => l.email === lecturerEmail);
+  if (!lecturer) return {};
+
+  const courseStudents: Record<string, Student[]> = {};
+  
+  lecturer.courses.forEach(courseCode => {
+    // Get students from the same department as the lecturer
+    const departmentStudents = mockStudents.filter(student => 
+      student.department === lecturer.department
+    );
+    
+    // Ensure at least 5 students per course by taking the first 5-10 students
+    const minStudents = 5;
+    const maxStudents = 10;
+    const studentsForCourse = departmentStudents.slice(0, Math.max(minStudents, Math.min(maxStudents, departmentStudents.length)));
+    
+    // Add the course to each student's course list if not already present
+    studentsForCourse.forEach(student => {
+      if (!student.courses.some(course => course.courseCode === courseCode)) {
+        const { grade, score } = generateGradeForStudent(student.gpa);
+        student.courses.push({
+          courseCode,
+          courseName: `${lecturer.department} Course`,
+          grade,
+          score,
+          semester: student.semester,
+          level: parseInt(student.level)
+        });
+      }
+    });
+    
+    courseStudents[courseCode] = studentsForCourse;
+  });
+  
+  return courseStudents;
+};
+
+// Helper function to generate grade based on student's GPA
+const generateGradeForStudent = (gpa: number) => {
+  const variation = (Math.random() - 0.5) * 0.5;
+  const courseGPA = Math.max(0, Math.min(5, gpa + variation));
+  
+  if (courseGPA >= 4.5) return { grade: 'A+', score: Math.floor(Math.random() * 10) + 90 };
+  if (courseGPA >= 4.0) return { grade: 'A', score: Math.floor(Math.random() * 10) + 80 };
+  if (courseGPA >= 3.5) return { grade: 'B+', score: Math.floor(Math.random() * 10) + 75 };
+  if (courseGPA >= 3.0) return { grade: 'B', score: Math.floor(Math.random() * 10) + 70 };
+  if (courseGPA >= 2.5) return { grade: 'C+', score: Math.floor(Math.random() * 10) + 65 };
+  if (courseGPA >= 2.0) return { grade: 'C', score: Math.floor(Math.random() * 10) + 60 };
+  if (courseGPA >= 1.5) return { grade: 'D+', score: Math.floor(Math.random() * 10) + 55 };
+  if (courseGPA >= 1.0) return { grade: 'D', score: Math.floor(Math.random() * 10) + 50 };
+  return { grade: 'F', score: Math.floor(Math.random() * 50) + 0 };
 };
 
 export const getFacultyTopPerformers = (facultyName: string) => {

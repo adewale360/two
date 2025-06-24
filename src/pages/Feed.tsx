@@ -4,6 +4,7 @@ import Card from '../components/Common/Card';
 import Avatar from '../components/Common/Avatar';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { mockNews } from '../data/mockData';
 
 interface Post {
   id: string;
@@ -52,77 +53,61 @@ const Feed: React.FC = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [newPost, setNewPost] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
   const [commentingOnPost, setCommentingOnPost] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
 
-  // Fetch posts from Supabase
+  // Load posts from localStorage on mount
   useEffect(() => {
-    const fetchPosts = async () => {
+    const loadPosts = () => {
       try {
         setLoading(true);
         
-        if (!user) {
-          setLoading(false);
-          return;
+        // Load posts from localStorage
+        const savedPosts = localStorage.getItem('pineappl_posts');
+        const savedComments = localStorage.getItem('pineappl_comments');
+        
+        if (savedPosts) {
+          setPosts(JSON.parse(savedPosts));
+        } else {
+          // Initialize with demo data including news
+          const initialPosts = getDemoPosts();
+          setPosts(initialPosts);
+          localStorage.setItem('pineappl_posts', JSON.stringify(initialPosts));
         }
         
-        // Try to fetch posts from Supabase
-        const { data, error } = await supabase.rpc('get_posts_with_user_interactions', {
-          user_id: user.id
-        });
-        
-        if (error) {
-          console.error('Error fetching posts:', error);
-          // Fallback to localStorage
-          const savedPosts = localStorage.getItem('pineappl_posts');
-          if (savedPosts) {
-            setPosts(JSON.parse(savedPosts));
-          } else {
-            // Use demo data
-            setPosts(getDemoPosts());
-          }
-        } else if (data && data.length > 0) {
-          // Format Supabase data to match our Post interface
-          const formattedPosts: Post[] = data.map(post => ({
-            id: post.id,
-            author: {
-              id: post.author_id,
-              name: post.author_name,
-              role: post.author_role,
-              department: post.author_department || 'General',
-              avatar: post.author_avatar,
-              isVerified: post.author_role === 'admin' || post.author_role === 'lecturer'
-            },
-            content: post.content,
-            timestamp: formatTimestamp(post.created_at),
-            likes: post.likes_count,
-            comments: post.comments_count,
-            shares: post.shares_count,
-            isLiked: post.is_liked,
-            isBookmarked: post.is_bookmarked,
-            type: post.post_type,
-            media: post.media_url,
-            event: post.event_data
-          }));
-          
-          setPosts(formattedPosts);
-        } else {
-          // No posts found, use demo data
-          setPosts(getDemoPosts());
+        if (savedComments) {
+          setComments(JSON.parse(savedComments));
         }
       } catch (error) {
-        console.error('Error in fetchPosts:', error);
+        console.error('Error loading posts:', error);
         setPosts(getDemoPosts());
       } finally {
         setLoading(false);
       }
     };
     
-    fetchPosts();
-  }, [user]);
+    loadPosts();
+  }, []);
+
+  // Save posts to localStorage whenever they change
+  useEffect(() => {
+    if (posts.length > 0) {
+      localStorage.setItem('pineappl_posts', JSON.stringify(posts));
+    }
+  }, [posts]);
+
+  // Save comments to localStorage whenever they change
+  useEffect(() => {
+    if (comments.length > 0) {
+      localStorage.setItem('pineappl_comments', JSON.stringify(comments));
+    }
+  }, [comments]);
 
   // Format timestamp to relative time
   const formatTimestamp = (timestamp: string) => {
@@ -142,9 +127,9 @@ const Feed: React.FC = () => {
     return date.toLocaleDateString();
   };
 
-  // Get demo posts for fallback
+  // Get demo posts including news
   const getDemoPosts = (): Post[] => {
-    return [
+    const demoPosts: Post[] = [
       {
         id: '1',
         author: {
@@ -155,7 +140,7 @@ const Feed: React.FC = () => {
           isVerified: true
         },
         content: 'Excited to announce that our Machine Learning research paper has been accepted for publication in the International Journal of AI! This is a collaborative effort with our brilliant students. #Research #MachineLearning #ProudMoment',
-        timestamp: '2 hours ago',
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
         likes: 45,
         comments: 12,
         shares: 8,
@@ -173,7 +158,7 @@ const Feed: React.FC = () => {
           isVerified: true
         },
         content: 'Join us for the Annual Tech Innovation Fair! Showcase your projects, network with industry professionals, and compete for amazing prizes.',
-        timestamp: '4 hours ago',
+        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
         likes: 128,
         comments: 34,
         shares: 67,
@@ -197,7 +182,7 @@ const Feed: React.FC = () => {
           isDepartmentGovernor: true
         },
         content: 'Just completed my final year project on blockchain-based voting systems! Special thanks to Dr. Wilson for her guidance throughout this journey. The future of secure digital democracy looks promising! 🚀',
-        timestamp: '6 hours ago',
+        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
         likes: 89,
         comments: 23,
         shares: 15,
@@ -215,7 +200,7 @@ const Feed: React.FC = () => {
           isVerified: true
         },
         content: 'Our students\' sustainable architecture designs are truly inspiring! Here are some highlights from this semester\'s final presentations. The creativity and environmental consciousness shown is remarkable.',
-        timestamp: '8 hours ago',
+        timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
         likes: 67,
         comments: 18,
         shares: 22,
@@ -225,47 +210,35 @@ const Feed: React.FC = () => {
         media: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg'
       }
     ];
-  };
 
-  // Fetch comments for a post
-  const fetchComments = async (postId: string) => {
-    try {
-      // Try to fetch comments from Supabase
-      const { data, error } = await supabase.rpc('get_post_comments', {
-        post_id: postId
-      });
-      
-      if (error) {
-        console.error('Error fetching comments:', error);
-        return;
-      }
-      
-      if (data && data.length > 0) {
-        // Format Supabase data to match our Comment interface
-        const formattedComments: Comment[] = data.map(comment => ({
-          id: comment.id,
-          postId: postId,
-          author: {
-            id: comment.user_id,
-            name: comment.author_name,
-            role: comment.author_role,
-            avatar: comment.author_avatar
-          },
-          content: comment.content,
-          timestamp: formatTimestamp(comment.created_at)
-        }));
-        
-        setComments(prev => [...prev.filter(c => c.postId !== postId), ...formattedComments]);
-      }
-    } catch (error) {
-      console.error('Error in fetchComments:', error);
-    }
-  };
+    // Add news as posts
+    const newsPosts: Post[] = mockNews.slice(0, 5).map(newsItem => ({
+      id: `news-${newsItem.id}`,
+      author: {
+        id: 'news-admin',
+        name: newsItem.author,
+        role: 'admin' as const,
+        department: 'Administration',
+        isVerified: true
+      },
+      content: newsItem.content,
+      timestamp: new Date(newsItem.date).toISOString(),
+      likes: Math.floor(Math.random() * 50) + 10,
+      comments: Math.floor(Math.random() * 20) + 5,
+      shares: Math.floor(Math.random() * 15) + 3,
+      isLiked: false,
+      isBookmarked: newsItem.featured,
+      type: 'news',
+      event: newsItem.category === 'event' ? {
+        title: newsItem.title,
+        date: newsItem.date,
+        location: 'University Campus',
+        attendees: Math.floor(Math.random() * 200) + 50
+      } : undefined
+    }));
 
-  // Save posts to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('pineappl_posts', JSON.stringify(posts));
-  }, [posts]);
+    return [...demoPosts, ...newsPosts];
+  };
 
   const getVerificationBadge = (author: Post['author']) => {
     if (author.role === 'admin' && author.isVerified) {
@@ -287,119 +260,65 @@ const Feed: React.FC = () => {
   };
 
   const handleLike = async (postId: string) => {
-    try {
-      const post = posts.find(p => p.id === postId);
-      if (!post || !user) return;
-      
-      const isLiked = post.isLiked;
-      
-      // Optimistically update UI
-      setPosts(posts.map(post => 
-        post.id === postId 
-          ? { 
-              ...post, 
-              isLiked: !post.isLiked, 
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1 
-            }
-          : post
-      ));
-      
-      // Update in Supabase
-      if (isLiked) {
-        // Remove like
-        await supabase
-          .from('post_likes')
-          .delete()
-          .eq('post_id', postId)
-          .eq('user_id', user.id);
-      } else {
-        // Add like
-        await supabase
-          .from('post_likes')
-          .insert({
-            post_id: postId,
-            user_id: user.id
-          });
-        
-        // Update likes count
-        await supabase.rpc('increment_post_likes', {
-          post_id: postId,
-          increment_by: 1
-        });
-      }
-    } catch (error) {
-      console.error('Error handling like:', error);
-      // Revert UI change on error
-      const originalPosts = JSON.parse(localStorage.getItem('pineappl_posts') || '[]');
-      setPosts(originalPosts);
-    }
+    const post = posts.find(p => p.id === postId);
+    if (!post || !user) return;
+    
+    const isLiked = post.isLiked;
+    
+    // Optimistically update UI
+    setPosts(posts.map(post => 
+      post.id === postId 
+        ? { 
+            ...post, 
+            isLiked: !post.isLiked, 
+            likes: post.isLiked ? post.likes - 1 : post.likes + 1 
+          }
+        : post
+    ));
   };
 
   const handleBookmark = async (postId: string) => {
-    try {
-      const post = posts.find(p => p.id === postId);
-      if (!post || !user) return;
-      
-      const isBookmarked = post.isBookmarked;
-      
-      // Optimistically update UI
-      setPosts(posts.map(post => 
-        post.id === postId 
-          ? { ...post, isBookmarked: !post.isBookmarked }
-          : post
-      ));
-      
-      // Update in Supabase
-      if (isBookmarked) {
-        // Remove bookmark
-        await supabase
-          .from('post_bookmarks')
-          .delete()
-          .eq('post_id', postId)
-          .eq('user_id', user.id);
-      } else {
-        // Add bookmark
-        await supabase
-          .from('post_bookmarks')
-          .insert({
-            post_id: postId,
-            user_id: user.id
-          });
-      }
-    } catch (error) {
-      console.error('Error handling bookmark:', error);
-      // Revert UI change on error
-      const originalPosts = JSON.parse(localStorage.getItem('pineappl_posts') || '[]');
-      setPosts(originalPosts);
-    }
+    const post = posts.find(p => p.id === postId);
+    if (!post || !user) return;
+    
+    // Optimistically update UI
+    setPosts(posts.map(post => 
+      post.id === postId 
+        ? { ...post, isBookmarked: !post.isBookmarked }
+        : post
+    ));
+  };
+
+  const handleMediaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setMediaFile(file);
+    
+    // Create preview URL
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setMediaPreview(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleCreatePost = async () => {
     if (!newPost.trim() || !user) return;
     
     try {
-      // Create post object
-      const postData = {
-        author_id: user.id,
-        content: newPost,
-        post_type: 'text'
-      };
+      let mediaUrl = null;
+      let postType: 'text' | 'image' | 'video' = 'text';
       
-      // Insert into Supabase
-      const { data, error } = await supabase
-        .from('user_posts')
-        .insert(postData)
-        .select()
-        .single();
-      
-      if (error) {
-        console.error('Error creating post:', error);
-        throw error;
+      // Handle media upload
+      if (mediaFile && mediaPreview) {
+        mediaUrl = mediaPreview; // In a real app, you'd upload to storage
+        postType = mediaFile.type.startsWith('image/') ? 'image' : 'video';
       }
       
-      // Add to local state
+      // Create post object
       const newPostObj: Post = {
-        id: data.id,
+        id: Date.now().toString(),
         author: {
           id: user.id,
           name: user.name,
@@ -409,45 +328,23 @@ const Feed: React.FC = () => {
           avatar: user.avatarUrl
         },
         content: newPost,
-        timestamp: 'Just now',
+        timestamp: new Date().toISOString(),
         likes: 0,
         comments: 0,
         shares: 0,
         isLiked: false,
         isBookmarked: false,
-        type: 'text'
+        type: postType,
+        media: mediaUrl || undefined
       };
       
       setPosts([newPostObj, ...posts]);
       setNewPost('');
+      setMediaFile(null);
+      setMediaPreview(null);
       setShowCreatePost(false);
     } catch (error) {
-      console.error('Error in handleCreatePost:', error);
-      
-      // Fallback to local storage for demo
-      const post: Post = {
-        id: Date.now().toString(),
-        author: {
-          id: user.id,
-          name: user.name,
-          role: user.role,
-          department: user.department || 'Computer Science',
-          isVerified: user.role === 'lecturer' || user.role === 'admin',
-          isDepartmentGovernor: user.role === 'student' && Math.random() > 0.8
-        },
-        content: newPost,
-        timestamp: 'Just now',
-        likes: 0,
-        comments: 0,
-        shares: 0,
-        isLiked: false,
-        isBookmarked: false,
-        type: 'text'
-      };
-      
-      setPosts([post, ...posts]);
-      setNewPost('');
-      setShowCreatePost(false);
+      console.error('Error creating post:', error);
     }
   };
 
@@ -455,38 +352,17 @@ const Feed: React.FC = () => {
     setSelectedImage(imageUrl);
   };
 
+  const handleVideoClick = (videoUrl: string) => {
+    setSelectedVideo(videoUrl);
+  };
+
   const handleAddComment = async (postId: string) => {
     if (!newComment.trim() || !user) return;
     
     try {
-      // Create comment object
-      const commentData = {
-        post_id: postId,
-        user_id: user.id,
-        content: newComment
-      };
-      
-      // Insert into Supabase
-      const { data, error } = await supabase
-        .from('post_comments')
-        .insert(commentData)
-        .select()
-        .single();
-      
-      if (error) {
-        console.error('Error creating comment:', error);
-        throw error;
-      }
-      
-      // Update comment count on post
-      await supabase.rpc('increment_post_comments', {
-        post_id: postId,
-        increment_by: 1
-      });
-      
       // Add to local state
       const newCommentObj: Comment = {
-        id: data.id,
+        id: Date.now().toString(),
         postId,
         author: {
           id: user.id,
@@ -495,7 +371,7 @@ const Feed: React.FC = () => {
           avatar: user.avatarUrl
         },
         content: newComment,
-        timestamp: 'Just now'
+        timestamp: new Date().toISOString()
       };
       
       setComments([...comments, newCommentObj]);
@@ -510,42 +386,9 @@ const Feed: React.FC = () => {
       setNewComment('');
       setCommentingOnPost(null);
     } catch (error) {
-      console.error('Error in handleAddComment:', error);
-      
-      // Fallback to local storage for demo
-      const comment: Comment = {
-        id: Date.now().toString(),
-        postId,
-        author: {
-          id: user.id,
-          name: user.name,
-          role: user.role,
-          avatar: user.avatarUrl
-        },
-        content: newComment,
-        timestamp: 'Just now'
-      };
-      
-      setComments([...comments, comment]);
-      
-      // Update comment count on post
-      setPosts(posts.map(post => 
-        post.id === postId 
-          ? { ...post, comments: post.comments + 1 }
-          : post
-      ));
-      
-      setNewComment('');
-      setCommentingOnPost(null);
+      console.error('Error adding comment:', error);
     }
   };
-
-  // Load comments when a post is selected for commenting
-  useEffect(() => {
-    if (commentingOnPost) {
-      fetchComments(commentingOnPost);
-    }
-  }, [commentingOnPost]);
 
   const filteredPosts = posts.filter(post => {
     if (activeTab === 'all') return true;
@@ -639,7 +482,11 @@ const Feed: React.FC = () => {
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Create Post</h3>
               <button
-                onClick={() => setShowCreatePost(false)}
+                onClick={() => {
+                  setShowCreatePost(false);
+                  setMediaFile(null);
+                  setMediaPreview(null);
+                }}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
               >
                 <X className="h-5 w-5 text-gray-500" />
@@ -667,14 +514,54 @@ const Feed: React.FC = () => {
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white resize-none"
             />
 
+            {/* Media Preview */}
+            {mediaPreview && (
+              <div className="mt-3 relative">
+                {mediaFile?.type.startsWith('image/') ? (
+                  <img 
+                    src={mediaPreview} 
+                    alt="Preview" 
+                    className="w-full h-32 object-cover rounded-lg"
+                  />
+                ) : (
+                  <video 
+                    src={mediaPreview} 
+                    className="w-full h-32 object-cover rounded-lg"
+                    controls
+                  />
+                )}
+                <button
+                  onClick={() => {
+                    setMediaFile(null);
+                    setMediaPreview(null);
+                  }}
+                  className="absolute top-2 right-2 p-1 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+
             <div className="flex items-center justify-between mt-3">
               <div className="flex space-x-2">
-                <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                <label className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full cursor-pointer">
                   <Image className="h-5 w-5 text-gray-500" />
-                </button>
-                <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleMediaUpload}
+                    className="hidden"
+                  />
+                </label>
+                <label className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full cursor-pointer">
                   <Video className="h-5 w-5 text-gray-500" />
-                </button>
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleMediaUpload}
+                    className="hidden"
+                  />
+                </label>
                 <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                   <Calendar className="h-5 w-5 text-gray-500" />
                 </button>
@@ -712,6 +599,27 @@ const Feed: React.FC = () => {
         </div>
       )}
 
+      {/* Video Modal */}
+      {selectedVideo && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50" onClick={() => setSelectedVideo(null)}>
+          <div className="relative max-w-4xl max-h-full p-4">
+            <button
+              onClick={() => setSelectedVideo(null)}
+              className="absolute top-4 right-4 p-2 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-colors z-10"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <video 
+              src={selectedVideo} 
+              className="max-w-full max-h-full object-contain rounded-lg"
+              controls
+              autoPlay
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Posts */}
       <div className="space-y-3">
         {filteredPosts.map((post) => (
@@ -733,7 +641,7 @@ const Feed: React.FC = () => {
                   {getPostTypeIcon(post.type)}
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {post.author.department} • {post.timestamp}
+                  {post.author.department} • {formatTimestamp(post.timestamp)}
                 </p>
               </div>
               <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
@@ -783,6 +691,22 @@ const Feed: React.FC = () => {
                     alt="Post content" 
                     className="w-full h-48 object-cover hover:scale-105 transition-transform duration-200"
                   />
+                </div>
+              )}
+
+              {/* Video */}
+              {post.type === 'video' && post.media && (
+                <div className="rounded-lg overflow-hidden cursor-pointer" onClick={() => handleVideoClick(post.media!)}>
+                  <video 
+                    src={post.media} 
+                    className="w-full h-48 object-cover"
+                    controls={false}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                      <Video className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -874,7 +798,7 @@ const Feed: React.FC = () => {
                               {comment.author.name}
                             </span>
                             <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {comment.timestamp}
+                              {formatTimestamp(comment.timestamp)}
                             </span>
                           </div>
                           <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">

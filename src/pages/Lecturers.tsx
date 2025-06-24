@@ -3,7 +3,7 @@ import { Search, Plus, User, Star, TrendingUp, Users, Calendar, CheckCircle, Bar
 import Card from '../components/Common/Card';
 import Avatar from '../components/Common/Avatar';
 import CustomBarChart from '../components/Charts/BarChart';
-import { mockLecturers, mockPerformanceData, getStudentsByCourse, courseSyllabi, mockStudents } from '../data/mockData';
+import { mockLecturers, mockPerformanceData, getStudentsByLecturerCourses, courseSyllabi, mockStudents } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
 
 const Lecturers: React.FC = () => {
@@ -39,8 +39,9 @@ const Lecturers: React.FC = () => {
     return matchesSearch && matchesDepartment;
   });
 
-  // Get students for lecturer's courses only (real-time enrollment)
-  const studentsForCourse = selectedCourse ? getStudentsByCourse(selectedCourse) : [];
+  // Get students for lecturer's courses with minimum 5 students per course
+  const lecturerCourseStudents = isLecturer ? getStudentsByLecturerCourses(user?.email || '') : {};
+  const studentsForCourse = selectedCourse ? lecturerCourseStudents[selectedCourse] || [] : [];
 
   // Mock syllabus coverage data for heat map
   const syllabusData = currentLecturer.courses.map(course => {
@@ -63,6 +64,22 @@ const Lecturers: React.FC = () => {
       studentId: selectedStudent,
       courseCode: selectedCourse
     });
+    
+    // Save to localStorage for persistence
+    const existingResults = JSON.parse(localStorage.getItem('pineappl_results') || '[]');
+    const newResult = {
+      id: Date.now().toString(),
+      studentId: selectedStudent,
+      courseCode: selectedCourse,
+      semester: resultForm.semester,
+      year: resultForm.year,
+      score: parseInt(resultForm.score),
+      submittedAt: new Date().toISOString(),
+      lecturerId: user?.id
+    };
+    existingResults.push(newResult);
+    localStorage.setItem('pineappl_results', JSON.stringify(existingResults));
+    
     setShowResultForm(false);
     setResultForm({ courseCode: '', semester: '1st', year: '2024', score: '' });
     setSelectedCourse('');
@@ -78,12 +95,10 @@ const Lecturers: React.FC = () => {
           : topic
       ) || []
     }));
+    
+    // Save to localStorage for persistence
+    localStorage.setItem('pineappl_syllabus', JSON.stringify(syllabusState));
   };
-
-  // Get students for lecturer's department only (for lecturer role)
-  const departmentStudents = isLecturer 
-    ? mockStudents.filter(s => s.department === currentLecturer.department)
-    : [];
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -472,18 +487,21 @@ const Lecturers: React.FC = () => {
               <div className="space-y-4">
                 <h4 className="font-semibold text-gray-900 dark:text-white">Select Course</h4>
                 <div className="space-y-2">
-                  {currentLecturer.courses.map(course => (
-                    <button
-                      key={course}
-                      onClick={() => setSelectedCourse(course)}
-                      className="w-full p-4 text-left border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <div className="font-medium text-gray-900 dark:text-white">{course}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        {getStudentsByCourse(course).length} students enrolled
-                      </div>
-                    </button>
-                  ))}
+                  {currentLecturer.courses.map(course => {
+                    const courseStudents = lecturerCourseStudents[course] || [];
+                    return (
+                      <button
+                        key={course}
+                        onClick={() => setSelectedCourse(course)}
+                        className="w-full p-4 text-left border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <div className="font-medium text-gray-900 dark:text-white">{course}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          {courseStudents.length} students enrolled
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
