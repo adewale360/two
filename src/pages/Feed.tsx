@@ -1,153 +1,215 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Plus, Image, Video, Calendar, X, Send,
-  Heart, MessageCircle, Share2, Bookmark
-} from 'lucide-react';
+import { Image, Video, Calendar, X, Send, Plus, Users } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
+interface Post {
+  id: number;
+  content: string;
+  media_url?: string;
+  type: 'text' | 'image' | 'video';
+  created_at: string;
+  author: {
+    id: string;
+    name: string;
+    role: string;
+    department?: string;
+    avatarUrl?: string;
+  };
+}
+
 const CentralizedFeed = () => {
   const { user } = useAuth();
-  const [posts, setPosts] = useState([]);
-  const [content, setContent] = useState('');
-  const [media, setMedia] = useState(null);
-  const [mediaPreview, setMediaPreview] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('all');
-
-  const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (!error) setPosts(data);
-  };
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [newPost, setNewPost] = useState('');
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'all' | 'following' | 'saved'>('all');
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  const handleMediaUpload = (e) => {
-    const file = e.target.files[0];
-    setMedia(file);
+  const fetchPosts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*, author:profiles(id, name, role, department, avatarUrl)')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) setPosts(data);
+    setLoading(false);
+  };
+
+  const handleMediaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setMediaFile(file);
     const reader = new FileReader();
-    reader.onloadend = () => setMediaPreview(reader.result);
+    reader.onload = (event) => setMediaPreview(event.target?.result as string);
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async () => {
-    if (!user || !content.trim()) return;
+  const handleCreatePost = async () => {
+    if (!newPost.trim() || !user) return;
+    let media_url = null;
+    let type: 'text' | 'image' | 'video' = 'text';
 
-    let mediaUrl = null;
-    if (media) {
-      const { data, error } = await supabase.storage.from('media').upload(`${Date.now()}-${media.name}`, media);
-      if (!error) {
-        const { data: publicUrl } = supabase.storage.from('media').getPublicUrl(data.path);
-        mediaUrl = publicUrl.publicUrl;
-      }
+    if (mediaFile) {
+      const fileExt = mediaFile.name.split('.').pop();
+      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage.from('media').upload(filePath, mediaFile);
+      if (uploadError) return console.error('Upload failed', uploadError);
+
+      const { data: urlData } = supabase.storage.from('media').getPublicUrl(filePath);
+      media_url = urlData.publicUrl;
+      type = mediaFile.type.startsWith('image') ? 'image' : 'video';
     }
 
-    const { error: insertError } = await supabase.from('posts').insert([
-      {
-        content,
-        user_id: user.id,
-        media_url: mediaUrl,
-        media_type: media?.type || 'text',
-      }
-    ]);
+    const { error } = await supabase.from('posts').insert({
+      content: newPost,
+      media_url,
+      type,
+      author_id: user.id,
+    });
 
-    if (!insertError) {
-      setContent('');
-      setMedia(null);
+    if (!error) {
+      setNewPost('');
+      setMediaFile(null);
       setMediaPreview(null);
-      setShowModal(false);
+      setShowCreatePost(false);
       fetchPosts();
     }
   };
 
   const filteredPosts = posts.filter(post => {
-    if (activeTab === 'following') return user?.following?.includes(post.user_id);
-    if (activeTab === 'saved') return user?.savedPosts?.includes(post.id);
+    if (activeTab === 'all') return true;
+    if (activeTab === 'following') {
+      // Dummy filter: assume following list available
+      return user?.following?.includes(post.author.id);
+    }
+    if (activeTab === 'saved') {
+      return user?.savedPosts?.includes(post.id);
+    }
     return true;
   });
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <header className="mb-4">
-        <h1 className="text-2xl font-bold">University Feed</h1>
-        <p className="text-sm text-gray-500">Stay connected with your university community</p>
-      </header>
-
+    <div className="p-4 max-w-2xl mx-auto min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex justify-between items-center mb-4">
-        <div className="space-x-2">
-          <button onClick={() => setActiveTab('all')} className={`px-3 py-1 rounded ${activeTab === 'all' ? 'bg-emerald-600 text-white' : 'bg-gray-200'}`}>All Posts</button>
-          <button onClick={() => setActiveTab('following')} className={`px-3 py-1 rounded ${activeTab === 'following' ? 'bg-emerald-600 text-white' : 'bg-gray-200'}`}>Following</button>
-          <button onClick={() => setActiveTab('saved')} className={`px-3 py-1 rounded ${activeTab === 'saved' ? 'bg-emerald-600 text-white' : 'bg-gray-200'}`}>Saved</button>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">University Feed</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Stay connected with your university community</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="flex items-center bg-emerald-600 text-white px-3 py-1 rounded">
-          <Plus className="w-4 h-4 mr-1" /> Post
+        <button
+          onClick={() => setShowCreatePost(true)}
+          className="flex items-center space-x-2 bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Post</span>
         </button>
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded w-full max-w-md">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-lg font-semibold">Create Post</h2>
-              <button onClick={() => setShowModal(false)}><X /></button>
-            </div>
+      <div className="flex space-x-3 mb-4">
+        {['all', 'following', 'saved'].map(tab => (
+          <button
+            key={tab}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              activeTab === tab
+                ? 'bg-emerald-600 text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+            }`}
+            onClick={() => setActiveTab(tab as any)}
+          >
+            {tab === 'all' ? 'All Posts' : tab === 'following' ? 'Following' : 'Saved'}
+          </button>
+        ))}
+      </div>
+
+      {showCreatePost && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg w-full max-w-md relative">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+              onClick={() => {
+                setShowCreatePost(false);
+                setMediaPreview(null);
+                setMediaFile(null);
+              }}
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Create Post</h3>
             <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full border rounded p-2 mb-2"
+              rows={3}
               placeholder="What's on your mind?"
+              className="w-full p-2 border rounded mb-3 dark:bg-gray-700 dark:text-white"
+              value={newPost}
+              onChange={(e) => setNewPost(e.target.value)}
             />
-            {mediaPreview && <img src={mediaPreview} className="w-full h-48 object-cover mb-2 rounded" />}
-            <div className="flex items-center justify-between">
-              <div className="flex space-x-2">
+            {mediaPreview && (
+              <img src={mediaPreview} alt="preview" className="w-full max-h-48 object-cover rounded mb-3" />
+            )}
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex gap-3">
                 <label className="cursor-pointer">
-                  <Image className="w-5 h-5" />
-                  <input type="file" accept="image/*" className="hidden" onChange={handleMediaUpload} />
+                  <Image className="h-5 w-5 text-gray-500" />
+                  <input type="file" accept="image/*" onChange={handleMediaUpload} className="hidden" />
                 </label>
                 <label className="cursor-pointer">
-                  <Video className="w-5 h-5" />
-                  <input type="file" accept="video/*" className="hidden" onChange={handleMediaUpload} />
+                  <Video className="h-5 w-5 text-gray-500" />
+                  <input type="file" accept="video/*" onChange={handleMediaUpload} className="hidden" />
                 </label>
-                <button><Calendar className="w-5 h-5" /></button>
+                <button>
+                  <Calendar className="h-5 w-5 text-gray-500" />
+                </button>
               </div>
-              <button onClick={handleSubmit} className="bg-emerald-600 text-white px-3 py-1 rounded flex items-center space-x-1">
-                <Send className="w-4 h-4" /> <span>Post</span>
+              <button
+                className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
+                disabled={!newPost.trim()}
+                onClick={handleCreatePost}
+              >
+                <Send className="w-4 h-4 inline mr-1" /> Post
               </button>
             </div>
           </div>
         </div>
       )}
 
-      <div className="space-y-4">
-        {filteredPosts.length === 0 && (
-          <div className="text-center py-10 bg-gray-100 rounded">
-            <p className="text-gray-500">No posts found</p>
-            <p className="text-sm text-gray-400">Be the first to share something with the community!</p>
-          </div>
-        )}
-
-        {filteredPosts.map(post => (
-          <div key={post.id} className="p-4 bg-white shadow rounded">
-            <p>{post.content}</p>
-            {post.media_url && post.media_type.startsWith('image') && (
-              <img src={post.media_url} className="mt-2 rounded max-h-64 w-full object-cover cursor-pointer" />
-            )}
-            <div className="flex justify-between mt-2 text-gray-600">
-              <div className="flex space-x-4">
-                <button><Heart className="w-4 h-4" /></button>
-                <button><MessageCircle className="w-4 h-4" /></button>
-                <button><Share2 className="w-4 h-4" /></button>
-              </div>
-              <button><Bookmark className="w-4 h-4" /></button>
+      {loading ? (
+        <div className="text-center py-12">Loading...</div>
+      ) : filteredPosts.length === 0 ? (
+        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded border dark:border-gray-700">
+          <Users className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No posts found</h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            {activeTab === 'saved' ? "You haven't saved any posts yet." : 'Be the first to share something with the community!'}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredPosts.map(post => (
+            <div key={post.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+              <p className="text-gray-900 dark:text-white mb-2">{post.content}</p>
+              {post.media_url && post.type === 'image' && (
+                <img
+                  src={post.media_url}
+                  alt="post"
+                  className="w-full max-h-60 object-cover rounded cursor-pointer"
+                  onClick={() => window.open(post.media_url, '_blank')}
+                />
+              )}
+              {post.media_url && post.type === 'video' && (
+                <video controls className="w-full rounded">
+                  <source src={post.media_url} />
+                </video>
+              )}
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
