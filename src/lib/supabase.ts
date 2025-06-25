@@ -1,8 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-// Use environment variables if available, otherwise use demo values
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://onwluqqlacifazsrdrsq.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ud2x1cXFsYWNpZmF6c3JkcnNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MTM1NzEsImV4cCI6MjA2NTQ4OTU3MX0.3tUIAi0Ihfww6JmxrSB54MapbE7jTVz10IT_GMi0hS4';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -11,149 +10,151 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
-          id: string
-          email: string
-          full_name: string
-          username: string
-          role: 'admin' | 'lecturer' | 'student'
-          date_of_birth: string | null
-          phone: string | null
-          address: string | null
-          faculty_id: string | null
-          department_id: string | null
-          matric_number: string | null
-          staff_id: string | null
-          bio: string | null
-          avatar_url: string | null
-          is_verified: boolean
-          created_at: string
-          updated_at: string
-          interests: string[] | null
-          emergency_contact: any | null
-        }
+          id: string;
+          email: string;
+          full_name: string;
+          username: string;
+          role: 'admin' | 'lecturer' | 'student';
+          date_of_birth: string | null;
+          phone: string | null;
+          address: string | null;
+          faculty_id: string | null;
+          department_id: string | null;
+          matric_number: string | null;
+          staff_id: string | null;
+          bio: string | null;
+          avatar_url: string | null;
+          is_verified: boolean;
+          created_at: string;
+          updated_at: string;
+          interests: string[] | null;
+          emergency_contact: any | null;
+        };
         Insert: {
-          id: string
-          email: string
-          full_name: string
-          username: string
-          role?: 'admin' | 'lecturer' | 'student'
-          date_of_birth?: string | null
-          phone?: string | null
-          address?: string | null
-          faculty_id?: string | null
-          department_id?: string | null
-          matric_number?: string | null
-          staff_id?: string | null
-          bio?: string | null
-          avatar_url?: string | null
-          is_verified?: boolean
-          interests?: string[] | null
-          emergency_contact?: any | null
-        }
-        Update: {
-          email?: string
-          full_name?: string
-          username?: string
-          role?: 'admin' | 'lecturer' | 'student'
-          date_of_birth?: string | null
-          phone?: string | null
-          address?: string | null
-          faculty_id?: string | null
-          department_id?: string | null
-          matric_number?: string | null
-          staff_id?: string | null
-          bio?: string | null
-          avatar_url?: string | null
-          is_verified?: boolean
-          interests?: string[] | null
-          emergency_contact?: any | null
-        }
-      }
+          id: string;
+          email: string;
+          full_name: string;
+          username: string;
+          role?: 'admin' | 'lecturer' | 'student';
+          date_of_birth?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          faculty_id?: string | null;
+          department_id?: string | null;
+          matric_number?: string | null;
+          staff_id?: string | null;
+          bio?: string | null;
+          avatar_url?: string | null;
+          is_verified?: boolean;
+          interests?: string[] | null;
+          emergency_contact?: any | null;
+        };
+        Update: Partial<Omit<Database['public']['Tables']['profiles']['Row'], 'id' | 'created_at' | 'updated_at'>>;
+      };
+
       faculties: {
         Row: {
-          id: string
-          name: string
-          full_name: string
-          description: string | null
-          dean_name: string | null
-          dean_email: string | null
-          dean_phone: string | null
-          created_at: string
-        }
-      }
+          id: string;
+          name: string;
+          full_name: string;
+          description: string | null;
+          dean_name: string | null;
+          dean_email: string | null;
+          dean_phone: string | null;
+          created_at: string;
+        };
+      };
+
       departments: {
         Row: {
-          id: string
-          name: string
-          faculty_id: string
-          head_of_department: string | null
-          created_at: string
-        }
-      }
+          id: string;
+          name: string;
+          faculty_id: string;
+          head_of_department: string | null;
+          created_at: string;
+        };
+      };
+
       courses: {
         Row: {
-          id: string
-          course_code: string
-          course_name: string
-          department_id: string
-          lecturer_id: string | null
-          credit_units: number
-          level: number
-          semester: number
-          description: string | null
-          created_at: string
-        }
-      }
+          id: string;
+          course_code: string;
+          course_name: string;
+          department_id: string;
+          lecturer_id: string | null;
+          credit_units: number;
+          level: number;
+          semester: number;
+          description: string | null;
+          created_at: string;
+        };
+      };
+
       user_posts: {
         Row: {
-          id: string
-          author_id: string
-          content: string
-          post_type: string
-          media_url: string | null
-          event_data: any | null
-          likes_count: number
-          comments_count: number
-          shares_count: number
-          created_at: string
-          updated_at: string
-        }
-      }
+          id: string;
+          author_id: string;
+          content: string;
+          post_type: 'text' | 'image' | 'video';
+          media_url: string | null;
+          event_data: any | null;
+          likes_count: number;
+          comments_count: number;
+          shares_count: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          author_id: string;
+          content: string;
+          post_type: 'text' | 'image' | 'video';
+          media_url?: string | null;
+          event_data?: any | null;
+          likes_count?: number;
+          comments_count?: number;
+          shares_count?: number;
+        };
+        Update: Partial<Omit<Database['public']['Tables']['user_posts']['Row'], 'id' | 'created_at' | 'updated_at'>>;
+      };
+
       post_comments: {
         Row: {
-          id: string
-          post_id: string
-          user_id: string
-          content: string
-          created_at: string
-        }
-      }
+          id: string;
+          post_id: string;
+          user_id: string;
+          content: string;
+          created_at: string;
+        };
+      };
+
       post_likes: {
         Row: {
-          id: string
-          post_id: string
-          user_id: string
-          created_at: string
-        }
-      }
+          id: string;
+          post_id: string;
+          user_id: string;
+          created_at: string;
+        };
+      };
+
       post_bookmarks: {
         Row: {
-          id: string
-          post_id: string
-          user_id: string
-          created_at: string
-        }
-      }
+          id: string;
+          post_id: string;
+          user_id: string;
+          created_at: string;
+        };
+      };
+
       user_media: {
         Row: {
-          id: string
-          user_id: string
-          media_type: string
-          filename: string
-          media_url: string
-          created_at: string
-        }
-      }
-    }
-  }
-}
+          id: string;
+          user_id: string;
+          media_type: string;
+          filename: string;
+          media_url: string;
+          created_at: string;
+        };
+      };
+    };
+  };
+};
