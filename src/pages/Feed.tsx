@@ -53,7 +53,15 @@ const CentralizedFeed = () => {
   };
 
   const handleCreatePost = async () => {
-    if (!newPost.trim() || !user) return;
+    if (!newPost.trim()) {
+      alert('Post content is required.');
+      return;
+    }
+    if (!user) {
+      alert('You must be logged in to post.');
+      return;
+    }
+
     let media_url = null;
     let type: 'text' | 'image' | 'video' = 'text';
 
@@ -61,33 +69,39 @@ const CentralizedFeed = () => {
       const fileExt = mediaFile.name.split('.').pop();
       const filePath = `${user.id}/${Date.now()}.${fileExt}`;
       const { error: uploadError } = await supabase.storage.from('media').upload(filePath, mediaFile);
-      if (uploadError) return console.error('Upload failed', uploadError);
-
+      if (uploadError) {
+        alert('Failed to upload media.');
+        console.error('Upload failed:', uploadError.message);
+        return;
+      }
       const { data: urlData } = supabase.storage.from('media').getPublicUrl(filePath);
       media_url = urlData.publicUrl;
       type = mediaFile.type.startsWith('image') ? 'image' : 'video';
     }
 
-    const { error } = await supabase.from('posts').insert({
+    const { error: insertError } = await supabase.from('posts').insert({
       content: newPost,
       media_url,
       type,
       author_id: user.id,
     });
 
-    if (!error) {
-      setNewPost('');
-      setMediaFile(null);
-      setMediaPreview(null);
-      setShowCreatePost(false);
-      fetchPosts();
+    if (insertError) {
+      alert('Failed to create post.');
+      console.error('Post insert error:', insertError.message);
+      return;
     }
+
+    setNewPost('');
+    setMediaFile(null);
+    setMediaPreview(null);
+    setShowCreatePost(false);
+    fetchPosts();
   };
 
   const filteredPosts = posts.filter(post => {
     if (activeTab === 'all') return true;
     if (activeTab === 'following') {
-      // Dummy filter: assume following list available
       return user?.following?.includes(post.author.id);
     }
     if (activeTab === 'saved') {
