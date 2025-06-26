@@ -11,10 +11,10 @@ interface Post {
   created_at: string;
   author: {
     id: string;
-    name: string;
+    full_name: string;
     role: string;
     department?: string;
-    avatarUrl?: string;
+    avatar_url?: string;
   };
 }
 
@@ -35,8 +35,8 @@ const CentralizedFeed = () => {
   const fetchPosts = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from('posts')
-      .select('*, author:profiles(id, name, role, department, avatarUrl)')
+      .from('user_posts')
+      .select(`*, author:profiles(id, full_name, role, department_id, avatar_url)`)
       .order('created_at', { ascending: false });
 
     if (!error && data) setPosts(data);
@@ -53,14 +53,8 @@ const CentralizedFeed = () => {
   };
 
   const handleCreatePost = async () => {
-    if (!newPost.trim()) {
-      alert('Post content is required.');
-      return;
-    }
-    if (!user) {
-      alert('You must be logged in to post.');
-      return;
-    }
+    if (!newPost.trim()) return alert('Post content is required.');
+    if (!user) return alert('You must be logged in to post.');
 
     let media_url = null;
     let type: 'text' | 'image' | 'video' = 'text';
@@ -79,7 +73,7 @@ const CentralizedFeed = () => {
       type = mediaFile.type.startsWith('image') ? 'image' : 'video';
     }
 
-    const { error: insertError } = await supabase.from('posts').insert({
+    const { error: insertError } = await supabase.from('user_posts').insert({
       content: newPost,
       media_url,
       type,
@@ -101,12 +95,8 @@ const CentralizedFeed = () => {
 
   const filteredPosts = posts.filter(post => {
     if (activeTab === 'all') return true;
-    if (activeTab === 'following') {
-      return user?.following?.includes(post.author.id);
-    }
-    if (activeTab === 'saved') {
-      return user?.savedPosts?.includes(post.id);
-    }
+    if (activeTab === 'following') return user?.following?.includes(post.author.id);
+    if (activeTab === 'saved') return user?.savedPosts?.includes(post.id);
     return true;
   });
 
@@ -206,6 +196,16 @@ const CentralizedFeed = () => {
         <div className="space-y-4">
           {filteredPosts.map(post => (
             <div key={post.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+              <div className="flex items-center mb-2 space-x-3">
+                {post.author?.avatar_url && (
+                  <img src={post.author.avatar_url} className="h-8 w-8 rounded-full" />
+                )}
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {post.author?.full_name} • {post.author?.role}
+                  </p>
+                </div>
+              </div>
               <p className="text-gray-900 dark:text-white mb-2">{post.content}</p>
               {post.media_url && post.type === 'image' && (
                 <img
