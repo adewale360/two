@@ -3,6 +3,7 @@ import { Image, Video, Calendar, X, Send, Plus, Users, Heart, MessageCircle, Boo
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import Avatar from '../components/Common/Avatar';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Post {
   id: string;
@@ -57,8 +58,8 @@ const CentralizedFeed = () => {
   const getDemoUserUUID = () => {
     let demoUUID = localStorage.getItem('demo_user_uuid');
     if (!demoUUID) {
-      // Generate a proper UUID format for demo users
-      demoUUID = 'demo-' + crypto.randomUUID();
+      // Generate a proper UUID for demo users
+      demoUUID = uuidv4();
       localStorage.setItem('demo_user_uuid', demoUUID);
     }
     return demoUUID;
@@ -80,7 +81,11 @@ const CentralizedFeed = () => {
       const demoUserData = localStorage.getItem('demo_user_data');
       
       if (demoUserData) {
-        return JSON.parse(demoUserData);
+        const userData = JSON.parse(demoUserData);
+        return {
+          ...userData,
+          id: demoUUID // Ensure we use the UUID
+        };
       } else {
         const newDemoUser = {
           id: demoUUID,
@@ -104,36 +109,70 @@ const CentralizedFeed = () => {
       try {
         const { data: supabasePosts, error } = await supabase
           .from('feed_posts')
-          .select(`
-            *,
-            profiles!feed_posts_author_id_fkey (
-              id,
-              full_name,
-              role,
-              avatar_url,
-              departments (name)
-            )
-          `)
+          .select('*')
           .order('created_at', { ascending: false });
 
         if (!error && supabasePosts) {
-          allPosts = supabasePosts.map(post => ({
-            id: post.id,
-            content: post.content,
-            media_url: post.media_url,
-            type: post.type || 'text',
-            created_at: post.created_at,
-            likes_count: 0, // Will be calculated from likes table
-            comments_count: 0, // Will be calculated from comments table
-            shares_count: 0,
-            author: {
-              id: post.profiles?.id || post.author_id,
-              full_name: post.profiles?.full_name || 'Unknown User',
-              role: post.profiles?.role || 'student',
-              department: post.profiles?.departments?.name,
-              avatar_url: post.profiles?.avatar_url
-            }
-          }));
+          // Get author information for each post
+          const postsWithAuthors = await Promise.all(
+            supabasePosts.map(async (post) => {
+              let author = {
+                id: post.author_id,
+                full_name: 'Unknown User',
+                role: 'student',
+                department: undefined,
+                avatar_url: undefined
+              };
+
+              // Try to get profile from Supabase first
+              try {
+                const { data: profile } = await supabase
+                  .from('profiles')
+                  .select('id, full_name, role, avatar_url, departments(name)')
+                  .eq('id', post.author_id)
+                  .single();
+
+                if (profile) {
+                  author = {
+                    id: profile.id,
+                    full_name: profile.full_name,
+                    role: profile.role,
+                    department: profile.departments?.name,
+                    avatar_url: profile.avatar_url
+                  };
+                }
+              } catch (profileError) {
+                // If not found in profiles, check localStorage for demo user data
+                const demoUserData = localStorage.getItem('demo_user_data');
+                if (demoUserData) {
+                  const userData = JSON.parse(demoUserData);
+                  if (userData.id === post.author_id) {
+                    author = userData;
+                  }
+                }
+              }
+
+              // Get likes and comments count
+              const [likesResult, commentsResult] = await Promise.all([
+                supabase.from('feed_likes').select('id', { count: 'exact' }).eq('post_id', post.id),
+                supabase.from('feed_comments').select('id', { count: 'exact' }).eq('post_id', post.id)
+              ]);
+
+              return {
+                id: post.id,
+                content: post.content,
+                media_url: post.media_url,
+                type: post.type || 'text',
+                created_at: post.created_at,
+                likes_count: likesResult.count || 0,
+                comments_count: commentsResult.count || 0,
+                shares_count: 0,
+                author
+              };
+            })
+          );
+
+          allPosts = postsWithAuthors;
         }
       } catch (error) {
         console.log('Supabase not available, using local storage');
@@ -153,7 +192,7 @@ const CentralizedFeed = () => {
       if (allPosts.length === 0) {
         const demoPosts: Post[] = [
           {
-            id: 'demo-initial-1',
+            id: uuidv4(),
             content: 'Welcome to the University Feed! This is where you can share updates, achievements, and connect with the university community. Feel free to create your first post!',
             type: 'announcement',
             created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
@@ -169,7 +208,7 @@ const CentralizedFeed = () => {
             }
           },
           {
-            id: 'demo-initial-2',
+            id: uuidv4(),
             content: 'Excited to announce that our Machine Learning research paper has been accepted for publication! This collaborative effort showcases the incredible talent of our students and faculty. #Research #MachineLearning',
             type: 'text',
             created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
@@ -177,7 +216,7 @@ const CentralizedFeed = () => {
             comments_count: 12,
             shares_count: 8,
             author: {
-              id: 'demo-lecturer-1',
+              id: uuidv4(),
               full_name: 'Dr. Sarah Wilson',
               role: 'lecturer',
               department: 'Computer Science',
@@ -185,7 +224,7 @@ const CentralizedFeed = () => {
             }
           },
           {
-            id: 'demo-initial-3',
+            id: uuidv4(),
             content: 'Just completed my final year project on sustainable architecture! Special thanks to my supervisor and classmates for their support throughout this journey. The future of green building design looks promising! 🌱🏗️',
             type: 'text',
             created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
@@ -193,7 +232,7 @@ const CentralizedFeed = () => {
             comments_count: 8,
             shares_count: 5,
             author: {
-              id: 'demo-student-1',
+              id: uuidv4(),
               full_name: 'Adebayo Johnson',
               role: 'student',
               department: 'Architecture',
@@ -243,19 +282,13 @@ const CentralizedFeed = () => {
 
     // Handle media upload
     if (mediaFile) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        media_url = event.target?.result as string;
-      };
-      reader.readAsDataURL(mediaFile);
       type = mediaFile.type.startsWith('image') ? 'image' : 'video';
-      
       // For demo purposes, we'll use the preview URL
       media_url = mediaPreview;
     }
 
     const newPostData: Post = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       content: newPost,
       media_url,
       type,
@@ -269,42 +302,22 @@ const CentralizedFeed = () => {
     // Always save to localStorage first for persistence
     savePostToLocalStorage(newPostData);
 
-    // Try to save to Supabase if possible
-    if (user?.id) {
-      try {
-        const { error } = await supabase.from('feed_posts').insert({
-          id: newPostData.id,
-          content: newPost,
-          media_url,
-          type,
-          author_id: user.id,
-          visibility: 'public'
-        });
+    // Try to save to Supabase
+    try {
+      const { error } = await supabase.from('feed_posts').insert({
+        id: newPostData.id,
+        content: newPost,
+        media_url,
+        type,
+        author_id: currentUser.id,
+        visibility: 'public'
+      });
 
-        if (error) {
-          console.log('Supabase insert failed, using localStorage only:', error);
-        }
-      } catch (error) {
-        console.log('Supabase not available, using localStorage only');
+      if (error) {
+        console.log('Supabase insert failed, using localStorage only:', error);
       }
-    } else {
-      // For demo users, we can still try to insert with the demo UUID
-      try {
-        const { error } = await supabase.from('feed_posts').insert({
-          id: newPostData.id,
-          content: newPost,
-          media_url,
-          type,
-          author_id: currentUser.id,
-          visibility: 'public'
-        });
-
-        if (error) {
-          console.log('Demo user Supabase insert failed, using localStorage only:', error);
-        }
-      } catch (error) {
-        console.log('Supabase not available for demo user, using localStorage only');
-      }
+    } catch (error) {
+      console.log('Supabase not available, using localStorage only');
     }
 
     // Update local state
@@ -357,6 +370,7 @@ const CentralizedFeed = () => {
         await supabase
           .from('feed_likes')
           .insert({ 
+            id: uuidv4(),
             post_id: postId, 
             user_id: currentUser.id 
           });
@@ -372,7 +386,7 @@ const CentralizedFeed = () => {
 
     const currentUser = getCurrentUser();
     const newCommentData: Comment = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       content: commentText,
       created_at: new Date().toISOString(),
       user: currentUser
@@ -440,30 +454,50 @@ const CentralizedFeed = () => {
         try {
           const { data, error } = await supabase
             .from('feed_comments')
-            .select(`
-              *,
-              profiles (
-                id,
-                full_name,
-                role,
-                avatar_url
-              )
-            `)
+            .select('*')
             .eq('post_id', postId)
             .order('created_at', { ascending: true });
 
           if (!error && data) {
-            const formattedComments: Comment[] = data.map(comment => ({
-              id: comment.id,
-              content: comment.content,
-              created_at: comment.created_at,
-              user: {
-                id: comment.profiles?.id || comment.user_id,
-                full_name: comment.profiles?.full_name || 'Unknown User',
-                role: comment.profiles?.role || 'student',
-                avatar_url: comment.profiles?.avatar_url
-              }
-            }));
+            const formattedComments: Comment[] = await Promise.all(
+              data.map(async (comment) => {
+                let user = {
+                  id: comment.user_id,
+                  full_name: 'Unknown User',
+                  role: 'student',
+                  avatar_url: undefined
+                };
+
+                // Try to get user info from Supabase
+                try {
+                  const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('id, full_name, role, avatar_url')
+                    .eq('id', comment.user_id)
+                    .single();
+
+                  if (profile) {
+                    user = profile;
+                  }
+                } catch {
+                  // Check localStorage for demo user
+                  const demoUserData = localStorage.getItem('demo_user_data');
+                  if (demoUserData) {
+                    const userData = JSON.parse(demoUserData);
+                    if (userData.id === comment.user_id) {
+                      user = userData;
+                    }
+                  }
+                }
+
+                return {
+                  id: comment.id,
+                  content: comment.content,
+                  created_at: comment.created_at,
+                  user
+                };
+              })
+            );
 
             setComments(prev => ({
               ...prev,
