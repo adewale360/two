@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from '../../components/Layout/Logo';
 
 const SignIn: React.FC = () => {
@@ -16,6 +16,17 @@ const SignIn: React.FC = () => {
 
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check for success message from signup
+  const successMessage = location.state?.message;
+  const prefillEmail = location.state?.email;
+
+  React.useEffect(() => {
+    if (prefillEmail) {
+      setFormData(prev => ({ ...prev, email: prefillEmail }));
+    }
+  }, [prefillEmail]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,8 +62,24 @@ const SignIn: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900 relative">
-      {/* Bolt Logo - Top Right */}
-      <div className="absolute top-4 right-4">
+      {/* Logos - Top Right */}
+      <div className="absolute top-4 right-4 flex items-center space-x-3">
+        <div className="w-8 h-8 rounded-full overflow-hidden">
+          <img 
+            src="/pineapple.jpeg" 
+            alt="Pineappl Logo" 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const parent = target.parentElement;
+              if (parent) {
+                parent.classList.add('bg-gradient-to-r', 'from-emerald-500', 'to-teal-600', 'flex', 'items-center', 'justify-center');
+                parent.innerHTML += `<div class="text-white"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>`;
+              }
+            }}
+          />
+        </div>
         <a 
           href="https://bolt.new/" 
           target="_blank" 
@@ -62,7 +89,7 @@ const SignIn: React.FC = () => {
           <img 
             src="/black_circle_360x360.png" 
             alt="Powered by Bolt" 
-            className="w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+            className="w-8 h-8 rounded-full shadow-md hover:shadow-lg transition-shadow"
           />
         </a>
       </div>
@@ -78,6 +105,13 @@ const SignIn: React.FC = () => {
             <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Pineappl</h1>
             <p className="text-gray-600 dark:text-gray-400 text-xs">Academic Performance Platform</p>
           </div>
+
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mb-4 p-3 bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-800 rounded-lg text-green-700 dark:text-green-300 text-sm">
+              {successMessage}
+            </div>
+          )}
 
           {/* Tab Navigation */}
           <div className="flex mb-4">

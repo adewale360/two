@@ -58,7 +58,6 @@ const CentralizedFeed = () => {
   const getDemoUserUUID = () => {
     let demoUUID = localStorage.getItem('demo_user_uuid');
     if (!demoUUID) {
-      // Generate a proper UUID for demo users
       demoUUID = uuidv4();
       localStorage.setItem('demo_user_uuid', demoUUID);
     }
@@ -84,7 +83,7 @@ const CentralizedFeed = () => {
         const userData = JSON.parse(demoUserData);
         return {
           ...userData,
-          id: demoUUID // Ensure we use the UUID
+          id: demoUUID
         };
       } else {
         const newDemoUser = {
@@ -105,7 +104,7 @@ const CentralizedFeed = () => {
     try {
       let allPosts: Post[] = [];
 
-      // Fetch from Supabase (including demo posts stored there)
+      // Fetch from Supabase
       try {
         const { data: supabasePosts, error } = await supabase
           .from('feed_posts')
@@ -283,7 +282,6 @@ const CentralizedFeed = () => {
     // Handle media upload
     if (mediaFile) {
       type = mediaFile.type.startsWith('image') ? 'image' : 'video';
-      // For demo purposes, we'll use the preview URL
       media_url = mediaPreview;
     }
 
@@ -315,6 +313,8 @@ const CentralizedFeed = () => {
 
       if (error) {
         console.log('Supabase insert failed, using localStorage only:', error);
+      } else {
+        console.log('Post successfully saved to Supabase');
       }
     } catch (error) {
       console.log('Supabase not available, using localStorage only');
