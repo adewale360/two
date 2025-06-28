@@ -222,7 +222,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     staff_id,
   } = formData;
 
-  // Random avatar logic
+  // ✅ Validate UUIDs: must match UUID format or be null
+  const isValidUUID = (value: string) =>
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+
+  const safeFacultyId = isValidUUID(faculty_id) ? faculty_id : null;
+  const safeDepartmentId = isValidUUID(department_id) ? department_id : null;
+
+  // ✅ Random avatar logic
   const avatarFileNames = [
     'one.jpeg', 'two.jpeg', 'three.jpeg', 'four.jpeg', 'five.jpeg',
     'six.jpeg', 'seven.jpeg', 'eight.jpeg', 'nine.jpeg', 'ten.jpeg',
@@ -232,20 +239,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const randomAvatar = avatarFileNames[Math.floor(Math.random() * avatarFileNames.length)];
   const avatar_url = `/${randomAvatar}`;
 
-  // Create Supabase Auth user
-  const { data: authData, error: signUpError } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+  console.log('📨 Creating Supabase Auth user...');
+  const { data: authData, error: signUpError } = await supabase.auth.signUp({ email, password });
 
   if (signUpError || !authData?.user) {
-    console.error('Auth signUp error:', signUpError?.message);
+    console.error('❌ Auth signUp error:', signUpError?.message);
     return { error: signUpError };
   }
 
   const user_id = authData.user.id;
+  console.log('✅ Auth user created with ID:', user_id);
 
-  // Insert into profiles table
+  // ✅ Insert into profiles table
   const { error: profileError } = await supabase.from('profiles').insert({
     id: user_id,
     email,
@@ -256,19 +261,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     phone,
     address,
     role,
-    faculty_id: faculty_id || null,
-    department_id: department_id || null,
+    faculty_id: safeFacultyId,
+    department_id: safeDepartmentId,
     matric_number: role === 'student' ? matric_number : null,
     staff_id: role !== 'student' ? staff_id : null,
   });
 
   if (profileError) {
-    console.error('Profile insert error:', profileError.message);
+    console.error('❌ Profile insert error:', profileError.message);
     return { error: profileError };
   }
 
+  console.log('✅ Profile saved to Supabase');
+
   return { user: authData.user, error: null };
 };
+
+
+  
 
   const switchRole = (role: UserRole) => {
     if (user) {
