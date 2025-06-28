@@ -206,10 +206,69 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
-  const signUp = async (data: any) => {
-    // Use the same UUID fallback logic if needed here
-    return { error: null };
-  };
+ const signUp = async (formData: any) => {
+  const {
+    email,
+    password,
+    full_name,
+    username,
+    date_of_birth,
+    phone,
+    address,
+    role,
+    faculty_id,
+    department_id,
+    matric_number,
+    staff_id,
+  } = formData;
+
+  // Random avatar logic
+  const avatarFileNames = [
+    'one.jpeg', 'two.jpeg', 'three.jpeg', 'four.jpeg', 'five.jpeg',
+    'six.jpeg', 'seven.jpeg', 'eight.jpeg', 'nine.jpeg', 'ten.jpeg',
+    'eleven.jpeg', 'twelve.jpeg', 'thirteen.jpeg', 'fourteen.jpeg',
+    'fifteen.jpeg', 'sixteen.jpeg', 'seventeen.jpeg', 'eighteen.jpeg',
+  ];
+  const randomAvatar = avatarFileNames[Math.floor(Math.random() * avatarFileNames.length)];
+  const avatar_url = `/${randomAvatar}`;
+
+  // Create Supabase Auth user
+  const { data: authData, error: signUpError } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  if (signUpError || !authData?.user) {
+    console.error('Auth signUp error:', signUpError?.message);
+    return { error: signUpError };
+  }
+
+  const user_id = authData.user.id;
+
+  // Insert into profiles table
+  const { error: profileError } = await supabase.from('profiles').insert({
+    id: user_id,
+    email,
+    full_name,
+    username,
+    avatar_url,
+    date_of_birth,
+    phone,
+    address,
+    role,
+    faculty_id: faculty_id || null,
+    department_id: department_id || null,
+    matric_number: role === 'student' ? matric_number : null,
+    staff_id: role !== 'student' ? staff_id : null,
+  });
+
+  if (profileError) {
+    console.error('Profile insert error:', profileError.message);
+    return { error: profileError };
+  }
+
+  return { user: authData.user, error: null };
+};
 
   const switchRole = (role: UserRole) => {
     if (user) {
