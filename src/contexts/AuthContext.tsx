@@ -31,11 +31,26 @@ interface ProfileUpdateData {
   dateOfBirth?: string;
 }
 
+interface SignUpData {
+  email: string;
+  password: string;
+  full_name: string;
+  username: string;
+  date_of_birth?: string;
+  phone?: string;
+  address?: string;
+  role: UserRole;
+  faculty_id?: string;
+  department_id?: string;
+  matric_number?: string;
+  staff_id?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>; 
-  signUp: (data: any) => Promise<{ error: any }>; 
+  signUp: (data: SignUpData) => Promise<{ error: any }>; 
   signOut: () => Promise<void>;
   switchRole: (role: UserRole) => void;
   updateUserProfile: (data: ProfileUpdateData) => void;
@@ -100,6 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
+        // If Supabase auth fails, create demo user for development
         const demoId = uuidv4();
         const demoUser: User = {
           id: demoId,
@@ -153,55 +169,101 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signUp = async (formData: any) => {
-    const {
-      email,
-      password,
-      full_name,
-      username,
-      date_of_birth,
-      phone,
-      address,
-      role,
-      faculty_id,
-      department_id,
-      matric_number,
-      staff_id
-    } = formData;
+  const signUp = async (formData: SignUpData) => {
+    try {
+      const {
+        email,
+        password,
+        full_name,
+        username,
+        date_of_birth,
+        phone,
+        address,
+        role,
+        faculty_id,
+        department_id,
+        matric_number,
+        staff_id
+      } = formData;
 
-    const isValidUUID = (value: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
-    const safeFacultyId = isValidUUID(faculty_id) ? faculty_id : null;
-    const safeDepartmentId = isValidUUID(department_id) ? department_id : null;
+      // Validate UUIDs
+      const isValidUUID = (value: string) => 
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+      
+      const safeFacultyId = faculty_id && isValidUUID(faculty_id) ? faculty_id : null;
+      const safeDepartmentId = department_id && isValidUUID(department_id) ? department_id : null;
 
-    const avatars = ['one.jpeg','two.jpeg','three.jpeg','four.jpeg','five.jpeg','six.jpeg','seven.jpeg','eight.jpeg','nine.jpeg','ten.jpeg','eleven.jpeg','twelve.jpeg','thirteen.jpeg','fourteen.jpeg','fifteen.jpeg','sixteen.jpeg','seventeen.jpeg','eighteen.jpeg'];
-    const avatar_url = `/${avatars[Math.floor(Math.random() * avatars.length)]}`;
+      // Generate random avatar
+      const avatars = [
+        'one.jpeg', 'two.jpeg', 'three.jpeg', 'four.jpeg', 'five.jpeg', 
+        'six.jpeg', 'seven.jpeg', 'eight.jpeg', 'nine.jpeg', 'ten.jpeg',
+        'eleven.jpeg', 'twelve.jpeg', 'thirteen.jpeg', 'fourteen.jpeg', 
+        'fifteen.jpeg', 'sixteen.jpeg', 'seventeen.jpeg', 'eighteen.jpeg'
+      ];
+      const avatar_url = `/${avatars[Math.floor(Math.random() * avatars.length)]}`;
 
-    const { data: authData, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name,
-          username,
-          role,
-          avatar_url,
-          date_of_birth,
-          phone,
-          address,
-          faculty_id: safeFacultyId,
-          department_id: safeDepartmentId,
-          matric_number: role === 'student' ? matric_number : null,
-          staff_id: role !== 'student' ? staff_id : null
+      // Step 1: Create auth user (without additional data to avoid trigger issues)
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (signUpError) {
+        console.error('❌ Supabase Auth error:', signUpError);
+        return { error: signUpError };
+      }
+
+      if (!authData?.user) {
+        return { error: new Error('User creation failed') };
+      }
+
+      // Step 2: Wait a moment for any triggers to complete
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Step 3: Create or update profile directly
+      const profileData = {
+        id: authData.user.id,
+        email,
+        full_name,
+        username,
+        role,
+        date_of_birth: date_of_birth || null,
+        phone: phone || null,
+        address: address || null,
+        faculty_id: safeFacultyId,
+        department_id: safeDepartmentId,
+        matric_number: role === 'student' ? matric_number : null,
+        staff_id: (role === 'lecturer' || role === 'admin') ? staff_id : null,
+        avatar_url,
+        is_verified: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Try to insert profile, if it fails due to existing record, update it
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert(profileData);
+
+      if (insertError) {
+        // If insert fails (profile might already exist from trigger), try update
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update(profileData)
+          .eq('id', authData.user.id);
+
+        if (updateError) {
+          console.error('❌ Profile update error:', updateError);
+          return { error: updateError };
         }
       }
-    });
 
-    if (signUpError || !authData?.user) {
-      console.error('❌ Supabase Auth error:', signUpError);
-      return { error: signUpError };
+      return { user: authData.user, error: null };
+
+    } catch (error: any) {
+      console.error('❌ Signup error:', error);
+      return { error };
     }
-
-    return { user: authData.user, error: null };
   };
 
   const signOut = async () => {
