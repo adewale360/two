@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 
-// === Types ===
 type UserRole = 'student' | 'lecturer' | 'admin';
 
 interface User {
@@ -34,8 +33,8 @@ interface ProfileUpdateData {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>; 
-  signUp: (data: any) => Promise<{ error: any }>; 
+  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (data: any) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   switchRole: (role: UserRole) => void;
   updateUserProfile: (data: ProfileUpdateData) => void;
@@ -145,6 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('pineappl_user', JSON.stringify(userProfile));
         setUser(userProfile);
       }
+
       return { error: null };
     } catch (error) {
       return { error };
@@ -169,65 +169,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       staff_id
     } = formData;
 
-    const isValidUUID = (value: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+    const isValidUUID = (value: string) =>
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+
     const safeFacultyId = isValidUUID(faculty_id) ? faculty_id : null;
     const safeDepartmentId = isValidUUID(department_id) ? department_id : null;
 
-    const avatars = ['one.jpeg','two.jpeg','three.jpeg','four.jpeg','five.jpeg','six.jpeg','seven.jpeg','eight.jpeg','nine.jpeg','ten.jpeg','eleven.jpeg','twelve.jpeg','thirteen.jpeg','fourteen.jpeg','fifteen.jpeg','sixteen.jpeg','seventeen.jpeg','eighteen.jpeg'];
+    const avatars = [
+      'one.jpeg', 'two.jpeg', 'three.jpeg', 'four.jpeg', 'five.jpeg', 'six.jpeg',
+      'seven.jpeg', 'eight.jpeg', 'nine.jpeg', 'ten.jpeg', 'eleven.jpeg', 'twelve.jpeg',
+      'thirteen.jpeg', 'fourteen.jpeg', 'fifteen.jpeg', 'sixteen.jpeg', 'seventeen.jpeg', 'eighteen.jpeg'
+    ];
     const avatar_url = `/${avatars[Math.floor(Math.random() * avatars.length)]}`;
 
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
-  email,
-  password,
-  options: {
-    data: {
-      full_name,
-      username,
-      role,
-      avatar_url,
-      date_of_birth,
-      phone,
-      address,
-      faculty_id: safeFacultyId,
-      department_id: safeDepartmentId,
-      matric_number: role === 'student' ? matric_number : null,
-      staff_id: role !== 'student' ? staff_id : null
-    }
-  }
-});
-
+      email,
+      password,
+      options: {
+        data: {
+          full_name,
+          username,
+          role,
+          avatar_url,
+          date_of_birth,
+          phone,
+          address,
+          faculty_id: safeFacultyId,
+          department_id: safeDepartmentId,
+          matric_number: role === 'student' ? matric_number : null,
+          staff_id: role !== 'student' ? staff_id : null
+        }
+      }
+    });
 
     if (signUpError || !authData?.user) {
       console.error('❌ Supabase Auth error:', signUpError);
       return { error: signUpError };
     }
 
-    const user_id = authData.user.id;
-
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: user_id,
-      email,
-      full_name,
-      username,
-      avatar_url,
-      date_of_birth,
-      phone,
-      address,
-      role,
-      faculty_id: safeFacultyId,
-      department_id: safeDepartmentId,
-      matric_number: role === 'student' ? matric_number : null,
-      staff_id: role !== 'student' ? staff_id : null,
-      is_verified: false,
-      interests: null,
-      emergency_contact: null
-    });
-
-    if (profileError) {
-      console.error('❌ Profile insert error:', profileError);
-      return { error: profileError };
-    }
-
+    // No manual insert – Supabase trigger already handled it
     return { user: authData.user, error: null };
   };
 
@@ -254,7 +234,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, switchRole, updateUserProfile }}>
+    <AuthContext.Provider
+      value={{ user, loading, signIn, signUp, signOut, switchRole, updateUserProfile }}
+    >
       {children}
     </AuthContext.Provider>
   );
