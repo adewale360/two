@@ -3,6 +3,7 @@ import { Eye, EyeOff, School, ArrowRight, Calendar, User, Mail, Phone, MapPin, G
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Faculty {
   id: string;
@@ -49,6 +50,30 @@ const SignUp: React.FC = () => {
   const { signUp } = useAuth();
   const navigate = useNavigate();
 
+  // Generate consistent UUIDs for mock data
+  const mockFacultyIds = {
+    copas: '550e8400-e29b-41d4-a716-446655440001',
+    colensma: '550e8400-e29b-41d4-a716-446655440002',
+    casmas: '550e8400-e29b-41d4-a716-446655440003',
+    colaw: '550e8400-e29b-41d4-a716-446655440004',
+    nursing: '550e8400-e29b-41d4-a716-446655440005'
+  };
+
+  const mockDepartmentIds = {
+    computerScience: '550e8400-e29b-41d4-a716-446655440011',
+    biochemistry: '550e8400-e29b-41d4-a716-446655440012',
+    softwareEngineering: '550e8400-e29b-41d4-a716-446655440013',
+    architecture: '550e8400-e29b-41d4-a716-446655440014',
+    estateManagement: '550e8400-e29b-41d4-a716-446655440015',
+    businessAdmin: '550e8400-e29b-41d4-a716-446655440016',
+    accounting: '550e8400-e29b-41d4-a716-446655440017',
+    economics: '550e8400-e29b-41d4-a716-446655440018',
+    publicLaw: '550e8400-e29b-41d4-a716-446655440019',
+    privateLaw: '550e8400-e29b-41d4-a716-446655440020',
+    nursingScience: '550e8400-e29b-41d4-a716-446655440021',
+    humanPhysiology: '550e8400-e29b-41d4-a716-446655440022'
+  };
+
   useEffect(() => {
     fetchFaculties();
   }, []);
@@ -72,11 +97,11 @@ const SignUp: React.FC = () => {
       } else {
         // Fallback to mock data if no faculties in database
         const mockFaculties = [
-          { id: '1', name: 'COPAS', full_name: 'College of Pure and Applied Sciences' },
-          { id: '2', name: 'COLENSMA', full_name: 'College of Environmental Sciences and Management' },
-          { id: '3', name: 'CASMAS', full_name: 'College of Art, Social, and Management Science' },
-          { id: '4', name: 'COLAW', full_name: 'College of Law' },
-          { id: '5', name: 'NURSING', full_name: 'College of Nursing and Basic Medical Sciences' }
+          { id: mockFacultyIds.copas, name: 'COPAS', full_name: 'College of Pure and Applied Sciences' },
+          { id: mockFacultyIds.colensma, name: 'COLENSMA', full_name: 'College of Environmental Sciences and Management' },
+          { id: mockFacultyIds.casmas, name: 'CASMAS', full_name: 'College of Art, Social, and Management Science' },
+          { id: mockFacultyIds.colaw, name: 'COLAW', full_name: 'College of Law' },
+          { id: mockFacultyIds.nursing, name: 'NURSING', full_name: 'College of Nursing and Basic Medical Sciences' }
         ];
         setFaculties(mockFaculties);
       }
@@ -84,11 +109,11 @@ const SignUp: React.FC = () => {
       console.error('Error fetching faculties:', error);
       // Use mock data as fallback
       const mockFaculties = [
-        { id: '1', name: 'COPAS', full_name: 'College of Pure and Applied Sciences' },
-        { id: '2', name: 'COLENSMA', full_name: 'College of Environmental Sciences and Management' },
-        { id: '3', name: 'CASMAS', full_name: 'College of Art, Social, and Management Science' },
-        { id: '4', name: 'COLAW', full_name: 'College of Law' },
-        { id: '5', name: 'NURSING', full_name: 'College of Nursing and Basic Medical Sciences' }
+        { id: mockFacultyIds.copas, name: 'COPAS', full_name: 'College of Pure and Applied Sciences' },
+        { id: mockFacultyIds.colensma, name: 'COLENSMA', full_name: 'College of Environmental Sciences and Management' },
+        { id: mockFacultyIds.casmas, name: 'CASMAS', full_name: 'College of Art, Social, and Management Science' },
+        { id: mockFacultyIds.colaw, name: 'COLAW', full_name: 'College of Law' },
+        { id: mockFacultyIds.nursing, name: 'NURSING', full_name: 'College of Nursing and Basic Medical Sciences' }
       ];
       setFaculties(mockFaculties);
     }
@@ -108,27 +133,27 @@ const SignUp: React.FC = () => {
       } else {
         // Fallback to mock data
         const mockDepartments: Record<string, Department[]> = {
-          '1': [
-            { id: '1', name: 'Computer Science', faculty_id: '1' },
-            { id: '2', name: 'Biochemistry', faculty_id: '1' },
-            { id: '3', name: 'Software Engineering', faculty_id: '1' }
+          [mockFacultyIds.copas]: [
+            { id: mockDepartmentIds.computerScience, name: 'Computer Science', faculty_id: mockFacultyIds.copas },
+            { id: mockDepartmentIds.biochemistry, name: 'Biochemistry', faculty_id: mockFacultyIds.copas },
+            { id: mockDepartmentIds.softwareEngineering, name: 'Software Engineering', faculty_id: mockFacultyIds.copas }
           ],
-          '2': [
-            { id: '4', name: 'Architecture', faculty_id: '2' },
-            { id: '5', name: 'Estate Management', faculty_id: '2' }
+          [mockFacultyIds.colensma]: [
+            { id: mockDepartmentIds.architecture, name: 'Architecture', faculty_id: mockFacultyIds.colensma },
+            { id: mockDepartmentIds.estateManagement, name: 'Estate Management', faculty_id: mockFacultyIds.colensma }
           ],
-          '3': [
-            { id: '6', name: 'Business Administration', faculty_id: '3' },
-            { id: '7', name: 'Accounting', faculty_id: '3' },
-            { id: '8', name: 'Economics', faculty_id: '3' }
+          [mockFacultyIds.casmas]: [
+            { id: mockDepartmentIds.businessAdmin, name: 'Business Administration', faculty_id: mockFacultyIds.casmas },
+            { id: mockDepartmentIds.accounting, name: 'Accounting', faculty_id: mockFacultyIds.casmas },
+            { id: mockDepartmentIds.economics, name: 'Economics', faculty_id: mockFacultyIds.casmas }
           ],
-          '4': [
-            { id: '9', name: 'Public and Property Law', faculty_id: '4' },
-            { id: '10', name: 'Private and International Law', faculty_id: '4' }
+          [mockFacultyIds.colaw]: [
+            { id: mockDepartmentIds.publicLaw, name: 'Public and Property Law', faculty_id: mockFacultyIds.colaw },
+            { id: mockDepartmentIds.privateLaw, name: 'Private and International Law', faculty_id: mockFacultyIds.colaw }
           ],
-          '5': [
-            { id: '11', name: 'Nursing Science', faculty_id: '5' },
-            { id: '12', name: 'Human Physiology', faculty_id: '5' }
+          [mockFacultyIds.nursing]: [
+            { id: mockDepartmentIds.nursingScience, name: 'Nursing Science', faculty_id: mockFacultyIds.nursing },
+            { id: mockDepartmentIds.humanPhysiology, name: 'Human Physiology', faculty_id: mockFacultyIds.nursing }
           ]
         };
         setDepartments(mockDepartments[facultyId] || []);
@@ -137,27 +162,27 @@ const SignUp: React.FC = () => {
       console.error('Error fetching departments:', error);
       // Use mock data as fallback
       const mockDepartments: Record<string, Department[]> = {
-        '1': [
-          { id: '1', name: 'Computer Science', faculty_id: '1' },
-          { id: '2', name: 'Biochemistry', faculty_id: '1' },
-          { id: '3', name: 'Software Engineering', faculty_id: '1' }
+        [mockFacultyIds.copas]: [
+          { id: mockDepartmentIds.computerScience, name: 'Computer Science', faculty_id: mockFacultyIds.copas },
+          { id: mockDepartmentIds.biochemistry, name: 'Biochemistry', faculty_id: mockFacultyIds.copas },
+          { id: mockDepartmentIds.softwareEngineering, name: 'Software Engineering', faculty_id: mockFacultyIds.copas }
         ],
-        '2': [
-          { id: '4', name: 'Architecture', faculty_id: '2' },
-          { id: '5', name: 'Estate Management', faculty_id: '2' }
+        [mockFacultyIds.colensma]: [
+          { id: mockDepartmentIds.architecture, name: 'Architecture', faculty_id: mockFacultyIds.colensma },
+          { id: mockDepartmentIds.estateManagement, name: 'Estate Management', faculty_id: mockFacultyIds.colensma }
         ],
-        '3': [
-          { id: '6', name: 'Business Administration', faculty_id: '3' },
-          { id: '7', name: 'Accounting', faculty_id: '3' },
-          { id: '8', name: 'Economics', faculty_id: '3' }
+        [mockFacultyIds.casmas]: [
+          { id: mockDepartmentIds.businessAdmin, name: 'Business Administration', faculty_id: mockFacultyIds.casmas },
+          { id: mockDepartmentIds.accounting, name: 'Accounting', faculty_id: mockFacultyIds.casmas },
+          { id: mockDepartmentIds.economics, name: 'Economics', faculty_id: mockFacultyIds.casmas }
         ],
-        '4': [
-          { id: '9', name: 'Public and Property Law', faculty_id: '4' },
-          { id: '10', name: 'Private and International Law', faculty_id: '4' }
+        [mockFacultyIds.colaw]: [
+          { id: mockDepartmentIds.publicLaw, name: 'Public and Property Law', faculty_id: mockFacultyIds.colaw },
+          { id: mockDepartmentIds.privateLaw, name: 'Private and International Law', faculty_id: mockFacultyIds.colaw }
         ],
-        '5': [
-          { id: '11', name: 'Nursing Science', faculty_id: '5' },
-          { id: '12', name: 'Human Physiology', faculty_id: '5' }
+        [mockFacultyIds.nursing]: [
+          { id: mockDepartmentIds.nursingScience, name: 'Nursing Science', faculty_id: mockFacultyIds.nursing },
+          { id: mockDepartmentIds.humanPhysiology, name: 'Human Physiology', faculty_id: mockFacultyIds.nursing }
         ]
       };
       setDepartments(mockDepartments[facultyId] || []);
