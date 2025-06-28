@@ -266,6 +266,13 @@ const SignUp: React.FC = () => {
     setError('');
 
     try {
+      // Validate UUIDs
+      const isValidUUID = (value: string) =>
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+
+      const safeFacultyId = isValidUUID(formData.faculty_id) ? formData.faculty_id : null;
+      const safeDepartmentId = isValidUUID(formData.department_id) ? formData.department_id : null;
+
       // Create user account with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
@@ -273,34 +280,44 @@ const SignUp: React.FC = () => {
         options: {
           data: {
             full_name: formData.full_name,
-            username: formData.username
+            username: formData.username,
+            role: formData.role
           }
         }
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        console.error('Auth signup error:', authError);
+        throw authError;
+      }
 
       if (authData.user) {
-        // Create profile in profiles table
-        const { error: profileError } = await supabase
+        // Wait a moment for the trigger to complete
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Update the profile with additional information
+        const { error: updateError } = await supabase
           .from('profiles')
-          .insert({
-            id: authData.user.id,
-            email: formData.email,
+          .update({
             full_name: formData.full_name,
             username: formData.username,
             role: formData.role,
-            date_of_birth: formData.date_of_birth,
-            phone: formData.phone,
+            date_of_birth: formData.date_of_birth || null,
+            phone: formData.phone || null,
             address: formData.address || null,
-            faculty_id: formData.faculty_id,
-            department_id: formData.department_id,
+            faculty_id: safeFacultyId,
+            department_id: safeDepartmentId,
             matric_number: formData.role === 'student' ? formData.matric_number : null,
             staff_id: (formData.role === 'lecturer' || formData.role === 'admin') ? formData.staff_id : null,
             is_verified: false
-          });
+          })
+          .eq('id', authData.user.id);
 
-        if (profileError) throw profileError;
+        if (updateError) {
+          console.error('Profile update error:', updateError);
+          // Don't throw here - the user was created successfully
+          console.warn('Profile update failed, but user was created');
+        }
 
         // Success - redirect to sign in
         navigate('/signin', { 

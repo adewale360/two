@@ -206,79 +206,95 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
- const signUp = async (formData: any) => {
-  const {
-    email,
-    password,
-    full_name,
-    username,
-    date_of_birth,
-    phone,
-    address,
-    role,
-    faculty_id,
-    department_id,
-    matric_number,
-    staff_id,
-  } = formData;
+  const signUp = async (formData: any) => {
+    const {
+      email,
+      password,
+      full_name,
+      username,
+      date_of_birth,
+      phone,
+      address,
+      role,
+      faculty_id,
+      department_id,
+      matric_number,
+      staff_id,
+    } = formData;
 
-  // ✅ Validate UUIDs: must match UUID format or be null
-  const isValidUUID = (value: string) =>
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+    // Validate UUIDs: must match UUID format or be null
+    const isValidUUID = (value: string) =>
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 
-  const safeFacultyId = isValidUUID(faculty_id) ? faculty_id : null;
-  const safeDepartmentId = isValidUUID(department_id) ? department_id : null;
+    const safeFacultyId = isValidUUID(faculty_id) ? faculty_id : null;
+    const safeDepartmentId = isValidUUID(department_id) ? department_id : null;
 
-  // ✅ Random avatar logic
-  const avatarFileNames = [
-    'one.jpeg', 'two.jpeg', 'three.jpeg', 'four.jpeg', 'five.jpeg',
-    'six.jpeg', 'seven.jpeg', 'eight.jpeg', 'nine.jpeg', 'ten.jpeg',
-    'eleven.jpeg', 'twelve.jpeg', 'thirteen.jpeg', 'fourteen.jpeg',
-    'fifteen.jpeg', 'sixteen.jpeg', 'seventeen.jpeg', 'eighteen.jpeg',
-  ];
-  const randomAvatar = avatarFileNames[Math.floor(Math.random() * avatarFileNames.length)];
-  const avatar_url = `/${randomAvatar}`;
+    // Random avatar logic
+    const avatarFileNames = [
+      'one.jpeg', 'two.jpeg', 'three.jpeg', 'four.jpeg', 'five.jpeg',
+      'six.jpeg', 'seven.jpeg', 'eight.jpeg', 'nine.jpeg', 'ten.jpeg',
+      'eleven.jpeg', 'twelve.jpeg', 'thirteen.jpeg', 'fourteen.jpeg',
+      'fifteen.jpeg', 'sixteen.jpeg', 'seventeen.jpeg', 'eighteen.jpeg',
+    ];
+    const randomAvatar = avatarFileNames[Math.floor(Math.random() * avatarFileNames.length)];
+    const avatar_url = `/${randomAvatar}`;
 
-  console.log('📨 Creating Supabase Auth user...');
-  const { data: authData, error: signUpError } = await supabase.auth.signUp({ email, password });
+    console.log('📨 Creating Supabase Auth user...');
+    const { data: authData, error: signUpError } = await supabase.auth.signUp({ 
+      email, 
+      password,
+      options: {
+        data: {
+          full_name,
+          username,
+          role
+        }
+      }
+    });
 
-  if (signUpError || !authData?.user) {
-    console.error('❌ Auth signUp error:', signUpError?.message);
-    return { error: signUpError };
-  }
+    if (signUpError || !authData?.user) {
+      console.error('❌ Auth signUp error:', signUpError?.message);
+      return { error: signUpError };
+    }
 
-  const user_id = authData.user.id;
-  console.log('✅ Auth user created with ID:', user_id);
+    const user_id = authData.user.id;
+    console.log('✅ Auth user created with ID:', user_id);
 
-  // ✅ Insert into profiles table
-  const { error: profileError } = await supabase.from('profiles').insert({
-    id: user_id,
-    email,
-    full_name,
-    username,
-    avatar_url,
-    date_of_birth,
-    phone,
-    address,
-    role,
-    faculty_id: safeFacultyId,
-    department_id: safeDepartmentId,
-    matric_number: role === 'student' ? matric_number : null,
-    staff_id: role !== 'student' ? staff_id : null,
-  });
+    // Wait for the trigger to complete, then update the profile
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-  if (profileError) {
-    console.error('❌ Profile insert error:', profileError.message);
-    return { error: profileError };
-  }
+      const { error: profileError } = await supabase.from('profiles').upsert({
+        id: user_id,
+        email,
+        full_name,
+        username,
+        avatar_url,
+        date_of_birth,
+        phone,
+        address,
+        role,
+        faculty_id: safeFacultyId,
+        department_id: safeDepartmentId,
+        matric_number: role === 'student' ? matric_number : null,
+        staff_id: role !== 'student' ? staff_id : null,
+        is_verified: false,
+        interests: null,
+        emergency_contact: null
+      });
 
-  console.log('✅ Profile saved to Supabase');
+      if (profileError) {
+        console.error('❌ Profile upsert error:', profileError.message);
+        return { error: profileError };
+      }
 
-  return { user: authData.user, error: null };
-};
+      console.log('✅ Profile saved to Supabase');
+    } catch (error) {
+      console.warn('Profile update failed, but user was created:', error);
+    }
 
-
-  
+    return { user: authData.user, error: null };
+  };
 
   const switchRole = (role: UserRole) => {
     if (user) {
