@@ -177,55 +177,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const avatar_url = `/${avatars[Math.floor(Math.random() * avatars.length)]}`;
 
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
-  email,
-  password,
-  options: {
-    data: {
-      full_name,
-      username,
-      role,
-      avatar_url,
-      date_of_birth,
-      phone,
-      address,
-      faculty_id: safeFacultyId,
-      department_id: safeDepartmentId,
-      matric_number: role === 'student' ? matric_number : null,
-      staff_id: role !== 'student' ? staff_id : null
-    }
-  }
-});
-
+      email,
+      password,
+      options: {
+        data: {
+          full_name,
+          username,
+          role,
+          avatar_url,
+          date_of_birth,
+          phone,
+          address,
+          faculty_id: safeFacultyId,
+          department_id: safeDepartmentId,
+          matric_number: role === 'student' ? matric_number : null,
+          staff_id: role !== 'student' ? staff_id : null
+        }
+      }
+    });
 
     if (signUpError || !authData?.user) {
       console.error('❌ Supabase Auth error:', signUpError);
       return { error: signUpError };
-    }
-
-    const user_id = authData.user.id;
-
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: user_id,
-      email,
-      full_name,
-      username,
-      avatar_url,
-      date_of_birth,
-      phone,
-      address,
-      role,
-      faculty_id: safeFacultyId,
-      department_id: safeDepartmentId,
-      matric_number: role === 'student' ? matric_number : null,
-      staff_id: role !== 'student' ? staff_id : null,
-      is_verified: false,
-      interests: null,
-      emergency_contact: null
-    });
-
-    if (profileError) {
-      console.error('❌ Profile insert error:', profileError);
-      return { error: profileError };
     }
 
     return { user: authData.user, error: null };
